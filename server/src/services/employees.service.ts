@@ -18,3 +18,12 @@ export async function getEmployeeList() {
 
     return employees;
 }
+
+export async function getEmployeeForId(id) {
+    const employee = await prisma.employee.findUnique({
+        where: { id }
+    });
+
+    return employee;
+
+}
