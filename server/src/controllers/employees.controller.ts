@@ -29,7 +29,6 @@ export async function getemployeelist(req: Request, res: Response) {
 
 export async function getemployee(req: Request, res: Response) {
     try {
-        console.log("execute");
         const result = await employeeService.getEmployeeForId(Number(req.params.employeeId));
 
         if(!result) {
