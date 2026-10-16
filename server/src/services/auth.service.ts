@@ -56,7 +56,7 @@ export async function loginUser(email: string, password: string) {
     );
 
     return { 
-        user: user,
+        user: { firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role },
         token: token,
         success: 1
     };
