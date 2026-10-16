@@ -13,18 +13,6 @@ const prisma = new PrismaClient({ adapter });
 
 export async function loginUser(email: string, password: string) {
     
-    const hash = await argon2.hash(password, {
-        type: argon2.argon2i,
-        memoryCost: 19456,
-        timeCost: 2,
-        parallelism: 1,
-    });
-
-    
-   // console.log(await argon2.verify(hash, password)); // true
-
-    console.log(hash);
-    
     const user = await prisma.user.findUnique({
         where: { email }
     });
