@@ -7,7 +7,7 @@ import { isEvaluationDue } from "../api/evaluationDue";
 import { getQuarterEvaluationStatistics } from "../api/employee-evaluations";
 import { getRecentActivity, type DashboardActivity } from "../api/dashboard";
 
-type RecordAction = "note" | "writeup";
+type RecordAction = "note" | "writeup" | "recognition";
 
 type UpcomingEvaluation = {
     id: number;
@@ -111,7 +111,7 @@ export default function DashboardPage() {
         setRecordAction(action);
         setRecordEmployeeId("");
         setNoteTitle("");
-        setNoteType("GENERAL");
+        setNoteType(action === "recognition" ? "POSITIVE" : "GENERAL");
         setRecordContent("");
         setWarningType("VERBAL_WARNING");
         setRecordError("");
@@ -125,19 +125,19 @@ export default function DashboardPage() {
             setRecordError("Select an employee.");
             return;
         }
-        if (!recordContent.trim() || (recordAction === "note" && !noteTitle.trim())) {
+        if (!recordContent.trim() || (recordAction !== "writeup" && !noteTitle.trim())) {
             setRecordError("Complete all required fields.");
             return;
         }
         setRecordSaving(true);
         setRecordError("");
         try {
-            if (recordAction === "note") {
-                await createManagerNote(employeeId, { title: noteTitle.trim(), content: recordContent.trim(), type: noteType });
+            if (recordAction === "note" || recordAction === "recognition") {
+                await createManagerNote(employeeId, { title: noteTitle.trim(), content: recordContent.trim(), type: recordAction === "recognition" ? "POSITIVE" : noteType });
             } else if (recordAction === "writeup") {
                 await createEmployeeWriteUp(employeeId, { type: warningType, reason: recordContent.trim() });
             } else return;
-            setRecordNotice(recordAction === "note" ? "Manager note saved." : "Write-up created.");
+            setRecordNotice(recordAction === "recognition" ? "Recognition added." : recordAction === "note" ? "Manager note saved." : "Write-up created.");
             setRecordAction(null);
             const [activity, list] = await Promise.allSettled([getRecentActivity(), getemployeelist()]);
             if (activity.status === "fulfilled") setRecentActivity(activity.value);
@@ -178,14 +178,14 @@ export default function DashboardPage() {
             {recordNotice && <p className="dashboard-record-notice" role="status">{recordNotice}</p>}
             {recordAction && (
                 <div className="dashboard-record-backdrop" onMouseDown={() => { if (!recordSaving) setRecordAction(null); }}>
-                    <section className="dashboard-record-modal" role="dialog" aria-modal="true" aria-label={recordAction === "note" ? "Add manager note" : "Create write-up"} onMouseDown={event => event.stopPropagation()}>
+                    <section className="dashboard-record-modal" role="dialog" aria-modal="true" aria-label={recordAction === "recognition" ? "Add recognition" : recordAction === "note" ? "Add manager note" : "Create write-up"} onMouseDown={event => event.stopPropagation()}>
                         <h2>{recordAction === "note" ? "Add manager note" : "Create write-up"}</h2>
                         <p>Choose an employee and record the details.</p>
                         <form onSubmit={submitRecord}>
                             <EmployeePicker employees={employees} value={recordEmployeeId}
                                 onChange={id => { setRecordEmployeeId(id); setRecordError(""); }} disabled={recordSaving}/>
-                            {recordAction === "note" ? (
-                                <><fieldset className="note-type-fieldset"><legend>Note type</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} disabled={recordSaving} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset><label>Title<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label></>
+                            {recordAction !== "writeup" ? (
+                                <>{recordAction === "note" && <fieldset className="note-type-fieldset"><legend>Note type</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} disabled={recordSaving} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>Title<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label></>
                             ) : (
                                 <label>Warning type
                                     <select value={warningType} onChange={event => setWarningType(event.target.value as WriteUpType)} disabled={recordSaving}>
@@ -195,7 +195,7 @@ export default function DashboardPage() {
                                     </select>
                                 </label>
                             )}
-                            <label>{recordAction === "note" ? "Note" : "Reason / details"}
+                            <label>{recordAction === "recognition" ? "Recognition details" : recordAction === "note" ? "Note" : "Reason / details"}
                                 <textarea required rows={5} maxLength={10000} value={recordContent} onChange={event => setRecordContent(event.target.value)} disabled={recordSaving}/>
                             </label>
                             {recordError && <p className="dashboard-record-error" role="alert">{recordError}</p>}
@@ -357,9 +357,9 @@ export default function DashboardPage() {
                                 Add note
                             </button>
 
-                            <button type="button">
+                            <button type="button" onClick={() => openRecord("recognition")}>
                                 <span>★</span>
-                                Start evaluation
+                                Add recognition
                             </button>
 
                             <button type="button" onClick={() => openRecord("writeup")}>
