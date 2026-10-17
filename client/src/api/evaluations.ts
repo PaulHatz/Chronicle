@@ -19,7 +19,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
 }
 
 export async function createEvaluationTemplate(input: {
-  name: string; department: string; version: string;
+  name: string; version: string;
 }): Promise<{ id: number }> {
   return parseResponse(await apiFetch("/evaluation-templates", {
     method: "POST", body: JSON.stringify(input),
@@ -33,7 +33,7 @@ export async function addEvaluationQuestion(templateId: number, input: NewQuesti
 }
 
 export async function getEvaluationTemplates(): Promise<Array<{
-  id: number; name: string; department: string; version: string;
+  id: number; name: string; version: string;
 }>> {
   return parseResponse(await apiFetch("/evaluation-templates"));
 }
@@ -42,7 +42,6 @@ export type EvaluationQuestion = NewQuestion & { id: number; evaluationTemplateI
 export type EvaluationTemplateDetail = {
   id: number;
   name: string;
-  department: string;
   version: string;
   questions: EvaluationQuestion[];
 };
