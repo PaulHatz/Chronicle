@@ -423,3 +423,13 @@
         grid-template-columns: 1fr;
     }
 }
+/* Keep dashboard metric cards independent of styles loaded by other pages. */
+.dashboard-page { box-sizing: border-box; width: 100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; line-height: 1.5; text-align: left; }
+.dashboard-page *, .dashboard-page *::before, .dashboard-page *::after { box-sizing: border-box; }
+.dashboard-page .summary-grid { width: 100%; }
+.dashboard-page .summary-card { min-width: 0; display: flex; flex-direction: column; align-items: stretch; text-align: left; }
+.dashboard-page .summary-card-header { width: 100%; }
+.dashboard-page .summary-card > p { display: block; margin: 0 0 9px; font-size: 14px; font-weight: 400; line-height: 1.4; }
+.dashboard-page .summary-card > strong { display: block; font-size: 32px; font-weight: 750; line-height: 1.1; margin: 0 0 8px; }
+.dashboard-page .summary-card > span { display: block; font-size: 12px; font-weight: 400; line-height: 1.4; }
+.dashboard-page .summary-card-header .summary-change { font-size: 12px; line-height: 1.3; }
