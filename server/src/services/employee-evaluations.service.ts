@@ -56,9 +56,13 @@ export async function completeEmployeeEvaluation(employeeId: number, answers: An
       } else throw new EvaluationError(400, "Unsupported question type.");
       if (answer.textAnswer !== null && typeof answer.textAnswer !== "string") throw new EvaluationError(400, "Invalid written response.");
     }
-    return tx.evaluation.create({
+    const completedAt = new Date();
+    const nextEvaluationAt = new Date(completedAt);
+    nextEvaluationAt.setUTCDate(nextEvaluationAt.getUTCDate() + employee.department.evaluationFrequencyDays);
+    const evaluation = await tx.evaluation.create({
       data: {
         employeeId,
+        completedAt,
         evaluationTemplateId: template.id,
         answers: { create: answers.map(a => ({
           evaluationQuestionId: a.questionId,
@@ -68,6 +72,8 @@ export async function completeEmployeeEvaluation(employeeId: number, answers: An
       },
       include: { answers: true },
     });
+    await tx.employee.update({ where: { id: employeeId }, data: { nextEvaluationAt } });
+    return evaluation;
   });
 }
 
