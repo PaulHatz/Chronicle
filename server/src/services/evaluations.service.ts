@@ -85,6 +85,17 @@ export async function updateQuestion(id: number, changes: Partial<QuestionInput>
   if (!current) throw new ApiError(404, "Evaluation question not found.");
   await ensureEditable(current.evaluationTemplateId);
 
+  const nextType = changes.questionType ?? current.questionType;
+  const nextMin = changes.minScore !== undefined ? changes.minScore : current.minScore;
+  const nextMax = changes.maxScore !== undefined ? changes.maxScore : current.maxScore;
+  if (nextType === "NUMERIC") {
+    if (nextMin === null || nextMax === null || nextMin > nextMax) {
+      throw new ApiError(400, "Numeric questions require valid minScore and maxScore.");
+    }
+  } else if (nextMin !== null || nextMax !== null) {
+    throw new ApiError(400, "Text questions must have null minScore and maxScore.");
+  }
+
   return prisma.evaluationQuestion.update({
     where: { id },
     data: {
