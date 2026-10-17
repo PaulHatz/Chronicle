@@ -578,9 +578,7 @@ export default function EmployeePage() {
                                                 <span
                                                     className={`timeline-type timeline-type-${event.type}`}
                                                 >
-                                                    {getTimelineLabel(
-                                                        event.type,
-                                                    )}
+                                                    {event.type === "note" ? (event.noteType === "POSITIVE" ? "Positive note" : event.noteType === "IMPROVEMENT" ? "Needs improvement" : "General note") : getTimelineLabel(event.type)}
                                                 </span>
 
                                                 <h3>{event.evaluationId ? <Link to={`/employees/${employee.id}/evaluations/${event.evaluationId}`}>{event.title}</Link> : event.title}</h3>
