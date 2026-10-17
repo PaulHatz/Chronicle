@@ -30,6 +30,37 @@ enum UserRole {
   TEAM_LEADER
 }
 
+model EvaluationTemplate {
+  id         Int         @id @default(autoincrement())
+  department String
+  version    String
+}
+
+model EvaluationQuestion {
+  id                    Int         @id @default(autoincrement())
+  evaluationTemplateId  Int
+  questionText          String
+  questionType          String
+  ruberic               Json?
+  minScore              Int
+  maxScore              Int
+}
+
+model EvaluationAnswer {
+  id                    Int         @id @default(autoincrement())
+  evaluationQuestionId  Int
+  evaluationId  Int
+
+  scoreAnswer           Int?
+  textAnswer            String?
+
+  evaluation           Evaluation         @relation(fields: [evaluationId], references: [id])
+  question             EvaluationQuestion @relation(fields: [evaluationQuestionId], references: [id])
+
+  @@unique([evaluationId, evaluationQuestionId])
+}
+
+
 model Employee {
   id           Int              @id @default(autoincrement())
   firstName    String
@@ -51,8 +82,12 @@ model Evaluation {
   id         Int      @id @default(autoincrement())
   employeeId Int
   employee   Employee @relation(fields: [employeeId], references: [id])
-  score      Float
-  summary    String?
+ 
+  evaluationTemplateId Int
+  template             EvaluationTemplate @relation(fields: [evaluationTemplateId], references: [id])
+
+  answers              EvaluationAnswer[]
+
   completedAt DateTime @default(now())
 }
 
@@ -74,6 +109,7 @@ model WriteUp {
   resolvedAt DateTime?
   createdAt  DateTime    @default(now())
 }
+
 
 enum EmployeeStatus {
   ACTIVE
