@@ -1,5 +1,7 @@
 import "./DashboardPage.css";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getemployeelist } from "../api/employee";
 
 type Activity = {
     id: number;
@@ -96,6 +98,34 @@ async function upload_test_eval() {
 
 export default function DashboardPage() {
     const managerName = "Paul";
+    const [employeeCounts, setEmployeeCounts] = useState<{ total: number; active: number } | null>(null);
+    const [employeeError, setEmployeeError] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        async function loadEmployeeCounts() {
+            try {
+                const data: unknown = await getemployeelist();
+                if (!data || typeof data !== "object" || !("employeeList" in data) ||
+                    !Array.isArray(data.employeeList)) {
+                    throw new Error("Invalid employee list response.");
+                }
+                const employees = data.employeeList as Array<{ status?: string }>;
+                if (!cancelled) {
+                    setEmployeeCounts({
+                        total: employees.length,
+                        active: employees.filter(employee => employee.status === "ACTIVE").length,
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to load dashboard employee counts:", error);
+                if (!cancelled) setEmployeeError(true);
+            }
+        }
+        void loadEmployeeCounts();
+        return () => { cancelled = true; };
+    }, []);
+
 
     return (
         <main className="dashboard-page">
@@ -131,8 +161,8 @@ export default function DashboardPage() {
                     <span className="summary-icon employees-icon" aria-hidden="true">👥</span>
                     <div className="summary-card-info">
                         <p>Total employees</p>
-                        <strong>48</strong>
-                        <span className="summary-card-subtext">44 active employees</span>
+                        <strong>{employeeCounts?.total ?? "—"}</strong>
+                        <span className="summary-card-subtext">{employeeError ? "Unable to load employees" : employeeCounts ? `${employeeCounts.active} active employees` : "Loading employees…"}</span>
                     </div>
                 </article>
                 <article className="summary-card">
