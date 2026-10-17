@@ -1,12 +1,11 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/auth.middleware";
-import { getemployeenotes, getemployeewriteups } from "../controllers/activity.controller";
-
+import * as records from "../controllers/employee-records.controller";
 const router = Router();
-
 router.use(authenticate);
-
-router.use("/notes/:employeeId", getemployeenotes);
-router.use("/writeup/:employeeId", getemployeewriteups)
-
+router.get("/notes/:employeeId", records.notes);
+router.post("/notes/:employeeId", records.addNote);
+router.get("/writeup/:employeeId", records.writeUps);
+router.post("/writeup/:employeeId", records.addWriteUp);
+router.patch("/writeup/:employeeId/:writeUpId/resolve", records.resolveWriteUp);
 export default router;
