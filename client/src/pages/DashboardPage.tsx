@@ -43,25 +43,6 @@ function findUpcomingEvaluations(employees: Array<{
 }
 
 
-import { apiFetch } from "../api/client";
-
-async function upload_test_eval() {
-
-    const response = await apiFetch(
-        "/evaluation-templates", 
-        {
-            method: "POST",
-            body: JSON.stringify({
-                name: "Test Employee Evaluation",
-                department: "Kitchen",
-                version: "1.0",
-              }),
-        }
-    );
-
-    return response.json();
-}
-
 export default function DashboardPage() {
     const managerName = "Paul";
     const [employeeCounts, setEmployeeCounts] = useState<{ total: number; active: number; notes: number; openWriteUps: number; evaluationsDue: number } | null>(null);
@@ -125,20 +106,6 @@ export default function DashboardPage() {
                     </p>
                 </div>
 
-                <div className="dashboard-header-actions">
-
-                <button className="secondary-button" type="button" onClick={upload_test_eval}>
-                        Test Button
-                    </button>
-
-                    <button className="secondary-button" type="button">
-                        Add manager note
-                    </button>
-
-                    <Link className="primary-button" to="/evaluation-templates/new" style={{display:"inline-flex",alignItems:"center",textDecoration:"none"}}>
-                        Create evaluation template
-                    </Link>
-                </div>
             </header>
 
             <section className="summary-grid">
