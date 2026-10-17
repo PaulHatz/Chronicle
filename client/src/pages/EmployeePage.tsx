@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import "./EmployeePage.css";
 
 import { getemployee, getemployeenotes, getemployeewriteups } from "../api/employee";
+import { getEmployeeEvaluations } from "../api/employee-evaluations";
 
 
 type EmployeeStatus = "Active" | "Inactive" | "Leave";
@@ -40,6 +41,7 @@ type TimelineEvent = {
     description: string;
     author: string;
     date: string;
+    evaluationId?: number;
 };
 /*
 const timelineEvents: TimelineEvent[] = [
@@ -96,7 +98,7 @@ export default function EmployeePage() {
     const { employeeId } = useParams();
     const [activeTab, setActiveTab] = useState<TabName>("timeline");
     const [employee, setEmployee] = useState<Employee>();
-    const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>();
+    const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     useEffect(() => {
@@ -108,6 +110,7 @@ export default function EmployeePage() {
                     const data_notes = (await getemployeenotes(Number(employeeId))).notes;
 
                     const data_writeups = (await getemployeewriteups(Number(employeeId))).notes;
+                    const evaluations = await getEmployeeEvaluations(Number(employeeId));
 
                     if (!cancelled) {
                             const emp: Employee = {
@@ -121,12 +124,12 @@ export default function EmployeePage() {
                                 status: data.status,
                                 hireDate: data.hireDate,
                                 manager: "N/A",
-                                lastEvaluation: "N/A",
-                                nextEvaluation: "N/A",
+                                lastEvaluation: evaluations.length ? new Date(evaluations[0].completedAt).toLocaleDateString() : "N/A",
+                                nextEvaluation: data.nextEvaluationAt ? new Date(data.nextEvaluationAt).toLocaleDateString() : "N/A",
                                 performanceScore: 4.1,
                                 notes: 0,   
                                 openWriteUps: 0,
-                                completedEvaluations: 0
+                                completedEvaluations: evaluations.length
                             };
 
                         setEmployee(emp);
@@ -152,7 +155,17 @@ export default function EmployeePage() {
                         }));
 
 
-                        const timelineEvent: TimelineEvent[] = [...employee_notes, ...employee_writeups];
+                        const employee_evaluations: TimelineEvent[] = evaluations.map((evaluation) => ({
+                            id: evaluation.id,
+                            evaluationId: evaluation.id,
+                            type: "evaluation",
+                            title: evaluation.template.name + " completed",
+                            description: evaluation.answers.length + " questions answered",
+                            author: "Manager",
+                            date: evaluation.completedAt,
+                        }));
+                        const timelineEvent: TimelineEvent[] = [...employee_notes, ...employee_writeups, ...employee_evaluations]
+                            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
                         setTimelineEvents(timelineEvent);
     
@@ -522,13 +535,14 @@ export default function EmployeePage() {
                                                     )}
                                                 </span>
 
-                                                <h3>{event.title}</h3>
+                                                <h3>{event.evaluationId ? <Link to={`/employees/${employee.id}/evaluations/${event.evaluationId}`}>{event.title}</Link> : event.title}</h3>
                                             </div>
 
                                             <time>{event.date}</time>
                                         </div>
 
                                         <p>{event.description}</p>
+                                        {event.evaluationId && <Link className="evaluation-timeline-link" to={`/employees/${employee.id}/evaluations/${event.evaluationId}`}>View evaluation results →</Link>}
 
                                         <div className="timeline-author">
                                             Added by{" "}
