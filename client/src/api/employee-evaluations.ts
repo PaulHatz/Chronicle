@@ -14,3 +14,5 @@ export const getEmployeeEvaluations=(employeeId:number)=>request<CompletedEvalua
 
 export type EvaluationResult = CompletedEvaluation & { employee:{firstName:string;lastName:string;department:{name:string}} };
 export const getEvaluationResult=(employeeId:number,evaluationId:number)=>request<EvaluationResult>(`/employees/${employeeId}/evaluations/${evaluationId}`);
+
+export const getQuarterEvaluationStatistics = () => request<{ completedThisQuarter: number }>("/employees/evaluation-statistics/quarter");
