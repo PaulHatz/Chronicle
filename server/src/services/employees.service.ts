@@ -10,7 +10,7 @@ const adapter = new PrismaPg({
 
 export async function getEmployeeList() {
 
-    const employees = await prisma.employee.findMany();
+    const employees = await prisma.employee.findMany({ include: { department: true } });
 
     if(!employees) {
         return null;
@@ -21,7 +21,8 @@ export async function getEmployeeList() {
 
 export async function getEmployeeForId(id) {
     const employee = await prisma.employee.findUnique({
-        where: { id }
+        where: { id },
+        include: { department: true }
     });
 
     return employee;
@@ -30,18 +31,21 @@ export async function getEmployeeForId(id) {
 
 export async function createEmployee(emp) {
 
-    console.log(emp);
+    if (!Number.isSafeInteger(Number(emp.departmentId)) || Number(emp.departmentId) <= 0) {
+        throw new Error("A valid departmentId is required.");
+    }
     const new_employee = await prisma.employee.create({
             data: {
                 firstName: emp.firstName,
                 lastName: emp.lastName,
                 email: emp.email,
                 position: emp.position,
-                department: emp.department,
+                department: { connect: { id: Number(emp.departmentId) } },
                 status: emp.status,
                 phone: emp.phone,
                 hireDate: new Date(`${emp.startDate}T00:00:00.000Z`)
             },
+            include: { department: true }
     });
     return new_employee;
 
