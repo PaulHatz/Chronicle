@@ -474,3 +474,11 @@
   font-weight: 750;
   line-height: 1;
 }
+
+.dashboard-page .summary-card-info > .summary-card-subtext {
+  display: block;
+  color: #969dab;
+  font-size: 11px;
+  line-height: 1.35;
+  font-weight: 400;
+}
