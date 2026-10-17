@@ -495,3 +495,7 @@
 .dashboard-activity-employee:hover,.dashboard-activity-link:hover{text-decoration:underline}
 .dashboard-activity-link{display:inline-block;margin-top:6px;font-size:12px;font-weight:700;color:#355b98;text-decoration:none}
 .activity-panel .text-button{text-decoration:none}
+
+.dashboard-upcoming-employee{display:block;margin-bottom:4px;color:#263653;text-decoration:none;font-size:14px;font-weight:700}
+.dashboard-upcoming-employee:hover{text-decoration:underline;color:#355b98}
+.dashboard-schedule-link{display:flex;align-items:center;justify-content:center;text-decoration:none;box-sizing:border-box;font-size:13px}
