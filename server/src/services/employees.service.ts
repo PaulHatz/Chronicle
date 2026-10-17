@@ -43,7 +43,7 @@ export async function createEmployee(emp) {
                 department: { connect: { id: Number(emp.departmentId) } },
                 status: emp.status,
                 phone: emp.phone,
-                hireDate: new Date(`${emp.startDate}T00:00:00.000Z`)
+                hireDate: new Date(`${emp.hireDate}T00:00:00.000Z`)
             },
             include: { department: true }
     });
