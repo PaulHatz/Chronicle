@@ -8,7 +8,8 @@ import authRoutes from "./routes/auth.routes";
 
 import employeesRoutes from "./routes/employees.routes";
 
-import activityRoutes from "./routes/activity.routes"
+import activityRoutes from "./routes/activity.routes";
+import evaluationRoutes from "./routes/evaluations.routes";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/employees", employeesRoutes);
 app.use("/api/activity", activityRoutes);
+app.use("/api", evaluationRoutes);
 
 
 app.get("/", (req, res) => {
