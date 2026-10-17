@@ -6,7 +6,7 @@ import { isEvaluationDue } from "../api/evaluationDue";
 import { getQuarterEvaluationStatistics } from "../api/employee-evaluations";
 import { getRecentActivity, type DashboardActivity } from "../api/dashboard";
 
-type EmployeeOption = { id: number; firstName: string; lastName: string; status?: string };
+type EmployeeOption = { id: number; firstName: string; lastName: string; position: string; status?: string };
 type RecordAction = "note" | "writeup";
 
 type UpcomingEvaluation = {
@@ -59,6 +59,7 @@ export default function DashboardPage() {
     const [employees, setEmployees] = useState<EmployeeOption[]>([]);
     const [recordAction, setRecordAction] = useState<RecordAction | null>(null);
     const [recordEmployeeId, setRecordEmployeeId] = useState("");
+    const [employeeSearch, setEmployeeSearch] = useState("");
     const [noteTitle, setNoteTitle] = useState("");
     const [recordContent, setRecordContent] = useState("");
     const [warningType, setWarningType] = useState<WriteUpType>("VERBAL_WARNING");
@@ -109,6 +110,7 @@ export default function DashboardPage() {
     function openRecord(action: RecordAction) {
         setRecordAction(action);
         setRecordEmployeeId("");
+        setEmployeeSearch("");
         setNoteTitle("");
         setRecordContent("");
         setWarningType("VERBAL_WARNING");
@@ -180,14 +182,35 @@ export default function DashboardPage() {
                         <h2>{recordAction === "note" ? "Add manager note" : "Create write-up"}</h2>
                         <p>Choose an employee and record the details.</p>
                         <form onSubmit={submitRecord}>
-                            <label>Employee
-                                <select required value={recordEmployeeId} onChange={event => setRecordEmployeeId(event.target.value)} disabled={recordSaving}>
-                                    <option value="">Select an employee</option>
-                                    {employees.filter(employee => employee.status === "ACTIVE").sort((a,b) => (a.lastName + a.firstName).localeCompare(b.lastName + b.firstName)).map(employee =>
-                                        <option key={employee.id} value={employee.id}>{employee.firstName} {employee.lastName}</option>
-                                    )}
-                                </select>
-                            </label>
+                            <div className="dashboard-employee-picker">
+                                <label htmlFor="dashboard-employee-search">Employee</label>
+                                <div className="dashboard-employee-search">
+                                    <span aria-hidden="true">⌕</span>
+                                    <input id="dashboard-employee-search" type="search"
+                                        placeholder="Search employees by name or position…"
+                                        autoComplete="off" value={employeeSearch}
+                                        onChange={event => setEmployeeSearch(event.target.value)}
+                                        disabled={recordSaving}/>
+                                </div>
+                                <div className="dashboard-employee-results" role="group" aria-label="Choose an employee">
+                                    {employees.filter(employee => employee.status === "ACTIVE" &&
+                                        `${employee.firstName} ${employee.lastName} ${employee.position}`.toLowerCase().includes(employeeSearch.trim().toLowerCase()))
+                                        .sort((a,b) => (a.lastName + a.firstName).localeCompare(b.lastName + b.firstName))
+                                        .map(employee => (
+                                            <button type="button" key={employee.id} disabled={recordSaving}
+                                                className={`dashboard-employee-choice${recordEmployeeId === String(employee.id) ? " is-selected" : ""}`}
+                                                aria-pressed={recordEmployeeId === String(employee.id)}
+                                                onClick={() => { setRecordEmployeeId(String(employee.id)); setRecordError(""); }}>
+                                                <span className="dashboard-employee-avatar" aria-hidden="true">{employee.firstName.charAt(0)}{employee.lastName.charAt(0)}</span>
+                                                <span className="dashboard-employee-label"><strong>{employee.firstName} {employee.lastName}</strong><small>{employee.position}</small></span>
+                                                {recordEmployeeId === String(employee.id) && <span className="dashboard-employee-check" aria-hidden="true">✓</span>}
+                                            </button>
+                                        ))}
+                                    {!employees.some(employee => employee.status === "ACTIVE" &&
+                                        `${employee.firstName} ${employee.lastName} ${employee.position}`.toLowerCase().includes(employeeSearch.trim().toLowerCase())) &&
+                                        <p className="dashboard-employee-empty">No matching employees.</p>}
+                                </div>
+                            </div>
                             {recordAction === "note" ? (
                                 <label>Title<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label>
                             ) : (
