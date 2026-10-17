@@ -1,0 +1,40 @@
+.evaluation-builder{min-height:100vh;background:#f5f7fb;color:#172033;padding:36px;font-family:system-ui,sans-serif;text-align:left;box-sizing:border-box}
+.evaluation-builder *{box-sizing:border-box}
+.evaluation-builder-header{max-width:1380px;margin:0 auto 28px}
+.evaluation-back{display:inline-block;margin-bottom:25px;color:#456298;text-decoration:none;font-size:14px;font-weight:650}
+.evaluation-eyebrow{color:#516daa;font-size:12px;font-weight:750;letter-spacing:.09em;text-transform:uppercase;margin:0 0 8px}
+.evaluation-builder h1{font-size:36px;letter-spacing:-1px;margin:0 0 8px;color:#172033}
+.evaluation-builder-header p:last-child,.evaluation-panel-heading p{color:#747e90;font-size:14px;margin:4px 0 0}
+.evaluation-layout{max-width:1380px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start}
+.evaluation-editor,.evaluation-sidebar{display:grid;gap:20px}
+.evaluation-panel{background:#fff;border:1px solid #e1e6ef;border-radius:14px;padding:24px;box-shadow:0 8px 25px rgba(26,36,56,.04)}
+.evaluation-panel h2{margin:0;color:#172033;font-size:19px;font-weight:750}
+.evaluation-panel-heading{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.evaluation-number{display:grid;place-items:center;flex-shrink:0;width:42px;height:42px;border-radius:10px;background:#ebf1fb;color:#31599f;font-size:13px;font-weight:800}
+.evaluation-fields{display:grid;grid-template-columns:2fr 1fr 100px;gap:16px}
+.evaluation-builder label{display:grid;gap:8px;font-size:13px;font-weight:650;color:#455068}
+.evaluation-builder input,.evaluation-builder textarea,.evaluation-builder select{width:100%;border:1px solid #dce2ed;border-radius:9px;padding:11px 12px;background:#fff;color:#172033;font:inherit;font-size:14px;outline:0}
+.evaluation-builder input:focus,.evaluation-builder textarea:focus,.evaluation-builder select:focus{border-color:#5977b5;box-shadow:0 0 0 3px #e8eefb}
+.evaluation-questions{display:grid;gap:18px}
+.evaluation-question{border:1px solid #e4e8f0;border-radius:12px;padding:20px;display:grid;gap:17px;background:#fdfdff}
+.evaluation-question-top{display:flex;justify-content:space-between;align-items:center;font-size:15px}
+.evaluation-remove{border:0;background:none;color:#ad4b53;cursor:pointer;font-weight:650}
+.evaluation-range{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.evaluation-rubric{padding:16px;border-radius:10px;background:#f4f7fc;display:grid;gap:10px}
+.evaluation-rubric-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px}
+.evaluation-rubric-heading span,.evaluation-help{color:#778397;font-size:12px}
+.evaluation-rubric-row{display:grid!important;grid-template-columns:32px 1fr;align-items:center;gap:10px!important}
+.evaluation-rubric-row span{text-align:center;font-weight:800;color:#31599f}
+.evaluation-add{border:1px dashed #91a5c9;border-radius:10px;background:#f8faff;padding:13px;width:100%;color:#385b99;font-weight:750;cursor:pointer;margin-top:18px}
+.evaluation-actions{display:flex;justify-content:flex-end}
+.evaluation-submit{border:0;border-radius:10px;padding:14px 22px;background:#304d86;color:white;font-weight:750;cursor:pointer}
+.evaluation-submit:disabled{opacity:.6;cursor:wait}
+.evaluation-error,.evaluation-success{padding:13px 16px;border-radius:9px;font-size:14px}
+.evaluation-error{background:#fff0f0;color:#9a3030}
+.evaluation-success{background:#ecf8f1;color:#246c50}
+.evaluation-stat{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #edf0f6;color:#667388;font-size:14px}
+.evaluation-stat strong{color:#172033}
+.evaluation-existing{display:grid;gap:5px;padding:13px 0;border-bottom:1px solid #edf0f6}
+.evaluation-existing strong{font-size:14px}.evaluation-existing span{color:#798497;font-size:12px}
+@media(max-width:900px){.evaluation-layout{grid-template-columns:1fr}.evaluation-fields{grid-template-columns:1fr 1fr}.evaluation-fields label:first-child{grid-column:1/-1}}
+@media(max-width:560px){.evaluation-builder{padding:20px}.evaluation-fields{grid-template-columns:1fr}.evaluation-fields label:first-child{grid-column:auto}.evaluation-panel{padding:16px}.evaluation-builder h1{font-size:28px}.evaluation-rubric-heading{display:grid}}
