@@ -576,7 +576,7 @@ export default function EmployeePage() {
                                     <b>→</b>
                                 </button>
 
-                                <button type="button">
+                                <Link to={`/employees/${employee.id}/evaluate`} className="employee-start-evaluation">
                                     <span className="action-icon action-green">
                                         ✓
                                     </span>
@@ -589,7 +589,7 @@ export default function EmployeePage() {
                                     </div>
 
                                     <b>→</b>
-                                </button>
+                                </Link>
 
                                 <button type="button">
                                     <span className="action-icon action-yellow">
