@@ -179,7 +179,7 @@ export default function DashboardPage() {
             {recordAction && (
                 <div className="dashboard-record-backdrop" onMouseDown={() => { if (!recordSaving) setRecordAction(null); }}>
                     <section className="dashboard-record-modal" role="dialog" aria-modal="true" aria-label={recordAction === "recognition" ? "Add recognition" : recordAction === "note" ? "Add manager note" : "Create write-up"} onMouseDown={event => event.stopPropagation()}>
-                        <h2>{recordAction === "note" ? "Add manager note" : "Create write-up"}</h2>
+                        <h2>{recordAction === "recognition" ? "Add recognition" : recordAction === "note" ? "Add manager note" : "Create write-up"}</h2>
                         <p>Choose an employee and record the details.</p>
                         <form onSubmit={submitRecord}>
                             <EmployeePicker employees={employees} value={recordEmployeeId}
