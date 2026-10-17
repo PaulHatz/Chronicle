@@ -19,17 +19,18 @@ function withSchedule<T extends {
     nextEvaluationAt: Date | null;
     department: { evaluationFrequencyDays: number };
     evaluations: { completedAt: Date }[];
+    _count: { notes: number; writeUps: number };
 }>(employee: T) {
     const lastEvaluationAt = employee.evaluations[0]?.completedAt ?? null;
     const nextEvaluationAt = employee.nextEvaluationAt ??
         addDays(lastEvaluationAt ?? employee.hireDate, employee.department.evaluationFrequencyDays);
-    const { evaluations, ...record } = employee;
-    return { ...record, nextEvaluationAt, lastEvaluationAt };
+    const { evaluations, _count, ...record } = employee;
+    return { ...record, nextEvaluationAt, lastEvaluationAt, notesCount: _count.notes, openWriteUpsCount: _count.writeUps };
 }
 
 export async function getEmployeeList() {
 
-    const employees = await prisma.employee.findMany({ include: { department: true, evaluations: { orderBy: { completedAt: "desc" }, take: 1, select: { completedAt: true } } } });
+    const employees = await prisma.employee.findMany({ include: { department: true, evaluations: { orderBy: { completedAt: "desc" }, take: 1, select: { completedAt: true } }, _count: { select: { notes: true, writeUps: { where: { resolvedAt: null } } } } } });
 
     if(!employees) {
         return null;
