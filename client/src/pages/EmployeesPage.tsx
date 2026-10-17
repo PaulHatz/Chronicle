@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "./EmployeesPage.css";
 
 import { getemployeelist, addemployee } from "../api/employee";
+import { getDepartments, type Department } from "../api/departments";
 
 type EmployeeStatus = "ACTIVE" | "INACTIVE" | "LEAVE";
 
@@ -25,6 +26,7 @@ type Employee = {
 export default function EmployeesPage() {
     
     const [employees, setEmployees] = useState<Employee[]>([]);
+    const [departments, setDepartments] = useState<Department[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showAddForm, setShowAddForm] = useState(false);
@@ -34,7 +36,7 @@ export default function EmployeesPage() {
         lastName: "",
         email: "",
         position: "",
-        department: "Service",
+        departmentId: 0,
         status: "ACTIVE" as EmployeeStatus,
         phone: "",
         hireDate: ""
@@ -75,7 +77,7 @@ export default function EmployeesPage() {
                     `${createdEmployee.firstName[0]}${createdEmployee.lastName[0]}`.toUpperCase(),
                 email: createdEmployee.email,
                 position: createdEmployee.position,
-                department: createdEmployee.department,
+                department: createdEmployee.department?.name ?? "Unknown",
                 status: createdEmployee.status,
                 lastEvaluation: "N/A",
                 nextEvaluation: "N/A",
@@ -93,10 +95,10 @@ export default function EmployeesPage() {
                 lastName: "",
                 email: "",
                 position: "",
-                department: "Service",
+                departmentId: 0,
                 status: "ACTIVE",
                 phone: "",
-                startDate: ""
+                hireDate: ""
             });
     
             setShowAddForm(false);
@@ -112,6 +114,7 @@ export default function EmployeesPage() {
     }
     
     useEffect(() => {
+        void getDepartments().then(setDepartments).catch(error => console.error("Failed to load departments:", error));
         let cancelled = false;
     
         async function loadEmployees() {
@@ -127,7 +130,7 @@ export default function EmployeesPage() {
                             initials: String(employee.firstName[0] + employee.lastName[0]),
                             email: String(employee.email),
                             position: String(employee.position),
-                            department: String(employee.department),
+                            department: String(employee.department?.name ?? "Unknown"),
                             status: employee.status as EmployeeStatus,
                             lastEvaluation: String(
                                 "N/A",
@@ -360,20 +363,21 @@ export default function EmployeesPage() {
                         <span>Department</span>
 
                         <select
-                            value={newEmployee.department}
+                            required
+                            value={newEmployee.departmentId || ""}
                             onChange={(event) =>
                                 setNewEmployee((current) => ({
                                     ...current,
-                                    department: event.target.value,
+                                    departmentId: Number(event.target.value),
                                 }))
                             }
                         >
-                            <option value="Service">Service</option>
-                            <option value="Bar">Bar</option>
-                            <option value="Kitchen">Kitchen</option>
-                            <option value="Management">
-                                Management
-                            </option>
+                            <option value="" disabled>Select a department</option>
+                            {departments.map((department) => (
+                                <option key={department.id} value={department.id}>
+                                    {department.name}
+                                </option>
+                            ))}
                         </select>
                     </label>
 
@@ -385,11 +389,11 @@ export default function EmployeesPage() {
     <input
         required
         type="date"
-        value={newEmployee.startDate}
+        value={newEmployee.hireDate}
         onChange={(event) =>
             setNewEmployee((current) => ({
                 ...current,
-                startDate: event.target.value,
+                hireDate: event.target.value,
             }))
         }
     />
