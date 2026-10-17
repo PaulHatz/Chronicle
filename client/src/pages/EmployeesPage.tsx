@@ -80,7 +80,7 @@ export default function EmployeesPage() {
                 department: createdEmployee.department?.name ?? "Unknown",
                 status: createdEmployee.status,
                 lastEvaluation: "N/A",
-                nextEvaluation: "N/A",
+                nextEvaluation: createdEmployee.nextEvaluationAt ? new Date(createdEmployee.nextEvaluationAt).toLocaleDateString() : "N/A",
                 openWriteUps: 0,
                 notes: 0,
             };
@@ -132,12 +132,8 @@ export default function EmployeesPage() {
                             position: String(employee.position),
                             department: String(employee.department?.name ?? "Unknown"),
                             status: employee.status as EmployeeStatus,
-                            lastEvaluation: String(
-                                "N/A",
-                            ),
-                            nextEvaluation: String(
-                                "N/A",
-                            ),
+                            lastEvaluation: employee.lastEvaluationAt ? new Date(employee.lastEvaluationAt).toLocaleDateString() : "N/A",
+                            nextEvaluation: employee.nextEvaluationAt ? new Date(employee.nextEvaluationAt).toLocaleDateString() : "N/A",
                             openWriteUps: Number(
                                 0,
                             ),
