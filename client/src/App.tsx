@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import EmployeePage from "./pages/EmployeePage";
 import EmployeesPage from "./pages/EmployeesPage";
+import EvaluationTemplatesPage from "./pages/EvaluationTemplatesPage";
 export default function App() {
     return (
         <Routes>
@@ -27,6 +28,7 @@ export default function App() {
                     path="/employees/:employeeId"
                     element={<EmployeePage />}
                 />
+                <Route path="/evaluation-templates" element={<EvaluationTemplatesPage />} />
             </Route>
 
             <Route
