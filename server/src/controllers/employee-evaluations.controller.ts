@@ -47,3 +47,8 @@ export async function getEvaluation(req: Request, res: Response) {
     return res.json(await service.getEmployeeEvaluation(employeeId, evaluationId));
   } catch (error) { return respondError(error, res); }
 }
+
+export async function quarterStatistics(_req: Request, res: Response) {
+  try { return res.json({ completedThisQuarter: await service.countEvaluationsCompletedThisQuarter() }); }
+  catch (error) { return respondError(error, res); }
+}
