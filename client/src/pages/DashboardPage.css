@@ -541,3 +541,13 @@
 .dashboard-record-modal form{min-height:0;overflow:visible}
 .dashboard-employee-picker{min-height:0}
 .dashboard-employee-results{max-height:clamp(110px,25dvh,215px);overflow-y:auto;overscroll-behavior:contain}
+
+/* Segmented note type selector shared by dashboard and employee forms. */
+.note-type-fieldset{border:0;padding:0;margin:0;min-width:0}
+.note-type-fieldset legend{padding:0;margin-bottom:8px;color:#37435b;font-size:13px;font-weight:700}
+.note-type-button-group{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:4px;border:1px solid #d8deea;background:#f3f6fb;border-radius:10px}
+.note-type-button-group .note-type-option{min-width:0;min-height:40px;padding:8px 6px;border:1px solid transparent;border-radius:7px;background:transparent;color:#596579;font-size:12px;font-weight:700;cursor:pointer;line-height:1.25}
+.note-type-button-group .note-type-option:hover:not(:disabled){background:#e7edf7}
+.note-type-button-group .note-type-option.selected{background:#fff;border-color:#c6d4ed;box-shadow:0 1px 5px rgba(24,45,82,.09);color:#304d86}
+.note-type-button-group .note-type-option:focus-visible{outline:2px solid #304d86;outline-offset:2px}
+.note-type-button-group .note-type-option:disabled{opacity:.6;cursor:not-allowed}
