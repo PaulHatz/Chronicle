@@ -1,4 +1,5 @@
 import "./DashboardPage.css";
+import EmployeePicker, { type EmployeePickerOption } from "../components/EmployeePicker";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getemployeelist, createManagerNote, createEmployeeWriteUp, type WriteUpType, type ManagerNoteType } from "../api/employee";
@@ -6,7 +7,6 @@ import { isEvaluationDue } from "../api/evaluationDue";
 import { getQuarterEvaluationStatistics } from "../api/employee-evaluations";
 import { getRecentActivity, type DashboardActivity } from "../api/dashboard";
 
-type EmployeeOption = { id: number; firstName: string; lastName: string; position: string; status?: string };
 type RecordAction = "note" | "writeup";
 
 type UpcomingEvaluation = {
@@ -56,10 +56,9 @@ export default function DashboardPage() {
     const [activityLoading, setActivityLoading] = useState(true);
     const [activityError, setActivityError] = useState(false);
     const [upcomingEvaluations, setUpcomingEvaluations] = useState<UpcomingEvaluation[]>([]);
-    const [employees, setEmployees] = useState<EmployeeOption[]>([]);
+    const [employees, setEmployees] = useState<EmployeePickerOption[]>([]);
     const [recordAction, setRecordAction] = useState<RecordAction | null>(null);
     const [recordEmployeeId, setRecordEmployeeId] = useState("");
-    const [employeeSearch, setEmployeeSearch] = useState("");
     const [noteTitle, setNoteTitle] = useState("");
     const [noteType, setNoteType] = useState<ManagerNoteType>("GENERAL");
     const [recordContent, setRecordContent] = useState("");
@@ -111,7 +110,6 @@ export default function DashboardPage() {
     function openRecord(action: RecordAction) {
         setRecordAction(action);
         setRecordEmployeeId("");
-        setEmployeeSearch("");
         setNoteTitle("");
         setNoteType("GENERAL");
         setRecordContent("");
@@ -184,35 +182,8 @@ export default function DashboardPage() {
                         <h2>{recordAction === "note" ? "Add manager note" : "Create write-up"}</h2>
                         <p>Choose an employee and record the details.</p>
                         <form onSubmit={submitRecord}>
-                            <div className="dashboard-employee-picker">
-                                <label htmlFor="dashboard-employee-search">Employee</label>
-                                <div className="dashboard-employee-search">
-                                    <span aria-hidden="true">⌕</span>
-                                    <input id="dashboard-employee-search" type="search"
-                                        placeholder="Search employees by name or position…"
-                                        autoComplete="off" value={employeeSearch}
-                                        onChange={event => setEmployeeSearch(event.target.value)}
-                                        disabled={recordSaving}/>
-                                </div>
-                                <div className="dashboard-employee-results" role="group" aria-label="Choose an employee">
-                                    {employees.filter(employee => employee.status === "ACTIVE" &&
-                                        `${employee.firstName} ${employee.lastName} ${employee.position}`.toLowerCase().includes(employeeSearch.trim().toLowerCase()))
-                                        .sort((a,b) => (a.lastName + a.firstName).localeCompare(b.lastName + b.firstName))
-                                        .map(employee => (
-                                            <button type="button" key={employee.id} disabled={recordSaving}
-                                                className={`dashboard-employee-choice${recordEmployeeId === String(employee.id) ? " is-selected" : ""}`}
-                                                aria-pressed={recordEmployeeId === String(employee.id)}
-                                                onClick={() => { setRecordEmployeeId(String(employee.id)); setRecordError(""); }}>
-                                                <span className="dashboard-employee-avatar" aria-hidden="true">{employee.firstName.charAt(0)}{employee.lastName.charAt(0)}</span>
-                                                <span className="dashboard-employee-label"><strong>{employee.firstName} {employee.lastName}</strong><small>{employee.position}</small></span>
-                                                {recordEmployeeId === String(employee.id) && <span className="dashboard-employee-check" aria-hidden="true">✓</span>}
-                                            </button>
-                                        ))}
-                                    {!employees.some(employee => employee.status === "ACTIVE" &&
-                                        `${employee.firstName} ${employee.lastName} ${employee.position}`.toLowerCase().includes(employeeSearch.trim().toLowerCase())) &&
-                                        <p className="dashboard-employee-empty">No matching employees.</p>}
-                                </div>
-                            </div>
+                            <EmployeePicker employees={employees} value={recordEmployeeId}
+                                onChange={id => { setRecordEmployeeId(id); setRecordError(""); }} disabled={recordSaving}/>
                             {recordAction === "note" ? (
                                 <><fieldset className="note-type-fieldset"><legend>Note type</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} disabled={recordSaving} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset><label>Title<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label></>
                             ) : (
