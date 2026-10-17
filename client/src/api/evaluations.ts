@@ -37,3 +37,33 @@ export async function getEvaluationTemplates(): Promise<Array<{
 }>> {
   return parseResponse(await apiFetch("/evaluation-templates"));
 }
+
+export type EvaluationQuestion = NewQuestion & { id: number; evaluationTemplateId: number };
+export type EvaluationTemplateDetail = {
+  id: number;
+  name: string;
+  department: string;
+  version: string;
+  questions: EvaluationQuestion[];
+};
+
+export async function getEvaluationTemplate(id: number): Promise<EvaluationTemplateDetail> {
+  return parseResponse(await apiFetch(`/evaluation-templates/${id}`));
+}
+
+export async function updateEvaluationQuestion(id: number, input: NewQuestion): Promise<EvaluationQuestion> {
+  return parseResponse(await apiFetch(`/evaluation-questions/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  }));
+}
+
+export async function deleteEvaluationQuestion(id: number): Promise<void> {
+  const response = await apiFetch(`/evaluation-questions/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    const body: unknown = await response.json().catch(() => null);
+    const message = body && typeof body === "object" && "message" in body
+      ? String(body.message) : `Delete failed (${response.status})`;
+    throw new Error(message);
+  }
+}
