@@ -132,6 +132,7 @@ export default function DashboardPage() {
                     <div className="summary-card-info">
                         <p>Total employees</p>
                         <strong>48</strong>
+                        <span className="summary-card-subtext">44 active employees</span>
                     </div>
                 </article>
                 <article className="summary-card">
@@ -139,6 +140,7 @@ export default function DashboardPage() {
                     <div className="summary-card-info">
                         <p>Evaluations completed</p>
                         <strong>12</strong>
+                        <span className="summary-card-subtext">This quarter</span>
                     </div>
                 </article>
                 <article className="summary-card">
@@ -146,6 +148,7 @@ export default function DashboardPage() {
                     <div className="summary-card-info">
                         <p>Manager notes</p>
                         <strong>27</strong>
+                        <span className="summary-card-subtext">Added this month</span>
                     </div>
                 </article>
                 <article className="summary-card">
@@ -153,6 +156,7 @@ export default function DashboardPage() {
                     <div className="summary-card-info">
                         <p>Open write-ups</p>
                         <strong>4</strong>
+                        <span className="summary-card-subtext">2 awaiting follow-up</span>
                     </div>
                 </article>
             </section>
