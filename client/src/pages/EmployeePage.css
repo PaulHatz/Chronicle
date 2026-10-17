@@ -996,3 +996,18 @@
         flex-direction: column;
     }
 }
+.profile-action-list .employee-start-evaluation {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 13px;
+    border: 0;
+    border-radius: 9px;
+    color: #323d51;
+    text-align: left;
+    cursor: pointer;
+    background: transparent;
+    text-decoration: none;
+}
+.profile-action-list .employee-start-evaluation:hover { background: #f6f8fc; }
