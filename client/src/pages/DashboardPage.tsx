@@ -6,29 +6,41 @@ import { isEvaluationDue } from "../api/evaluationDue";
 import { getQuarterEvaluationStatistics } from "../api/employee-evaluations";
 import { getRecentActivity, type DashboardActivity } from "../api/dashboard";
 
-const upcomingEvaluations = [
-    {
-        id: 1,
-        employee: "Jordan Lee",
-        position: "Server",
-        date: "July 18",
-        daysRemaining: 2,
-    },
-    {
-        id: 2,
-        employee: "Amélie Gagnon",
-        position: "Team Leader",
-        date: "July 22",
-        daysRemaining: 6,
-    },
-    {
-        id: 3,
-        employee: "Noah Wilson",
-        position: "Bartender",
-        date: "July 27",
-        daysRemaining: 11,
-    },
-];
+type UpcomingEvaluation = {
+    id: number;
+    employee: string;
+    position: string;
+    date: string;
+    daysRemaining: number;
+};
+
+function findUpcomingEvaluations(employees: Array<{
+    id: number;
+    firstName: string;
+    lastName: string;
+    position: string;
+    nextEvaluationAt?: string | null;
+}>): UpcomingEvaluation[] {
+    const now = new Date();
+    const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    const dayMs = 24 * 60 * 60 * 1000;
+
+    return employees.flatMap(employee => {
+        if (!employee.nextEvaluationAt) return [];
+        const date = new Date(employee.nextEvaluationAt);
+        if (Number.isNaN(date.getTime())) return [];
+        const scheduledDay = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+        const daysRemaining = Math.round((scheduledDay - today) / dayMs);
+        if (daysRemaining < 0 || daysRemaining > 30) return [];
+        return [{
+            id: employee.id,
+            employee: `${employee.firstName} ${employee.lastName}`,
+            position: employee.position,
+            date: date.toLocaleDateString(undefined, { timeZone: "UTC", month: "short", day: "numeric" }),
+            daysRemaining,
+        }];
+    }).sort((a, b) => a.daysRemaining - b.daysRemaining || a.employee.localeCompare(b.employee));
+}
 
 
 import { apiFetch } from "../api/client";
@@ -59,6 +71,7 @@ export default function DashboardPage() {
     const [recentActivity, setRecentActivity] = useState<DashboardActivity[]>([]);
     const [activityLoading, setActivityLoading] = useState(true);
     const [activityError, setActivityError] = useState(false);
+    const [upcomingEvaluations, setUpcomingEvaluations] = useState<UpcomingEvaluation[]>([]);
 
     useEffect(() => {
         let cancelled = false;
@@ -69,8 +82,9 @@ export default function DashboardPage() {
                     !Array.isArray(data.employeeList)) {
                     throw new Error("Invalid employee list response.");
                 }
-                const employees = data.employeeList as Array<{ status?: string; notesCount?: number; openWriteUpsCount?: number; nextEvaluationAt?: string | null }>;
+                const employees = data.employeeList as Array<{ id: number; firstName: string; lastName: string; position: string; status?: string; notesCount?: number; openWriteUpsCount?: number; nextEvaluationAt?: string | null }>;
                 if (!cancelled) {
+                    setUpcomingEvaluations(findUpcomingEvaluations(employees));
                     setEmployeeCounts({
                         total: employees.length,
                         active: employees.filter(employee => employee.status === "ACTIVE").length,
@@ -228,15 +242,18 @@ export default function DashboardPage() {
                         </div>
 
                         <div className="evaluation-list">
+                            {!employeeCounts && !employeeError && <p className="dashboard-activity-message">Loading scheduled evaluations…</p>}
+                            {employeeError && <p className="dashboard-activity-message" role="alert">Unable to load evaluation schedule.</p>}
+                            {employeeCounts && upcomingEvaluations.length === 0 && <p className="dashboard-activity-message">No evaluations scheduled in the next 30 days.</p>}
                             {upcomingEvaluations.map((evaluation) => (
                                 <div
                                     className="evaluation-item"
                                     key={evaluation.id}
                                 >
                                     <div>
-                                        <strong>
+                                        <Link className="dashboard-upcoming-employee" to={`/employees/${evaluation.id}`}>
                                             {evaluation.employee}
-                                        </strong>
+                                        </Link>
 
                                         <span>
                                             {evaluation.position}
@@ -247,19 +264,16 @@ export default function DashboardPage() {
                                         <strong>{evaluation.date}</strong>
 
                                         <span>
-                                            {evaluation.daysRemaining} days
+                                            {evaluation.daysRemaining === 0 ? "Due today" : evaluation.daysRemaining === 1 ? "Tomorrow" : `${evaluation.daysRemaining} days away`}
                                         </span>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        <button
-                            className="panel-button"
-                            type="button"
-                        >
-                            View evaluation schedule
-                        </button>
+                        <Link className="panel-button dashboard-schedule-link" to="/employees">
+                            View employee schedule
+                        </Link>
                     </article>
 
                     <article className="dashboard-panel quick-actions-panel">
