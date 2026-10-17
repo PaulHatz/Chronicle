@@ -12,7 +12,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model User {
   id           Int      @id @default(autoincrement())
   email        String   @unique
@@ -31,62 +30,68 @@ enum UserRole {
 }
 
 model EvaluationTemplate {
-  id         Int         @id @default(autoincrement())
+  id         Int    @id @default(autoincrement())
   department String
   version    String
+
+  evaluations Evaluation[]
+  questions   EvaluationQuestion[]
 }
 
 model EvaluationQuestion {
-  id                    Int         @id @default(autoincrement())
-  evaluationTemplateId  Int
-  questionText          String
-  questionType          String
-  ruberic               Json?
-  minScore              Int
-  maxScore              Int
+  id                   Int    @id @default(autoincrement())
+  evaluationTemplateId Int
+  questionText         String
+  questionType         String
+  rubric               Json?
+  minScore             Int
+  maxScore             Int
+
+  template EvaluationTemplate @relation(fields: [evaluationTemplateId], references: [id])
+
+  answers EvaluationAnswer[]
 }
 
 model EvaluationAnswer {
-  id                    Int         @id @default(autoincrement())
-  evaluationQuestionId  Int
-  evaluationId  Int
+  id                   Int @id @default(autoincrement())
+  evaluationQuestionId Int
+  evaluationId         Int
 
-  scoreAnswer           Int?
-  textAnswer            String?
+  scoreAnswer Int?
+  textAnswer  String?
 
-  evaluation           Evaluation         @relation(fields: [evaluationId], references: [id])
-  question             EvaluationQuestion @relation(fields: [evaluationQuestionId], references: [id])
+  evaluation Evaluation         @relation(fields: [evaluationId], references: [id])
+  question   EvaluationQuestion @relation(fields: [evaluationQuestionId], references: [id])
 
   @@unique([evaluationId, evaluationQuestionId])
 }
 
-
 model Employee {
-  id           Int              @id @default(autoincrement())
-  firstName    String
-  lastName     String
-  email        String?          @unique
-  phone        String?
-  position     String
-  department   String
-  status       EmployeeStatus   @default(ACTIVE)
-  hireDate     DateTime
+  id          Int            @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String?        @unique
+  phone       String?
+  position    String
+  department  String
+  status      EmployeeStatus @default(ACTIVE)
+  hireDate    DateTime
   evaluations Evaluation[]
-  notes        ManagerNote[]
-  writeUps     WriteUp[]
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  notes       ManagerNote[]
+  writeUps    WriteUp[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }
 
 model Evaluation {
   id         Int      @id @default(autoincrement())
   employeeId Int
   employee   Employee @relation(fields: [employeeId], references: [id])
- 
+
   evaluationTemplateId Int
   template             EvaluationTemplate @relation(fields: [evaluationTemplateId], references: [id])
 
-  answers              EvaluationAnswer[]
+  answers EvaluationAnswer[]
 
   completedAt DateTime @default(now())
 }
@@ -109,7 +114,6 @@ model WriteUp {
   resolvedAt DateTime?
   createdAt  DateTime    @default(now())
 }
-
 
 enum EmployeeStatus {
   ACTIVE
