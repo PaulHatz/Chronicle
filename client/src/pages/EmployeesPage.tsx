@@ -4,6 +4,7 @@ import "./EmployeesPage.css";
 
 import { getemployeelist, addemployee } from "../api/employee";
 import { getDepartments, type Department } from "../api/departments";
+import { isEvaluationDue } from "../api/evaluationDue";
 
 type EmployeeStatus = "ACTIVE" | "INACTIVE" | "LEAVE";
 
@@ -17,6 +18,7 @@ type Employee = {
     status: EmployeeStatus;
     lastEvaluation: string;
     nextEvaluation: string;
+    nextEvaluationAt: string | null;
     openWriteUps: number;
     notes: number;
 };
@@ -81,6 +83,7 @@ export default function EmployeesPage() {
                 status: createdEmployee.status,
                 lastEvaluation: "N/A",
                 nextEvaluation: createdEmployee.nextEvaluationAt ? new Date(createdEmployee.nextEvaluationAt).toLocaleDateString() : "N/A",
+                nextEvaluationAt: createdEmployee.nextEvaluationAt ?? null,
                 openWriteUps: 0,
                 notes: 0,
             };
@@ -134,6 +137,7 @@ export default function EmployeesPage() {
                             status: employee.status as EmployeeStatus,
                             lastEvaluation: employee.lastEvaluationAt ? new Date(employee.lastEvaluationAt).toLocaleDateString() : "N/A",
                             nextEvaluation: employee.nextEvaluationAt ? new Date(employee.nextEvaluationAt).toLocaleDateString() : "N/A",
+                            nextEvaluationAt: employee.nextEvaluationAt ?? null,
                             openWriteUps: Number(employee.openWriteUpsCount ?? 0),
                             notes: Number(employee.notesCount ?? 0),
                         }),
@@ -171,6 +175,7 @@ export default function EmployeesPage() {
         (employee) => employee.status === "ACTIVE",
     ).length;
 
+    const evaluationsDue = employees.filter(employee => isEvaluationDue(employee.nextEvaluationAt)).length;
     const employeesWithWriteUps = employees.filter(
         (employee) => employee.openWriteUps > 0,
     ).length;
