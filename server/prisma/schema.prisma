@@ -31,7 +31,6 @@ enum UserRole {
 
 model EvaluationTemplate {
   id         Int    @id @default(autoincrement())
-  department String
   version    String
   name       String
   
