@@ -655,7 +655,7 @@ export default function EmployeePage() {
                                     <b>→</b>
                                 </Link>
 
-                                <button type="button" onClick={() => {setRecordForm("recognition");setNoteType("POSITIVE");setNoteTitle("");setRecordContent("");setRecordError("");}}>
+                                <button type="button" onClick={() => {setRecordForm("note");setNoteType("POSITIVE");setNoteTitle("");setRecordContent("");setRecordError("");}}>
                                     <span className="action-icon action-yellow">
                                         ★
                                     </span>
