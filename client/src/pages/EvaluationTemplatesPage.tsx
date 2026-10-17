@@ -5,7 +5,6 @@ import {
   getEvaluationTemplates, type NewQuestion,
 } from "../api/evaluations";
 import "./EvaluationTemplatesPage.css";
-import { getDepartments, type Department } from "../api/departments";
 
 type DraftQuestion = {
   key: number;
@@ -23,28 +22,18 @@ const newQuestion = (key: number): DraftQuestion => ({
 
 export default function EvaluationTemplatesPage() {
   const [name, setName] = useState("");
-  const [department, setDepartment] = useState("");
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [departmentsLoading, setDepartmentsLoading] = useState(true);
-  const [departmentError, setDepartmentError] = useState("");
   const [version, setVersion] = useState("1.0");
   const [questions, setQuestions] = useState<DraftQuestion[]>([newQuestion(1)]);
   const [nextKey, setNextKey] = useState(2);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [templates, setTemplates] = useState<Array<{ id: number; name: string; department: string; version: string }>>([]);
+  const [templates, setTemplates] = useState<Array<{ id: number; name: string; version: string }>>([]);
 
   useEffect(() => {
-    let active = true;
-    void getDepartments()
-      .then(items => { if (active) setDepartments(items); })
-      .catch(caught => { if (active) setDepartmentError(caught instanceof Error ? caught.message : "Could not load departments."); })
-      .finally(() => { if (active) setDepartmentsLoading(false); });
     void getEvaluationTemplates().then(setTemplates).catch(() => {
       // Creation can still work if loading the existing templates fails.
     });
-    return () => { active = false; };
   }, []);
 
   function editQuestion(key: number, patch: Partial<DraftQuestion>) {
@@ -85,12 +74,8 @@ export default function EvaluationTemplatesPage() {
     event.preventDefault();
     setError("");
     setSuccess("");
-    if (!name.trim() || !department.trim() || !version.trim()) {
-      setError("Enter a name, department, and version.");
-      return;
-    }
-    if (!departments.some(item => item.name === department)) {
-      setError("Select an existing department.");
+    if (!name.trim() || !version.trim()) {
+      setError("Enter a name and version.");
       return;
     }
     if (questions.length === 0) {
@@ -110,7 +95,7 @@ export default function EvaluationTemplatesPage() {
     let templateId: number | null = null;
     try {
       const template = await createEvaluationTemplate({
-        name: name.trim(), department: department.trim(), version: version.trim(),
+        name: name.trim(), version: version.trim(),
       });
       templateId = template.id;
       for (const question of payload) {
@@ -138,7 +123,7 @@ export default function EvaluationTemplatesPage() {
           <Link className="evaluation-back" to="/evaluation-templates">← All templates</Link>
           <p className="evaluation-eyebrow">Employee performance</p>
           <h1>Create evaluation template</h1>
-          <p>Build department-specific evaluations with scored and written questions.</p>
+          <p>Build reusable evaluation templates with scored and written questions.</p>
         </div>
       </header>
 
@@ -147,21 +132,12 @@ export default function EvaluationTemplatesPage() {
           <section className="evaluation-panel">
             <div className="evaluation-panel-heading">
               <span className="evaluation-number">01</span>
-              <div><h2>Template details</h2><p>Choose a name, department, and version.</p></div>
+              <div><h2>Template details</h2><p>Choose a name and version.</p></div>
             </div>
             <div className="evaluation-fields">
               <label>Template name<input required value={name} placeholder="Quarterly performance review" onChange={e => setName(e.target.value)} /></label>
-              <label>Department
-                <select required value={department} disabled={departmentsLoading || !!departmentError || saving}
-                  onChange={e => setDepartment(e.target.value)}>
-                  <option value="" disabled>{departmentsLoading ? "Loading departments…" : "Select a department"}</option>
-                  {departments.map(item => <option key={item.id} value={item.name}>{item.name}</option>)}
-                </select>
-              </label>
               <label>Version<input required value={version} placeholder="1.0" onChange={e => setVersion(e.target.value)} /></label>
             </div>
-            {departmentError && <p className="evaluation-error" role="alert">Unable to load departments: {departmentError}</p>}
-            {!departmentsLoading && !departmentError && departments.length === 0 && <p className="evaluation-help">No departments available. <Link to="/departments">Manage departments</Link> to add one.</p>}
           </section>
 
           <section className="evaluation-panel">
@@ -211,7 +187,7 @@ export default function EvaluationTemplatesPage() {
           {error && <div className="evaluation-error" role="alert">{error}</div>}
           {success && <div className="evaluation-success" role="status">{success}</div>}
           <div className="evaluation-actions">
-            <button type="submit" disabled={saving || departmentsLoading || !!departmentError || departments.length === 0} className="evaluation-submit">{saving ? "Saving…" : "Create evaluation template"}</button>
+            <button type="submit" disabled={saving} className="evaluation-submit">{saving ? "Saving…" : "Create evaluation template"}</button>
           </div>
         </form>
         <aside className="evaluation-sidebar">
@@ -226,7 +202,7 @@ export default function EvaluationTemplatesPage() {
             {templates.length ? templates.map(template =>
               <div key={template.id} className="evaluation-existing">
                 <strong>{template.name}</strong>
-                <span>{template.department} · v{template.version}</span>
+                <span>v{template.version}</span>
               </div>
             ) : <p className="evaluation-help">No templates loaded yet.</p>}
           </section>
