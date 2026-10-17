@@ -89,6 +89,7 @@ model Employee {
   department Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
   status      EmployeeStatus @default(ACTIVE)
   hireDate    DateTime
+  nextEvaluationAt DateTime?
   evaluations Evaluation[]
   notes       ManagerNote[]
   writeUps    WriteUp[]
