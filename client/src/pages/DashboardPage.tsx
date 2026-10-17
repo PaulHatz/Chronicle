@@ -120,7 +120,7 @@ export default function DashboardPage() {
                         Add manager note
                     </button>
 
-                    <Link className="primary-button" to="/evaluation-templates" style={{display:"inline-flex",alignItems:"center",textDecoration:"none"}}>
+                    <Link className="primary-button" to="/evaluation-templates/new" style={{display:"inline-flex",alignItems:"center",textDecoration:"none"}}>
                         Create evaluation template
                     </Link>
                 </div>
