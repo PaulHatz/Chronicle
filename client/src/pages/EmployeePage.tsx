@@ -104,7 +104,7 @@ export default function EmployeePage() {
     const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [recordForm, setRecordForm] = useState<"note"|"writeup"|null>(null);
+    const [recordForm, setRecordForm] = useState<"note"|"writeup"|"recognition"|null>(null);
     const [noteTitle, setNoteTitle] = useState("");
     const [noteType, setNoteType] = useState<ManagerNoteType>("GENERAL");
     const [recordContent, setRecordContent] = useState("");
@@ -118,7 +118,7 @@ export default function EmployeePage() {
         if (!recordForm) return;
         setSavingRecord(true); setRecordError("");
         try {
-            if (recordForm === "note") await createManagerNote(Number(employeeId), {title:noteTitle,content:recordContent,type:noteType});
+            if (recordForm === "note" || recordForm === "recognition") await createManagerNote(Number(employeeId), {title:noteTitle,content:recordContent,type:recordForm === "recognition" ? "POSITIVE" : noteType});
             else await createEmployeeWriteUp(Number(employeeId), {type:warningType,reason:recordContent});
             setRecordForm(null); setNoteTitle(""); setNoteType("GENERAL"); setRecordContent("");
             setRefreshToken(value=>value+1);
@@ -332,15 +332,15 @@ export default function EmployeePage() {
                 </section>
 
                 {recordForm && <div className="employee-record-backdrop" role="presentation" onMouseDown={() => !savingRecord && setRecordForm(null)}>
-                    <section className="employee-record-modal" role="dialog" aria-modal="true" aria-label={recordForm === "note" ? "Add manager note" : "Create write-up"} onMouseDown={e=>e.stopPropagation()}>
-                        <h2>{recordForm === "note" ? "Add manager note" : "Create write-up"}</h2>
+                    <section className="employee-record-modal" role="dialog" aria-modal="true" aria-label={recordForm === "recognition" ? "Add recognition" : recordForm === "note" ? "Add manager note" : "Create write-up"} onMouseDown={e=>e.stopPropagation()}>
+                        <h2>{recordForm === "recognition" ? "Add recognition" : recordForm === "note" ? "Add manager note" : "Create write-up"}</h2>
                         <p>Record for {employee.name}</p>
                         <form onSubmit={submitRecord}>
-                            {recordForm === "note" ? <><fieldset className="note-type-fieldset"><legend>Note type</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset><label>Title<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
+                            {recordForm !== "writeup" ? <>{recordForm === "note" && <fieldset className="note-type-fieldset"><legend>Note type</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>Title<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
                               : <label>Warning type<select value={warningType} onChange={e=>setWarningType(e.target.value as WriteUpType)}>
                                 <option value="VERBAL_WARNING">Verbal warning</option><option value="WRITTEN_WARNING">Written warning</option><option value="FINAL_WARNING">Final warning</option>
                               </select></label>}
-                            <label>{recordForm === "note" ? "Note" : "Reason / details"}<textarea required rows={6} maxLength={10000} value={recordContent} onChange={e=>setRecordContent(e.target.value)}/></label>
+                            <label>{recordForm === "recognition" ? "Recognition details" : recordForm === "note" ? "Note" : "Reason / details"}<textarea required rows={6} maxLength={10000} value={recordContent} onChange={e=>setRecordContent(e.target.value)}/></label>
                             {recordError && <p role="alert" className="employee-record-error">{recordError}</p>}
                             <div className="employee-record-actions"><button type="button" disabled={savingRecord} onClick={()=>setRecordForm(null)}>Cancel</button><button type="submit" disabled={savingRecord}>{savingRecord ? "Saving…" : "Save record"}</button></div>
                         </form>
@@ -655,7 +655,7 @@ export default function EmployeePage() {
                                     <b>→</b>
                                 </Link>
 
-                                <button type="button">
+                                <button type="button" onClick={() => {setRecordForm("recognition");setNoteType("POSITIVE");setNoteTitle("");setRecordContent("");setRecordError("");}}>
                                     <span className="action-icon action-yellow">
                                         ★
                                     </span>
