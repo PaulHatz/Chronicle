@@ -1011,3 +1011,5 @@
     text-decoration: none;
 }
 .profile-action-list .employee-start-evaluation:hover { background: #f6f8fc; }
+
+.evaluation-timeline-link{display:inline-block;margin-top:10px;color:#355b98;font-size:13px;font-weight:700;text-decoration:none}.evaluation-timeline-link:hover{text-decoration:underline}.timeline-event-content h3 a{color:inherit;text-decoration:none}.timeline-event-content h3 a:hover{color:#355b98;text-decoration:underline}
