@@ -21,6 +21,7 @@ export default function EmployeePicker({ employees, value, onChange, disabled = 
   const searchId = useId();
   const [search, setSearch] = useState("");
   const query = search.trim().toLocaleLowerCase();
+  const selectedEmployee = employees.find(employee => String(employee.id) === value);
   const matches = employees
     .filter(employee => (!activeOnly || employee.status === "ACTIVE") &&
       `${employee.firstName} ${employee.lastName} ${employee.position}`.toLocaleLowerCase().includes(query))
@@ -32,14 +33,21 @@ export default function EmployeePicker({ employees, value, onChange, disabled = 
       <div className="dashboard-employee-search">
         <span aria-hidden="true">⌕</span>
         <input id={searchId} type="search" placeholder="Search employees by name or position…"
-          autoComplete="off" value={search} onChange={event => setSearch(event.target.value)} disabled={disabled}/>
+          autoComplete="off" value={search} onChange={event => {
+            setSearch(event.target.value);
+            if (value) onChange("");
+          }} disabled={disabled}/>
       </div>
+      {selectedEmployee && <span className="dashboard-employee-selected" role="status">Selected: {selectedEmployee.firstName} {selectedEmployee.lastName}</span>}
       <div className="dashboard-employee-results" role="group" aria-label="Choose an employee">
         {matches.map(employee => (
           <button type="button" key={employee.id} disabled={disabled}
             className={`dashboard-employee-choice${value === String(employee.id) ? " is-selected" : ""}`}
             aria-pressed={value === String(employee.id)}
-            onClick={() => onChange(String(employee.id))}>
+            onClick={() => {
+              onChange(String(employee.id));
+              setSearch(`${employee.firstName} ${employee.lastName}`);
+            }}>
             <span className="dashboard-employee-avatar" aria-hidden="true">{employee.firstName.charAt(0)}{employee.lastName.charAt(0)}</span>
             <span className="dashboard-employee-label">
               <strong>{employee.firstName} {employee.lastName}</strong>
