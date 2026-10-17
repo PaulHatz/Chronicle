@@ -127,7 +127,7 @@ export default function EvaluationTemplateDetailPage() {
                        Array.from({length:draft.maxScore - draft.minScore + 1},(_,i)=>draft.minScore!+i).map(score => (
                          <label className="evaluation-rubric-row" key={score}>
                            <span>{score}</span>
-                           <input placeholder="Description (optional)" value={draft.rubric?.[String(score)] ?? ""}
+                           <textarea rows={3} placeholder="Description (optional)" value={draft.rubric?.[String(score)] ?? ""}
                              onChange={e => setDraft({ ...draft, rubric: { ...draft.rubric, [String(score)]: e.target.value } })}/>
                          </label>
                        ))}
