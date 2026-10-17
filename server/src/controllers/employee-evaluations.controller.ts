@@ -38,3 +38,12 @@ export async function submitEvaluation(req: Request, res: Response) {
     return res.status(201).json(await service.completeEmployeeEvaluation(idFrom(req.params.employeeId), answers));
   } catch (error) { return respondError(error, res); }
 }
+
+export async function getEvaluation(req: Request, res: Response) {
+  try {
+    const employeeId = idFrom(req.params.employeeId);
+    const evaluationId = Number(req.params.evaluationId);
+    if (!Number.isSafeInteger(evaluationId) || evaluationId <= 0) throw new service.EvaluationError(400, "Invalid evaluation ID.");
+    return res.json(await service.getEmployeeEvaluation(employeeId, evaluationId));
+  } catch (error) { return respondError(error, res); }
+}
