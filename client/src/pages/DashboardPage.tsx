@@ -1,7 +1,7 @@
 import "./DashboardPage.css";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getemployeelist, createManagerNote, createEmployeeWriteUp, type WriteUpType } from "../api/employee";
+import { getemployeelist, createManagerNote, createEmployeeWriteUp, type WriteUpType, type ManagerNoteType } from "../api/employee";
 import { isEvaluationDue } from "../api/evaluationDue";
 import { getQuarterEvaluationStatistics } from "../api/employee-evaluations";
 import { getRecentActivity, type DashboardActivity } from "../api/dashboard";
@@ -61,6 +61,7 @@ export default function DashboardPage() {
     const [recordEmployeeId, setRecordEmployeeId] = useState("");
     const [employeeSearch, setEmployeeSearch] = useState("");
     const [noteTitle, setNoteTitle] = useState("");
+    const [noteType, setNoteType] = useState<ManagerNoteType>("GENERAL");
     const [recordContent, setRecordContent] = useState("");
     const [warningType, setWarningType] = useState<WriteUpType>("VERBAL_WARNING");
     const [recordSaving, setRecordSaving] = useState(false);
@@ -112,6 +113,7 @@ export default function DashboardPage() {
         setRecordEmployeeId("");
         setEmployeeSearch("");
         setNoteTitle("");
+        setNoteType("GENERAL");
         setRecordContent("");
         setWarningType("VERBAL_WARNING");
         setRecordError("");
@@ -133,7 +135,7 @@ export default function DashboardPage() {
         setRecordError("");
         try {
             if (recordAction === "note") {
-                await createManagerNote(employeeId, { title: noteTitle.trim(), content: recordContent.trim() });
+                await createManagerNote(employeeId, { title: noteTitle.trim(), content: recordContent.trim(), type: noteType });
             } else if (recordAction === "writeup") {
                 await createEmployeeWriteUp(employeeId, { type: warningType, reason: recordContent.trim() });
             } else return;
@@ -212,7 +214,7 @@ export default function DashboardPage() {
                                 </div>
                             </div>
                             {recordAction === "note" ? (
-                                <label>Title<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label>
+                                <><label>Note type<select value={noteType} onChange={event => setNoteType(event.target.value as ManagerNoteType)} disabled={recordSaving}><option value="GENERAL">General</option><option value="POSITIVE">Positive</option><option value="IMPROVEMENT">Needs improvement</option></select></label><label>Title<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label></>
                             ) : (
                                 <label>Warning type
                                     <select value={warningType} onChange={event => setWarningType(event.target.value as WriteUpType)} disabled={recordSaving}>
