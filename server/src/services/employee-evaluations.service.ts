@@ -88,3 +88,16 @@ export async function listEmployeeEvaluations(employeeId: number) {
     } },
   });
 }
+
+export async function getEmployeeEvaluation(employeeId: number, evaluationId: number) {
+  const evaluation = await prisma.evaluation.findFirst({
+    where: { id: evaluationId, employeeId },
+    include: {
+      template: { select: { name: true, version: true } },
+      answers: { include: { question: { select: { questionText: true, questionType: true, rubric: true, minScore: true, maxScore: true } } }, orderBy: { evaluationQuestionId: "asc" } },
+      employee: { select: { firstName: true, lastName: true, department: { select: { name: true } } } },
+    },
+  });
+  if (!evaluation) throw new EvaluationError(404, "Evaluation not found.");
+  return evaluation;
+}
