@@ -42,7 +42,7 @@ export async function getEmployeeList() {
 export async function getEmployeeForId(id) {
     const employee = await prisma.employee.findUnique({
         where: { id },
-        include: { department: true, evaluations: { orderBy: { completedAt: "desc" }, take: 1, select: { completedAt: true } } }
+        include: { department: true, evaluations: { orderBy: { completedAt: "desc" }, take: 1, select: { completedAt: true } }, _count: { select: { notes: true, writeUps: { where: { resolvedAt: null } } } } }
     });
 
     return employee ? withSchedule(employee) : null;
