@@ -1,10 +1,13 @@
 import "./DashboardPage.css";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getemployeelist } from "../api/employee";
+import { getemployeelist, createManagerNote, createEmployeeWriteUp, type WriteUpType } from "../api/employee";
 import { isEvaluationDue } from "../api/evaluationDue";
 import { getQuarterEvaluationStatistics } from "../api/employee-evaluations";
 import { getRecentActivity, type DashboardActivity } from "../api/dashboard";
+
+type EmployeeOption = { id: number; firstName: string; lastName: string; status?: string };
+type RecordAction = "note" | "writeup";
 
 type UpcomingEvaluation = {
     id: number;
@@ -53,6 +56,15 @@ export default function DashboardPage() {
     const [activityLoading, setActivityLoading] = useState(true);
     const [activityError, setActivityError] = useState(false);
     const [upcomingEvaluations, setUpcomingEvaluations] = useState<UpcomingEvaluation[]>([]);
+    const [employees, setEmployees] = useState<EmployeeOption[]>([]);
+    const [recordAction, setRecordAction] = useState<RecordAction | null>(null);
+    const [recordEmployeeId, setRecordEmployeeId] = useState("");
+    const [noteTitle, setNoteTitle] = useState("");
+    const [recordContent, setRecordContent] = useState("");
+    const [warningType, setWarningType] = useState<WriteUpType>("VERBAL_WARNING");
+    const [recordSaving, setRecordSaving] = useState(false);
+    const [recordError, setRecordError] = useState("");
+    const [recordNotice, setRecordNotice] = useState("");
 
     useEffect(() => {
         let cancelled = false;
@@ -65,6 +77,7 @@ export default function DashboardPage() {
                 }
                 const employees = data.employeeList as Array<{ id: number; firstName: string; lastName: string; position: string; status?: string; notesCount?: number; openWriteUpsCount?: number; nextEvaluationAt?: string | null }>;
                 if (!cancelled) {
+                    setEmployees(employees);
                     setUpcomingEvaluations(findUpcomingEvaluations(employees));
                     setEmployeeCounts({
                         total: employees.length,
@@ -93,6 +106,58 @@ export default function DashboardPage() {
     }, []);
 
 
+    function openRecord(action: RecordAction) {
+        setRecordAction(action);
+        setRecordEmployeeId("");
+        setNoteTitle("");
+        setRecordContent("");
+        setWarningType("VERBAL_WARNING");
+        setRecordError("");
+        setRecordNotice("");
+    }
+
+    async function submitRecord(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const employeeId = Number(recordEmployeeId);
+        if (!Number.isSafeInteger(employeeId) || !employees.some(employee => employee.id === employeeId)) {
+            setRecordError("Select an employee.");
+            return;
+        }
+        if (!recordContent.trim() || (recordAction === "note" && !noteTitle.trim())) {
+            setRecordError("Complete all required fields.");
+            return;
+        }
+        setRecordSaving(true);
+        setRecordError("");
+        try {
+            if (recordAction === "note") {
+                await createManagerNote(employeeId, { title: noteTitle.trim(), content: recordContent.trim() });
+            } else if (recordAction === "writeup") {
+                await createEmployeeWriteUp(employeeId, { type: warningType, reason: recordContent.trim() });
+            } else return;
+            setRecordNotice(recordAction === "note" ? "Manager note saved." : "Write-up created.");
+            setRecordAction(null);
+            const [activity, list] = await Promise.allSettled([getRecentActivity(), getemployeelist()]);
+            if (activity.status === "fulfilled") setRecentActivity(activity.value);
+            if (list.status === "fulfilled" && Array.isArray(list.value?.employeeList)) {
+                const updated = list.value.employeeList as Array<{ id: number; firstName: string; lastName: string; position: string; status?: string; notesCount?: number; openWriteUpsCount?: number; nextEvaluationAt?: string | null }>;
+                setEmployees(updated);
+                setUpcomingEvaluations(findUpcomingEvaluations(updated));
+                setEmployeeCounts({
+                    total: updated.length,
+                    active: updated.filter(employee => employee.status === "ACTIVE").length,
+                    notes: updated.reduce((sum, employee) => sum + (employee.notesCount ?? 0), 0),
+                    openWriteUps: updated.reduce((sum, employee) => sum + (employee.openWriteUpsCount ?? 0), 0),
+                    evaluationsDue: updated.filter(employee => isEvaluationDue(employee.nextEvaluationAt)).length,
+                });
+            }
+        } catch (caught) {
+            setRecordError(caught instanceof Error ? caught.message : "Unable to save record.");
+        } finally {
+            setRecordSaving(false);
+        }
+    }
+
     return (
         <main className="dashboard-page">
             <header className="dashboard-header">
@@ -108,6 +173,45 @@ export default function DashboardPage() {
 
             </header>
 
+            {recordNotice && <p className="dashboard-record-notice" role="status">{recordNotice}</p>}
+            {recordAction && (
+                <div className="dashboard-record-backdrop" onMouseDown={() => { if (!recordSaving) setRecordAction(null); }}>
+                    <section className="dashboard-record-modal" role="dialog" aria-modal="true" aria-label={recordAction === "note" ? "Add manager note" : "Create write-up"} onMouseDown={event => event.stopPropagation()}>
+                        <h2>{recordAction === "note" ? "Add manager note" : "Create write-up"}</h2>
+                        <p>Choose an employee and record the details.</p>
+                        <form onSubmit={submitRecord}>
+                            <label>Employee
+                                <select required value={recordEmployeeId} onChange={event => setRecordEmployeeId(event.target.value)} disabled={recordSaving}>
+                                    <option value="">Select an employee</option>
+                                    {employees.filter(employee => employee.status === "ACTIVE").sort((a,b) => (a.lastName + a.firstName).localeCompare(b.lastName + b.firstName)).map(employee =>
+                                        <option key={employee.id} value={employee.id}>{employee.firstName} {employee.lastName}</option>
+                                    )}
+                                </select>
+                            </label>
+                            {recordAction === "note" ? (
+                                <label>Title<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label>
+                            ) : (
+                                <label>Warning type
+                                    <select value={warningType} onChange={event => setWarningType(event.target.value as WriteUpType)} disabled={recordSaving}>
+                                        <option value="VERBAL_WARNING">Verbal warning</option>
+                                        <option value="WRITTEN_WARNING">Written warning</option>
+                                        <option value="FINAL_WARNING">Final warning</option>
+                                    </select>
+                                </label>
+                            )}
+                            <label>{recordAction === "note" ? "Note" : "Reason / details"}
+                                <textarea required rows={5} maxLength={10000} value={recordContent} onChange={event => setRecordContent(event.target.value)} disabled={recordSaving}/>
+                            </label>
+                            {recordError && <p className="dashboard-record-error" role="alert">{recordError}</p>}
+                            {employeeError && <p className="dashboard-record-error" role="alert">Unable to load employees. Please reload the dashboard.</p>}
+                            <div className="dashboard-record-actions">
+                                <button type="button" disabled={recordSaving} onClick={() => setRecordAction(null)}>Cancel</button>
+                                <button type="submit" disabled={recordSaving || employeeError || !employees.length}>{recordSaving ? "Saving…" : "Save record"}</button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            )}
             <section className="summary-grid">
                 <article className="summary-card">
                     <span className="summary-icon employees-icon" aria-hidden="true">👥</span>
@@ -252,7 +356,7 @@ export default function DashboardPage() {
                         </div>
 
                         <div className="quick-action-grid">
-                            <button type="button">
+                            <button type="button" onClick={() => openRecord("note")}>
                                 <span>＋</span>
                                 Add note
                             </button>
@@ -262,7 +366,7 @@ export default function DashboardPage() {
                                 Start evaluation
                             </button>
 
-                            <button type="button">
+                            <button type="button" onClick={() => openRecord("writeup")}>
                                 <span>!</span>
                                 Create write-up
                             </button>
