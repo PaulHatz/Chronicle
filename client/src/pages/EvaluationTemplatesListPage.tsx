@@ -36,11 +36,11 @@ export default function EvaluationTemplatesListPage() {
           error ? <p className="evaluation-error" role="alert">{error}</p> :
           visible.length === 0 ? <div className="evaluation-empty"><strong>No templates found</strong><p>Create a template to get started, or change your search.</p></div> :
           <div className="evaluation-list-rows">
-            {visible.map(t => <div className="evaluation-list-row" key={t.id}>
+            {visible.map(t => <Link className="evaluation-list-row evaluation-list-link" to={`/evaluation-templates/${t.id}`} key={t.id}>
               <div className="evaluation-template-symbol">▤</div>
               <div><strong>{t.name}</strong><span>{t.department}</span></div>
-              <span className="evaluation-version">v{t.version}</span>
-            </div>)}
+              <span className="evaluation-version">v{t.version}</span><span aria-hidden="true">→</span>
+            </Link>)}
           </div>}
       </div>
     </main>
