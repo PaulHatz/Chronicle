@@ -134,10 +134,8 @@ export default function EmployeesPage() {
                             status: employee.status as EmployeeStatus,
                             lastEvaluation: employee.lastEvaluationAt ? new Date(employee.lastEvaluationAt).toLocaleDateString() : "N/A",
                             nextEvaluation: employee.nextEvaluationAt ? new Date(employee.nextEvaluationAt).toLocaleDateString() : "N/A",
-                            openWriteUps: Number(
-                                0,
-                            ),
-                            notes: Number(0),
+                            openWriteUps: Number(employee.openWriteUpsCount ?? 0),
+                            notes: Number(employee.notesCount ?? 0),
                         }),
                     );
 
