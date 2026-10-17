@@ -38,3 +38,20 @@
 .evaluation-existing strong{font-size:14px}.evaluation-existing span{color:#798497;font-size:12px}
 @media(max-width:900px){.evaluation-layout{grid-template-columns:1fr}.evaluation-fields{grid-template-columns:1fr 1fr}.evaluation-fields label:first-child{grid-column:1/-1}}
 @media(max-width:560px){.evaluation-builder{padding:20px}.evaluation-fields{grid-template-columns:1fr}.evaluation-fields label:first-child{grid-column:auto}.evaluation-panel{padding:16px}.evaluation-builder h1{font-size:28px}.evaluation-rubric-heading{display:grid}}
+
+.evaluation-list-header{display:flex;align-items:center;justify-content:space-between;gap:20px;max-width:1380px;margin:0 auto 26px}
+.evaluation-link-button{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+.evaluation-template-list{max-width:1380px;margin:auto;padding:0;overflow:hidden}
+.evaluation-list-toolbar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:23px;border-bottom:1px solid #e5eaf2}
+.evaluation-list-toolbar h2 span{color:#8a94a5;font-size:14px}
+.evaluation-list-toolbar input{max-width:320px}
+.evaluation-list-rows{display:grid}
+.evaluation-list-row{display:flex;align-items:center;gap:16px;padding:19px 24px;border-bottom:1px solid #edf0f5}
+.evaluation-list-row:last-child{border-bottom:0}
+.evaluation-list-row>div:nth-child(2){display:grid;gap:4px;flex:1}
+.evaluation-list-row strong{font-size:15px}
+.evaluation-list-row span{font-size:13px;color:#7a8595}
+.evaluation-template-symbol{width:42px;height:42px;border-radius:10px;background:#edf3ff;color:#355a96;display:grid;place-items:center;font-size:22px}
+.evaluation-version{padding:6px 11px;border-radius:18px;background:#f0f3f8;color:#536582!important;font-weight:700}
+.evaluation-empty{text-align:center;padding:45px 20px}.evaluation-empty p{margin-top:8px;color:#7d8796}
+@media(max-width:600px){.evaluation-list-header,.evaluation-list-toolbar{align-items:stretch;flex-direction:column}.evaluation-list-toolbar input{max-width:none}}
