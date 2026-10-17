@@ -4,55 +4,7 @@ import { useEffect, useState } from "react";
 import { getemployeelist } from "../api/employee";
 import { isEvaluationDue } from "../api/evaluationDue";
 import { getQuarterEvaluationStatistics } from "../api/employee-evaluations";
-
-type Activity = {
-    id: number;
-    employee: string;
-    initials: string;
-    action: string;
-    detail: string;
-    date: string;
-    type: "evaluation" | "note" | "writeup" | "recognition";
-};
-
-const recentActivity: Activity[] = [
-    {
-        id: 1,
-        employee: "Sarah Martin",
-        initials: "SM",
-        action: "Evaluation completed",
-        detail: "Quarterly performance evaluation",
-        date: "Today, 10:30 AM",
-        type: "evaluation",
-    },
-    {
-        id: 2,
-        employee: "Daniel Roy",
-        initials: "DR",
-        action: "Manager note added",
-        detail: "Follow-up regarding attendance",
-        date: "Yesterday, 4:15 PM",
-        type: "note",
-    },
-    {
-        id: 3,
-        employee: "Maya Chen",
-        initials: "MC",
-        action: "Recognition added",
-        detail: "Excellent guest feedback",
-        date: "July 14, 2026",
-        type: "recognition",
-    },
-    {
-        id: 4,
-        employee: "Alex Tremblay",
-        initials: "AT",
-        action: "Write-up created",
-        detail: "Written warning documented",
-        date: "July 13, 2026",
-        type: "writeup",
-    },
-];
+import { getRecentActivity, type DashboardActivity } from "../api/dashboard";
 
 const upcomingEvaluations = [
     {
@@ -104,6 +56,9 @@ export default function DashboardPage() {
     const [employeeError, setEmployeeError] = useState(false);
     const [completedThisQuarter, setCompletedThisQuarter] = useState<number | null>(null);
     const [quarterError, setQuarterError] = useState(false);
+    const [recentActivity, setRecentActivity] = useState<DashboardActivity[]>([]);
+    const [activityLoading, setActivityLoading] = useState(true);
+    const [activityError, setActivityError] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -130,6 +85,9 @@ export default function DashboardPage() {
             }
         }
         void loadEmployeeCounts();
+        void getRecentActivity().then(items => { if (!cancelled) setRecentActivity(items); })
+            .catch(error => { console.error(error); if (!cancelled) setActivityError(true); })
+            .finally(() => { if (!cancelled) setActivityLoading(false); });
         void getQuarterEvaluationStatistics()
             .then(data => { if (!cancelled) setCompletedThisQuarter(data.completedThisQuarter); })
             .catch(error => {
@@ -220,12 +178,13 @@ export default function DashboardPage() {
                             <p>Latest employee record updates</p>
                         </div>
 
-                        <button className="text-button" type="button">
-                            View all
-                        </button>
+                        <Link className="text-button" to="/employees">View employees</Link>
                     </div>
 
                     <div className="activity-list">
+                        {activityLoading && <p className="dashboard-activity-message">Loading recent activity…</p>}
+                        {activityError && <p className="dashboard-activity-message" role="alert">Unable to load recent activity.</p>}
+                        {!activityLoading && !activityError && recentActivity.length === 0 && <p className="dashboard-activity-message">No employee activity yet.</p>}
                         {recentActivity.map((activity) => (
                             <div
                                 className="activity-item"
@@ -237,9 +196,9 @@ export default function DashboardPage() {
 
                                 <div className="activity-information">
                                     <div className="activity-title-row">
-                                        <strong>
+                                        <Link className="dashboard-activity-employee" to={`/employees/${activity.employeeId}`}>
                                             {activity.employee}
-                                        </strong>
+                                        </Link>
 
                                         <span
                                             className={`activity-type ${activity.type}`}
@@ -249,10 +208,11 @@ export default function DashboardPage() {
                                     </div>
 
                                     <p>{activity.action}</p>
+                                    {activity.type === "evaluation" && <Link className="dashboard-activity-link" to={`/employees/${activity.employeeId}/evaluations/${activity.recordId}`}>View results →</Link>}
                                     <span>{activity.detail}</span>
                                 </div>
 
-                                <time>{activity.date}</time>
+                                <time dateTime={activity.occurredAt}>{new Date(activity.occurredAt).toLocaleDateString()}</time>
                             </div>
                         ))}
                     </div>
