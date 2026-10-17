@@ -121,9 +121,9 @@ export default function EvaluationTemplatesPage() {
     <main className="evaluation-builder">
       <header className="evaluation-builder-header">
         <div>
-          <Link className="evaluation-back" to="/">← Dashboard</Link>
+          <Link className="evaluation-back" to="/evaluation-templates">← All templates</Link>
           <p className="evaluation-eyebrow">Employee performance</p>
-          <h1>Evaluation templates</h1>
+          <h1>Create evaluation template</h1>
           <p>Build department-specific evaluations with scored and written questions.</p>
         </div>
       </header>
