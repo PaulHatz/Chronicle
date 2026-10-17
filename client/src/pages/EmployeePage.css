@@ -1013,3 +1013,18 @@
 .profile-action-list .employee-start-evaluation:hover { background: #f6f8fc; }
 
 .evaluation-timeline-link{display:inline-block;margin-top:10px;color:#355b98;font-size:13px;font-weight:700;text-decoration:none}.evaluation-timeline-link:hover{text-decoration:underline}.timeline-event-content h3 a{color:inherit;text-decoration:none}.timeline-event-content h3 a:hover{color:#355b98;text-decoration:underline}
+
+.employee-record-backdrop{position:fixed;inset:0;z-index:1000;background:rgba(15,25,45,.55);display:grid;place-items:center;padding:20px}
+.employee-record-modal{width:min(100%,560px);max-height:90vh;overflow:auto;background:white;border-radius:15px;padding:28px;box-shadow:0 18px 60px rgba(0,0,0,.2)}
+.employee-record-modal h2{font-size:24px;margin:0 0 8px;color:#172033}
+.employee-record-modal>p{color:#7e8999;margin-bottom:22px}
+.employee-record-modal form{display:grid;gap:17px}
+.employee-record-modal label{display:grid;gap:8px;color:#4d5a70;font-size:13px;font-weight:700}
+.employee-record-modal input,.employee-record-modal select,.employee-record-modal textarea{border:1px solid #d9e1ed;border-radius:8px;padding:12px;background:white;color:#172033;font:inherit;resize:vertical}
+.employee-record-actions{display:flex;justify-content:flex-end;gap:10px}
+.employee-record-actions button{padding:11px 15px;border-radius:9px;border:1px solid #d9e1ed;background:white;color:#304d86;font-weight:750;cursor:pointer}
+.employee-record-actions button[type=submit]{background:#304d86;color:white;border-color:#304d86}
+.employee-record-actions button:disabled{opacity:.5}
+.employee-record-error{color:#a33e45!important}
+.writeup-resolution{display:flex;gap:12px;align-items:center;margin-top:10px;font-size:12px;color:#596983}
+.writeup-resolution button{background:#eef3fc;color:#304d86;border:0;border-radius:7px;padding:6px 10px;cursor:pointer;font-weight:700}
