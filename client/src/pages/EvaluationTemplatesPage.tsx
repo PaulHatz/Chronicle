@@ -174,7 +174,7 @@ export default function EvaluationTemplatesPage() {
                           Array.from({ length: q.maxScore - q.minScore + 1 }, (_, offset) => q.minScore + offset).map(score => (
                             <label className="evaluation-rubric-row" key={score}>
                               <span>{score}</span>
-                              <input aria-label={`Description for score ${score}`} value={q.rubric[String(score)] ?? ""} placeholder={`Meaning of score ${score}`}
+                              <textarea rows={3} aria-label={`Description for score ${score}`} value={q.rubric[String(score)] ?? ""} placeholder={`Meaning of score ${score}`}
                                 onChange={e => editQuestion(q.key, { rubric: { ...q.rubric, [String(score)]: e.target.value } })} />
                             </label>
                           ))}
