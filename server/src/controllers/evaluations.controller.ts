@@ -29,9 +29,8 @@ function nonempty(value: unknown, key: string): string {
 
 function parseTemplate(value: unknown): service.TemplateInput {
   const b = object(value);
-  allowed(b, ["department", "name", "version"]);
+  allowed(b, ["name", "version"]);
   return {
-    department: nonempty(b.department, "department"),
     name: nonempty(b.name, "name"),
     version: nonempty(b.version, "version"),
   };
@@ -109,11 +108,7 @@ export async function createTemplate(req: Request, res: Response) {
 }
 export async function listTemplates(req: Request, res: Response) {
   try {
-    const department = req.query.department;
-    if (department !== undefined && typeof department !== "string") {
-      throw new service.ApiError(400, "Invalid department filter.");
-    }
-    return res.json(await service.listTemplates(department));
+    return res.json(await service.listTemplates());
   } catch (e) { return handle(e, res); }
 }
 export async function getTemplate(req: Request, res: Response) {
