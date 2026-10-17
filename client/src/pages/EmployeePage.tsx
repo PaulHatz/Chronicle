@@ -336,7 +336,7 @@ export default function EmployeePage() {
                         <h2>{recordForm === "note" ? "Add manager note" : "Create write-up"}</h2>
                         <p>Record for {employee.name}</p>
                         <form onSubmit={submitRecord}>
-                            {recordForm === "note" ? <><label>Note type<select value={noteType} onChange={e=>setNoteType(e.target.value as ManagerNoteType)}><option value="GENERAL">General</option><option value="POSITIVE">Positive</option><option value="IMPROVEMENT">Needs improvement</option></select></label><label>Title<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
+                            {recordForm === "note" ? <><fieldset className="note-type-fieldset"><legend>Note type</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset><label>Title<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
                               : <label>Warning type<select value={warningType} onChange={e=>setWarningType(e.target.value as WriteUpType)}>
                                 <option value="VERBAL_WARNING">Verbal warning</option><option value="WRITTEN_WARNING">Written warning</option><option value="FINAL_WARNING">Final warning</option>
                               </select></label>}
