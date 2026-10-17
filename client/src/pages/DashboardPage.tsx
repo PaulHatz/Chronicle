@@ -31,7 +31,7 @@ function findUpcomingEvaluations(employees: Array<{
         if (Number.isNaN(date.getTime())) return [];
         const scheduledDay = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
         const daysRemaining = Math.round((scheduledDay - today) / dayMs);
-        if (daysRemaining < 0 || daysRemaining > 30) return [];
+        if (daysRemaining > 30) return [];
         return [{
             id: employee.id,
             employee: `${employee.firstName} ${employee.lastName}`,
@@ -237,14 +237,14 @@ export default function DashboardPage() {
                         <div className="panel-header">
                             <div>
                                 <h2>Upcoming evaluations</h2>
-                                <p>Scheduled in the next 30 days</p>
+                                <p>Overdue and scheduled in the next 30 days</p>
                             </div>
                         </div>
 
                         <div className="evaluation-list">
                             {!employeeCounts && !employeeError && <p className="dashboard-activity-message">Loading scheduled evaluations…</p>}
                             {employeeError && <p className="dashboard-activity-message" role="alert">Unable to load evaluation schedule.</p>}
-                            {employeeCounts && upcomingEvaluations.length === 0 && <p className="dashboard-activity-message">No evaluations scheduled in the next 30 days.</p>}
+                            {employeeCounts && upcomingEvaluations.length === 0 && <p className="dashboard-activity-message">No overdue or upcoming evaluations in the next 30 days.</p>}
                             {upcomingEvaluations.map((evaluation) => (
                                 <div
                                     className="evaluation-item"
@@ -264,7 +264,7 @@ export default function DashboardPage() {
                                         <strong>{evaluation.date}</strong>
 
                                         <span>
-                                            {evaluation.daysRemaining === 0 ? "Due today" : evaluation.daysRemaining === 1 ? "Tomorrow" : `${evaluation.daysRemaining} days away`}
+                                            {evaluation.daysRemaining < 0 ? `${Math.abs(evaluation.daysRemaining)} ${Math.abs(evaluation.daysRemaining) === 1 ? "day" : "days"} overdue` : evaluation.daysRemaining === 0 ? "Due today" : evaluation.daysRemaining === 1 ? "Tomorrow" : `${evaluation.daysRemaining} days away`}
                                         </span>
                                     </div>
                                 </div>
