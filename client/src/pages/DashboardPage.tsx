@@ -2,6 +2,7 @@ import "./DashboardPage.css";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getemployeelist } from "../api/employee";
+import { isEvaluationDue } from "../api/evaluationDue";
 
 type Activity = {
     id: number;
@@ -98,7 +99,7 @@ async function upload_test_eval() {
 
 export default function DashboardPage() {
     const managerName = "Paul";
-    const [employeeCounts, setEmployeeCounts] = useState<{ total: number; active: number; notes: number; openWriteUps: number } | null>(null);
+    const [employeeCounts, setEmployeeCounts] = useState<{ total: number; active: number; notes: number; openWriteUps: number; evaluationsDue: number } | null>(null);
     const [employeeError, setEmployeeError] = useState(false);
 
     useEffect(() => {
@@ -110,13 +111,14 @@ export default function DashboardPage() {
                     !Array.isArray(data.employeeList)) {
                     throw new Error("Invalid employee list response.");
                 }
-                const employees = data.employeeList as Array<{ status?: string; notesCount?: number; openWriteUpsCount?: number }>;
+                const employees = data.employeeList as Array<{ status?: string; notesCount?: number; openWriteUpsCount?: number; nextEvaluationAt?: string | null }>;
                 if (!cancelled) {
                     setEmployeeCounts({
                         total: employees.length,
                         active: employees.filter(employee => employee.status === "ACTIVE").length,
                         notes: employees.reduce((total, employee) => total + (employee.notesCount ?? 0), 0),
                         openWriteUps: employees.reduce((total, employee) => total + (employee.openWriteUpsCount ?? 0), 0),
+                        evaluationsDue: employees.filter(employee => isEvaluationDue(employee.nextEvaluationAt)).length,
                     });
                 }
             } catch (error) {
@@ -173,6 +175,14 @@ export default function DashboardPage() {
                         <p>Evaluations completed</p>
                         <strong>12</strong>
                         <span className="summary-card-subtext">This quarter</span>
+                    </div>
+                </article>
+                <article className="summary-card">
+                    <span className="summary-icon evaluation-icon" aria-hidden="true">◷</span>
+                    <div className="summary-card-info">
+                        <p>Evaluations due</p>
+                        <strong>{employeeCounts?.evaluationsDue ?? "—"}</strong>
+                        <span className="summary-card-subtext">Due today or overdue</span>
                     </div>
                 </article>
                 <article className="summary-card">
