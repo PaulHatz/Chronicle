@@ -33,7 +33,8 @@ model EvaluationTemplate {
   id         Int    @id @default(autoincrement())
   department String
   version    String
-
+  name       String
+  
   evaluations Evaluation[]
   questions   EvaluationQuestion[]
 }
@@ -44,8 +45,8 @@ model EvaluationQuestion {
   questionText         String
   questionType         String
   rubric               Json?
-  minScore             Int
-  maxScore             Int
+  minScore             Int?
+  maxScore             Int?
 
   template EvaluationTemplate @relation(fields: [evaluationTemplateId], references: [id])
 
