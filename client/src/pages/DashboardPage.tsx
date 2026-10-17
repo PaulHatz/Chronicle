@@ -128,67 +128,32 @@ export default function DashboardPage() {
 
             <section className="summary-grid">
                 <article className="summary-card">
-                    <div className="summary-card-header">
-                        <span className="summary-icon employees-icon">
-                            👥
-                        </span>
-
-                        <span className="summary-change positive">
-                            +2 this month
-                        </span>
+                    <span className="summary-icon employees-icon" aria-hidden="true">👥</span>
+                    <div className="summary-card-info">
+                        <p>Total employees</p>
+                        <strong>48</strong>
                     </div>
-
-                    <p>Total employees</p>
-                    <strong>48</strong>
-                    <span>44 active employees</span>
                 </article>
-
                 <article className="summary-card">
-                    <div className="summary-card-header">
-                        <span className="summary-icon evaluation-icon">
-                            ✓
-                        </span>
-
-                        <span className="summary-change">
-                            3 upcoming
-                        </span>
+                    <span className="summary-icon evaluation-icon" aria-hidden="true">✓</span>
+                    <div className="summary-card-info">
+                        <p>Evaluations completed</p>
+                        <strong>12</strong>
                     </div>
-
-                    <p>Evaluations completed</p>
-                    <strong>12</strong>
-                    <span>This quarter</span>
                 </article>
-
                 <article className="summary-card">
-                    <div className="summary-card-header">
-                        <span className="summary-icon note-icon">
-                            ✎
-                        </span>
-
-                        <span className="summary-change">
-                            5 this week
-                        </span>
+                    <span className="summary-icon note-icon" aria-hidden="true">✎</span>
+                    <div className="summary-card-info">
+                        <p>Manager notes</p>
+                        <strong>27</strong>
                     </div>
-
-                    <p>Manager notes</p>
-                    <strong>27</strong>
-                    <span>Added this month</span>
                 </article>
-
                 <article className="summary-card">
-                    <div className="summary-card-header">
-                        <span className="summary-icon writeup-icon">
-                            !
-                        </span>
-
-                        <span className="summary-change warning">
-                            Requires review
-                        </span>
+                    <span className="summary-icon writeup-icon" aria-hidden="true">!</span>
+                    <div className="summary-card-info">
+                        <p>Open write-ups</p>
+                        <strong>4</strong>
                     </div>
-
-                    <p>Open write-ups</p>
-                    <strong>4</strong>
-                    <span>2 awaiting follow-up</span>
                 </article>
             </section>
 
