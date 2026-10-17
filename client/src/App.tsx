@@ -10,6 +10,7 @@ import EvaluationTemplatesListPage from "./pages/EvaluationTemplatesListPage";
 import EvaluationTemplateDetailPage from "./pages/EvaluationTemplateDetailPage";
 import AppLayout from "./layout/AppLayout";
 import DepartmentsPage from "./pages/DepartmentsPage";
+import EmployeeEvaluationPage from "./pages/EmployeeEvaluationPage";
 export default function App() {
     return (
         <Routes>
@@ -33,6 +34,7 @@ export default function App() {
                     path="/employees/:employeeId"
                     element={<EmployeePage />}
                 />
+                <Route path="/employees/:employeeId/evaluate" element={<EmployeeEvaluationPage />} />
                 <Route path="/departments" element={<DepartmentsPage />} />
                 <Route path="/evaluation-templates" element={<EvaluationTemplatesListPage />} />
                 <Route path="/evaluation-templates/new" element={<EvaluationTemplatesPage />} />
