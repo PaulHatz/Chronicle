@@ -98,7 +98,7 @@ async function upload_test_eval() {
 
 export default function DashboardPage() {
     const managerName = "Paul";
-    const [employeeCounts, setEmployeeCounts] = useState<{ total: number; active: number } | null>(null);
+    const [employeeCounts, setEmployeeCounts] = useState<{ total: number; active: number; notes: number; openWriteUps: number } | null>(null);
     const [employeeError, setEmployeeError] = useState(false);
 
     useEffect(() => {
@@ -110,11 +110,13 @@ export default function DashboardPage() {
                     !Array.isArray(data.employeeList)) {
                     throw new Error("Invalid employee list response.");
                 }
-                const employees = data.employeeList as Array<{ status?: string }>;
+                const employees = data.employeeList as Array<{ status?: string; notesCount?: number; openWriteUpsCount?: number }>;
                 if (!cancelled) {
                     setEmployeeCounts({
                         total: employees.length,
                         active: employees.filter(employee => employee.status === "ACTIVE").length,
+                        notes: employees.reduce((total, employee) => total + (employee.notesCount ?? 0), 0),
+                        openWriteUps: employees.reduce((total, employee) => total + (employee.openWriteUpsCount ?? 0), 0),
                     });
                 }
             } catch (error) {
@@ -177,16 +179,16 @@ export default function DashboardPage() {
                     <span className="summary-icon note-icon" aria-hidden="true">✎</span>
                     <div className="summary-card-info">
                         <p>Manager notes</p>
-                        <strong>27</strong>
-                        <span className="summary-card-subtext">Added this month</span>
+                        <strong>{employeeCounts?.notes ?? "—"}</strong>
+                        <span className="summary-card-subtext">{employeeError ? "Unable to load notes" : "Total manager notes"}</span>
                     </div>
                 </article>
                 <article className="summary-card">
                     <span className="summary-icon writeup-icon" aria-hidden="true">!</span>
                     <div className="summary-card-info">
                         <p>Open write-ups</p>
-                        <strong>4</strong>
-                        <span className="summary-card-subtext">2 awaiting follow-up</span>
+                        <strong>{employeeCounts?.openWriteUps ?? "—"}</strong>
+                        <span className="summary-card-subtext">{employeeError ? "Unable to load write-ups" : "Unresolved records"}</span>
                     </div>
                 </article>
             </section>
