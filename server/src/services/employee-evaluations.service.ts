@@ -101,3 +101,11 @@ export async function getEmployeeEvaluation(employeeId: number, evaluationId: nu
   if (!evaluation) throw new EvaluationError(404, "Evaluation not found.");
   return evaluation;
 }
+
+/** Calendar quarter boundaries use UTC to make server-side reporting consistent. */
+export async function countEvaluationsCompletedThisQuarter() {
+  const now = new Date();
+  const start = new Date(Date.UTC(now.getUTCFullYear(), Math.floor(now.getUTCMonth() / 3) * 3, 1));
+  const end = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 3, 1));
+  return prisma.evaluation.count({ where: { completedAt: { gte: start, lt: end } } });
+}
