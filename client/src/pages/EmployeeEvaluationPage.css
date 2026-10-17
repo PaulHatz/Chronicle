@@ -6,3 +6,5 @@
 .employee-eval-footer{display:flex;align-items:center;justify-content:flex-end;gap:20px}.employee-eval-footer a{color:#576884;text-decoration:none;font-weight:700}.employee-eval-footer button{border:0;border-radius:9px;padding:13px 19px;background:#304d86;color:white;cursor:pointer;font-weight:750}.employee-eval-footer button:disabled{opacity:.55}
 .employee-eval-error{padding:14px;background:#fff0f0;border-radius:9px;color:#a03939}
 @media(max-width:600px){.employee-evaluation-page{padding:20px}.employee-eval-card{padding:17px}.employee-eval-header h1{font-size:28px}}
+
+.evaluation-result-score{background:#f1f5fc;border-radius:10px;padding:15px;color:#304d86}.evaluation-result-score p{white-space:pre-wrap;color:#4c5a70;margin-top:8px}.evaluation-result-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;color:#48566d;margin-top:12px}
