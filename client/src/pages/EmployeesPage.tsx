@@ -501,12 +501,11 @@ export default function EmployeesPage() {
                             <option value="All">
                                 All departments
                             </option>
-                            <option value="Service">Service</option>
-                            <option value="Bar">Bar</option>
-                            <option value="Kitchen">Kitchen</option>
-                            <option value="Management">
-                                Management
-                            </option>
+                            {departments.map((department) => (
+                                <option key={department.id} value={department.name}>
+                                    {department.name}
+                                </option>
+                            ))}
                         </select>
 
                         <select
