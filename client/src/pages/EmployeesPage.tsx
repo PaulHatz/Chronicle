@@ -458,7 +458,7 @@ export default function EmployeesPage() {
 
                     <div>
                         <span>Evaluations due</span>
-                        <strong>3</strong>
+                        <strong>{isLoading ? "—" : evaluationsDue}</strong>
                     </div>
                 </article>
 
