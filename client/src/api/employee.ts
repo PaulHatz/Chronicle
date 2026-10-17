@@ -52,7 +52,8 @@ export async function getemployeewriteups(id) {
 
     return response.json();
 }
-export async function createManagerNote(employeeId:number,input:{title:string;content:string}){
+export type ManagerNoteType = "POSITIVE" | "IMPROVEMENT" | "GENERAL";
+export async function createManagerNote(employeeId:number,input:{title:string;content:string;type:ManagerNoteType}){
  const response=await apiFetch("/activity/notes/"+employeeId,{method:"POST",body:JSON.stringify(input)});
  const body=await response.json();if(!response.ok)throw new Error(body.message||"Unable to save note");return body;
 }
