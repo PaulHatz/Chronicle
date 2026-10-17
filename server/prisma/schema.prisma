@@ -47,6 +47,7 @@ model Department {
   evaluationFrequencyDays Int
 
   evaluationTemplate EvaluationTemplate @relation(fields: [evaluationTemplateId], references: [id], onDelete: Restrict)
+  employees Employee[]
 }
 
 model EvaluationQuestion {
@@ -84,7 +85,8 @@ model Employee {
   email       String?        @unique
   phone       String?
   position    String
-  department  String
+  departmentId Int
+  department Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
   status      EmployeeStatus @default(ACTIVE)
   hireDate    DateTime
   evaluations Evaluation[]
