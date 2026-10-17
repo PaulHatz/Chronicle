@@ -89,7 +89,7 @@ export default function EvaluationTemplateDetailPage() {
         <Link className="evaluation-back" to="/evaluation-templates">← All templates</Link>
         <p className="evaluation-eyebrow">Settings / Evaluation templates</p>
         <h1>{template?.name ?? "Evaluation template"}</h1>
-        {template && <p>{template.department} · Version {template.version} · {template.questions.length} questions</p>}
+        {template && <p>Version {template.version} · {template.questions.length} questions</p>}
       </header>
       {loading ? <section className="evaluation-panel">Loading template…</section> :
         !template ? <section className="evaluation-panel evaluation-error">{error || "Template not found."}</section> : (
