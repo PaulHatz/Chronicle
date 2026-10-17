@@ -499,3 +499,19 @@
 .dashboard-upcoming-employee{display:block;margin-bottom:4px;color:#263653;text-decoration:none;font-size:14px;font-weight:700}
 .dashboard-upcoming-employee:hover{text-decoration:underline;color:#355b98}
 .dashboard-schedule-link{display:flex;align-items:center;justify-content:center;text-decoration:none;box-sizing:border-box;font-size:13px}
+
+/* Dashboard quick-action record editor. */
+.dashboard-record-backdrop{position:fixed;inset:0;z-index:1000;background:rgba(18,27,45,.55);display:flex;align-items:center;justify-content:center;padding:20px}
+.dashboard-record-modal{width:min(100%,520px);max-height:90vh;overflow-y:auto;background:white;border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.24);padding:28px}
+.dashboard-record-modal h2{margin:0 0 6px;font-size:22px}
+.dashboard-record-modal>p{margin:0 0 22px;color:#727b8c}
+.dashboard-record-modal form{display:grid;gap:16px}
+.dashboard-record-modal label{display:grid;gap:7px;color:#37435b;font-size:13px;font-weight:700}
+.dashboard-record-modal input,.dashboard-record-modal select,.dashboard-record-modal textarea{width:100%;padding:11px 12px;border:1px solid #d8deea;border-radius:8px;background:white;color:#172033;font:inherit;font-weight:400}
+.dashboard-record-modal textarea{resize:vertical}
+.dashboard-record-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
+.dashboard-record-actions button{padding:10px 18px;border:1px solid #d8deea;border-radius:8px;background:#f9fafc;color:#30405f;cursor:pointer;font-weight:700}
+.dashboard-record-actions button[type="submit"]{background:#304d86;border-color:#304d86;color:#fff}
+.dashboard-record-actions button:disabled{opacity:.55;cursor:not-allowed}
+.dashboard-record-error{margin:0;color:#a13d3d;font-size:13px}
+.dashboard-record-notice{padding:12px 16px;margin:0 0 20px;background:#e9f8f1;color:#21755a;border-radius:8px;font-weight:650}
