@@ -117,7 +117,7 @@ export default function EmployeePage() {
                                 email: data.email,
                                 phone: data.phone,
                                 position: data.position,
-                                department: data.department,
+                                department: data.department?.name ?? "Unknown",
                                 status: data.status,
                                 hireDate: data.hireDate,
                                 manager: "N/A",
