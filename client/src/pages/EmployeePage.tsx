@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./EmployeePage.css";
 
-import { getemployee, getemployeenotes, getemployeewriteups, createManagerNote, createEmployeeWriteUp, resolveEmployeeWriteUp, type WriteUpType } from "../api/employee";
+import { getemployee, getemployeenotes, getemployeewriteups, createManagerNote, createEmployeeWriteUp, resolveEmployeeWriteUp, type WriteUpType, type ManagerNoteType } from "../api/employee";
 import { getEmployeeEvaluations } from "../api/employee-evaluations";
 
 
@@ -44,6 +44,7 @@ type TimelineEvent = {
     evaluationId?: number;
     writeUpId?: number;
     resolvedAt?: string | null;
+    noteType?: ManagerNoteType;
 };
 /*
 const timelineEvents: TimelineEvent[] = [
@@ -105,6 +106,7 @@ export default function EmployeePage() {
     const [error, setError] = useState<string | null>(null);
     const [recordForm, setRecordForm] = useState<"note"|"writeup"|null>(null);
     const [noteTitle, setNoteTitle] = useState("");
+    const [noteType, setNoteType] = useState<ManagerNoteType>("GENERAL");
     const [recordContent, setRecordContent] = useState("");
     const [warningType, setWarningType] = useState<WriteUpType>("VERBAL_WARNING");
     const [savingRecord, setSavingRecord] = useState(false);
@@ -116,9 +118,9 @@ export default function EmployeePage() {
         if (!recordForm) return;
         setSavingRecord(true); setRecordError("");
         try {
-            if (recordForm === "note") await createManagerNote(Number(employeeId), {title:noteTitle,content:recordContent});
+            if (recordForm === "note") await createManagerNote(Number(employeeId), {title:noteTitle,content:recordContent,type:noteType});
             else await createEmployeeWriteUp(Number(employeeId), {type:warningType,reason:recordContent});
-            setRecordForm(null); setNoteTitle(""); setRecordContent("");
+            setRecordForm(null); setNoteTitle(""); setNoteType("GENERAL"); setRecordContent("");
             setRefreshToken(value=>value+1);
         } catch(e) { setRecordError(e instanceof Error ? e.message : "Unable to save record."); }
         finally { setSavingRecord(false); }
@@ -166,6 +168,7 @@ export default function EmployeePage() {
                             (note: any): TimelineEvent => ({
                                 id: note.id,
                                 type: "note",
+                                noteType: note.type ?? "GENERAL",
                                 title: note.title,
                                 description: note.content,
                                 author: "N/A",
@@ -333,7 +336,7 @@ export default function EmployeePage() {
                         <h2>{recordForm === "note" ? "Add manager note" : "Create write-up"}</h2>
                         <p>Record for {employee.name}</p>
                         <form onSubmit={submitRecord}>
-                            {recordForm === "note" ? <label>Title<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label>
+                            {recordForm === "note" ? <><label>Note type<select value={noteType} onChange={e=>setNoteType(e.target.value as ManagerNoteType)}><option value="GENERAL">General</option><option value="POSITIVE">Positive</option><option value="IMPROVEMENT">Needs improvement</option></select></label><label>Title<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
                               : <label>Warning type<select value={warningType} onChange={e=>setWarningType(e.target.value as WriteUpType)}>
                                 <option value="VERBAL_WARNING">Verbal warning</option><option value="WRITTEN_WARNING">Written warning</option><option value="FINAL_WARNING">Final warning</option>
                               </select></label>}
