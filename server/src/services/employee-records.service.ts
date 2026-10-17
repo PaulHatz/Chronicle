@@ -15,9 +15,9 @@ export async function listWriteUps(employeeId:number){
  await requireEmployee(employeeId);
  return prisma.writeUp.findMany({where:{employeeId},orderBy:{createdAt:"desc"}});
 }
-export async function createNote(employeeId:number,title:string,content:string){
+export async function createNote(employeeId:number,title:string,content:string,type:"POSITIVE"|"IMPROVEMENT"|"GENERAL" = "GENERAL"){
  await requireEmployee(employeeId);
- return prisma.managerNote.create({data:{employeeId,title,content}});
+ return prisma.managerNote.create({data:{employeeId,title,content,type}});
 }
 export async function createWriteUp(employeeId:number,type:"VERBAL_WARNING"|"WRITTEN_WARNING"|"FINAL_WARNING",reason:string){
  await requireEmployee(employeeId);
