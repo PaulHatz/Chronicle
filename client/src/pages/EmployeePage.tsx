@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./EmployeePage.css";
 
-import { getemployee, getemployeenotes, getemployeewriteups } from "../api/employee";
+import { getemployee, getemployeenotes, getemployeewriteups, createManagerNote, createEmployeeWriteUp, resolveEmployeeWriteUp, type WriteUpType } from "../api/employee";
 import { getEmployeeEvaluations } from "../api/employee-evaluations";
 
 
@@ -42,6 +42,8 @@ type TimelineEvent = {
     author: string;
     date: string;
     evaluationId?: number;
+    writeUpId?: number;
+    resolvedAt?: string | null;
 };
 /*
 const timelineEvents: TimelineEvent[] = [
@@ -101,6 +103,32 @@ export default function EmployeePage() {
     const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [recordForm, setRecordForm] = useState<"note"|"writeup"|null>(null);
+    const [noteTitle, setNoteTitle] = useState("");
+    const [recordContent, setRecordContent] = useState("");
+    const [warningType, setWarningType] = useState<WriteUpType>("VERBAL_WARNING");
+    const [savingRecord, setSavingRecord] = useState(false);
+    const [recordError, setRecordError] = useState("");
+    const [refreshToken, setRefreshToken] = useState(0);
+
+    async function submitRecord(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        if (!recordForm) return;
+        setSavingRecord(true); setRecordError("");
+        try {
+            if (recordForm === "note") await createManagerNote(Number(employeeId), {title:noteTitle,content:recordContent});
+            else await createEmployeeWriteUp(Number(employeeId), {type:warningType,reason:recordContent});
+            setRecordForm(null); setNoteTitle(""); setRecordContent("");
+            setRefreshToken(value=>value+1);
+        } catch(e) { setRecordError(e instanceof Error ? e.message : "Unable to save record."); }
+        finally { setSavingRecord(false); }
+    }
+    async function resolveRecord(id:number) {
+        if (!window.confirm("Mark this write-up as resolved?")) return;
+        try { await resolveEmployeeWriteUp(Number(employeeId),id); setRefreshToken(value=>value+1); }
+        catch(e) { setError(e instanceof Error ? e.message : "Could not resolve write-up."); }
+    }
+
     useEffect(() => {
             let cancelled = false;
         
@@ -127,8 +155,8 @@ export default function EmployeePage() {
                                 lastEvaluation: evaluations.length ? new Date(evaluations[0].completedAt).toLocaleDateString() : "N/A",
                                 nextEvaluation: data.nextEvaluationAt ? new Date(data.nextEvaluationAt).toLocaleDateString() : "N/A",
                                 performanceScore: 4.1,
-                                notes: 0,   
-                                openWriteUps: 0,
+                                notes: data_notes.length,   
+                                openWriteUps: data_writeups.filter((w: {resolvedAt?:string|null}) => !w.resolvedAt).length,
                                 completedEvaluations: evaluations.length
                             };
 
@@ -147,6 +175,8 @@ export default function EmployeePage() {
                         const employee_writeups: TimelineEvent[] = data_writeups.map(
                             (writeup: any): TimelineEvent => ({
                                 id: writeup.id,
+                                writeUpId: writeup.id,
+                                resolvedAt: writeup.resolvedAt,
                                 type: "writeup",
                                 title: writeup.type,
                                 description: writeup.reason,
@@ -189,7 +219,7 @@ export default function EmployeePage() {
             return () => {
                 cancelled = true;
             };
-        }, [employeeId]);
+        }, [employeeId, refreshToken]);
 
     if (!employee) {
         return (
@@ -298,6 +328,21 @@ export default function EmployeePage() {
                     </div>
                 </section>
 
+                {recordForm && <div className="employee-record-backdrop" role="presentation" onMouseDown={() => !savingRecord && setRecordForm(null)}>
+                    <section className="employee-record-modal" role="dialog" aria-modal="true" aria-label={recordForm === "note" ? "Add manager note" : "Create write-up"} onMouseDown={e=>e.stopPropagation()}>
+                        <h2>{recordForm === "note" ? "Add manager note" : "Create write-up"}</h2>
+                        <p>Record for {employee.name}</p>
+                        <form onSubmit={submitRecord}>
+                            {recordForm === "note" ? <label>Title<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label>
+                              : <label>Warning type<select value={warningType} onChange={e=>setWarningType(e.target.value as WriteUpType)}>
+                                <option value="VERBAL_WARNING">Verbal warning</option><option value="WRITTEN_WARNING">Written warning</option><option value="FINAL_WARNING">Final warning</option>
+                              </select></label>}
+                            <label>{recordForm === "note" ? "Note" : "Reason / details"}<textarea required rows={6} maxLength={10000} value={recordContent} onChange={e=>setRecordContent(e.target.value)}/></label>
+                            {recordError && <p role="alert" className="employee-record-error">{recordError}</p>}
+                            <div className="employee-record-actions"><button type="button" disabled={savingRecord} onClick={()=>setRecordForm(null)}>Cancel</button><button type="submit" disabled={savingRecord}>{savingRecord ? "Saving…" : "Save record"}</button></div>
+                        </form>
+                    </section>
+                </div>}
                 <section className="employee-overview-grid">
                     <article className="employee-information-card">
                         <div className="section-heading">
@@ -542,6 +587,10 @@ export default function EmployeePage() {
                                         </div>
 
                                         <p>{event.description}</p>
+                                        {event.writeUpId && <div className="writeup-resolution">
+                                            <span>{event.resolvedAt ? "Resolved" : "Open"}</span>
+                                            {!event.resolvedAt && <button type="button" onClick={() => void resolveRecord(event.writeUpId!)}>Mark resolved</button>}
+                                        </div>}
                                         {event.evaluationId && <Link className="evaluation-timeline-link" to={`/employees/${employee.id}/evaluations/${event.evaluationId}`}>View evaluation results →</Link>}
 
                                         <div className="timeline-author">
@@ -575,7 +624,7 @@ export default function EmployeePage() {
                             </div>
 
                             <div className="profile-action-list">
-                                <button type="button">
+                                <button type="button" onClick={() => {setRecordForm("note");setRecordError("");}}>
                                     <span className="action-icon action-blue">
                                         ✎
                                     </span>
@@ -620,7 +669,7 @@ export default function EmployeePage() {
                                     <b>→</b>
                                 </button>
 
-                                <button type="button">
+                                <button type="button" onClick={() => {setRecordForm("writeup");setRecordError("");}}>
                                     <span className="action-icon action-red">
                                         !
                                     </span>
