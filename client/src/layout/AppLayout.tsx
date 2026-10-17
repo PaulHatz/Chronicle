@@ -24,7 +24,7 @@ export default function AppLayout() {
   }, [open]);
   const location = useLocation();
   const { logout } = useAuth();
-  const settingsActive = location.pathname.startsWith("/evaluation-templates");
+  const settingsActive = (location.pathname.startsWith("/evaluation-templates") || location.pathname.startsWith("/departments"));
   return (
     <div className="chronicle-shell">
       <header className="chronicle-topbar">
@@ -42,6 +42,7 @@ export default function AppLayout() {
               </button>
               {open && (
                 <div className="chronicle-menu" role="menu">
+                  <Link role="menuitem" to="/departments" onClick={() => setOpen(false)}>Departments<span>Manage departments and review frequency</span></Link>
                   <Link role="menuitem" to="/evaluation-templates" onClick={() => setOpen(false)}>Evaluation templates<span>View and manage templates</span></Link>
                   <Link role="menuitem" to="/evaluation-templates/new" onClick={() => setOpen(false)}>Create evaluation template<span>Build a new evaluation</span></Link>
                 </div>
