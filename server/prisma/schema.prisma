@@ -37,6 +37,16 @@ model EvaluationTemplate {
   
   evaluations Evaluation[]
   questions   EvaluationQuestion[]
+  departments Department[]
+}
+
+model Department {
+  id                   Int @id @default(autoincrement())
+  name                 String @unique
+  evaluationTemplateId Int
+  evaluationFrequencyDays Int
+
+  evaluationTemplate EvaluationTemplate @relation(fields: [evaluationTemplateId], references: [id], onDelete: Restrict)
 }
 
 model EvaluationQuestion {
