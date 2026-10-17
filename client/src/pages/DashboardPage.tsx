@@ -214,7 +214,7 @@ export default function DashboardPage() {
                                 </div>
                             </div>
                             {recordAction === "note" ? (
-                                <><label>Note type<select value={noteType} onChange={event => setNoteType(event.target.value as ManagerNoteType)} disabled={recordSaving}><option value="GENERAL">General</option><option value="POSITIVE">Positive</option><option value="IMPROVEMENT">Needs improvement</option></select></label><label>Title<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label></>
+                                <><fieldset className="note-type-fieldset"><legend>Note type</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} disabled={recordSaving} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset><label>Title<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label></>
                             ) : (
                                 <label>Warning type
                                     <select value={warningType} onChange={event => setWarningType(event.target.value as WriteUpType)} disabled={recordSaving}>
