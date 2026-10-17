@@ -6,7 +6,7 @@ const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
 });
 
-export type TemplateInput = { department: string; name: string; version: string };
+export type TemplateInput = { name: string; version: string };
 export type QuestionInput = {
   questionText: string;
   questionType: "NUMERIC" | "TEXT";
@@ -38,9 +38,8 @@ export function createTemplate(data: TemplateInput) {
   return prisma.evaluationTemplate.create({ data });
 }
 
-export function listTemplates(department?: string) {
+export function listTemplates() {
   return prisma.evaluationTemplate.findMany({
-    where: department ? { department } : undefined,
     orderBy: { id: "desc" },
   });
 }
