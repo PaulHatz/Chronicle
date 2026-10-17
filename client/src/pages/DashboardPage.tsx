@@ -1,4 +1,5 @@
 import "./DashboardPage.css";
+import { Link } from "react-router-dom";
 
 type Activity = {
     id: number;
@@ -119,9 +120,9 @@ export default function DashboardPage() {
                         Add manager note
                     </button>
 
-                    <button className="primary-button" type="button">
-                        Add employee
-                    </button>
+                    <Link className="primary-button" to="/evaluation-templates" style={{display:"inline-flex",alignItems:"center",textDecoration:"none"}}>
+                        Create evaluation template
+                    </Link>
                 </div>
             </header>
 
