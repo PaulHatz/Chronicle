@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getemployeelist } from "../api/employee";
 import { isEvaluationDue } from "../api/evaluationDue";
+import { getQuarterEvaluationStatistics } from "../api/employee-evaluations";
 
 type Activity = {
     id: number;
@@ -101,6 +102,8 @@ export default function DashboardPage() {
     const managerName = "Paul";
     const [employeeCounts, setEmployeeCounts] = useState<{ total: number; active: number; notes: number; openWriteUps: number; evaluationsDue: number } | null>(null);
     const [employeeError, setEmployeeError] = useState(false);
+    const [completedThisQuarter, setCompletedThisQuarter] = useState<number | null>(null);
+    const [quarterError, setQuarterError] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -127,6 +130,12 @@ export default function DashboardPage() {
             }
         }
         void loadEmployeeCounts();
+        void getQuarterEvaluationStatistics()
+            .then(data => { if (!cancelled) setCompletedThisQuarter(data.completedThisQuarter); })
+            .catch(error => {
+                console.error("Failed to load quarterly evaluation statistics:", error);
+                if (!cancelled) setQuarterError(true);
+            });
         return () => { cancelled = true; };
     }, []);
 
@@ -173,8 +182,8 @@ export default function DashboardPage() {
                     <span className="summary-icon evaluation-icon" aria-hidden="true">✓</span>
                     <div className="summary-card-info">
                         <p>Evaluations completed</p>
-                        <strong>12</strong>
-                        <span className="summary-card-subtext">This quarter</span>
+                        <strong>{completedThisQuarter ?? "—"}</strong>
+                        <span className="summary-card-subtext">{quarterError ? "Unable to load evaluations" : "This quarter"}</span>
                     </div>
                 </article>
                 <article className="summary-card">
