@@ -20,6 +20,7 @@ model User {
   lastName     String
   role         UserRole @default(MANAGER)
   language     String   @default("fr-CA")
+  darkMode     Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
