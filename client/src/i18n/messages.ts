@@ -1,5 +1,6 @@
 export const messages = {
  "en-CA": {
+  appearance:"Appearance",appearanceDescription:"Choose how Chronicle looks.",darkMode:"Dark mode",darkModeDescription:"Use a darker colour scheme across Chronicle.",appearanceError:"Unable to save appearance preference.",
   dashboard:"Dashboard",employees:"Employees",settings:"Settings",signOut:"Sign out",
   users:"Users",departments:"Departments",evaluationTemplates:"Evaluation templates",
   accountPermissions:"Accounts and permissions",teamsSchedules:"Teams and evaluation schedules",
@@ -280,6 +281,7 @@ export const messages = {
   unknown: "Unknown",
  },
  "fr-CA": {
+  appearance:"Apparence",appearanceDescription:"Personnalisez l’apparence de Chronicle.",darkMode:"Mode sombre",darkModeDescription:"Utiliser un thème sombre dans Chronicle.",appearanceError:"Impossible d’enregistrer la préférence d’apparence.",
   dashboard:"Tableau de bord",employees:"Employés",settings:"Paramètres",signOut:"Déconnexion",
   users:"Utilisateurs",departments:"Départements",evaluationTemplates:"Modèles d’évaluation",
   accountPermissions:"Comptes et autorisations",teamsSchedules:"Équipes et calendriers d’évaluation",
