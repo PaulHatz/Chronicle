@@ -44,7 +44,7 @@ export async function loginUser(email: string, password: string) {
     );
 
     return { 
-        user: { firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, language: user.language },
+        user: { firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, language: user.language, darkMode: user.darkMode },
         token: token,
         success: 1
     };
@@ -62,6 +62,7 @@ export async function getCurrentUser(userId: number) {
             email: true,
             role: true,
             language: true,
+            darkMode: true,
             createdAt: true
         }
     });
