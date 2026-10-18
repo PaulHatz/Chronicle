@@ -14,6 +14,7 @@ import departmentRoutes from "./routes/departments.routes";
 import employeeEvaluationRoutes from "./routes/employee-evaluations.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import goalsRoutes from "./routes/goals.routes";
+import usersRoutes from "./routes/users.routes";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(cors());
 
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/users", usersRoutes);
 
 app.use("/api/employees", employeesRoutes);
 app.use("/api/activity", activityRoutes);
