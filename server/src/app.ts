@@ -13,6 +13,7 @@ import evaluationRoutes from "./routes/evaluations.routes";
 import departmentRoutes from "./routes/departments.routes";
 import employeeEvaluationRoutes from "./routes/employee-evaluations.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
+import goalsRoutes from "./routes/goals.routes";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api", evaluationRoutes);
 app.use("/api/departments", departmentRoutes);
 app.use("/api/employees", employeeEvaluationRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/employees", goalsRoutes);
 
 
 app.get("/", (req, res) => {
