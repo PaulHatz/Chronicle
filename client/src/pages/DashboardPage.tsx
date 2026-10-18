@@ -40,7 +40,7 @@ function findUpcomingEvaluations(employees: Array<{
             id: employee.id,
             employee: `${employee.firstName} ${employee.lastName}`,
             position: employee.position,
-            date: date.toLocaleDateString(undefined, { timeZone: "UTC", month: "short", day: "numeric" }),
+            date: date.toLocaleDateString(document.documentElement.lang, { timeZone: "UTC", month: "short", day: "numeric" }),
             daysRemaining,
         }];
     }).sort((a, b) => a.daysRemaining - b.daysRemaining || a.employee.localeCompare(b.employee));
@@ -309,7 +309,7 @@ export default function DashboardPage() {
                                     <span>{activity.detail}</span>
                                 </div>
 
-                                <time dateTime={activity.occurredAt}>{new Date(activity.occurredAt).toLocaleDateString()}</time>
+                                <time dateTime={activity.occurredAt}>{new Date(activity.occurredAt).toLocaleDateString(document.documentElement.lang)}</time>
                             </div>
                         ))}
                     </div>
