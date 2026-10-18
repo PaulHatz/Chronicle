@@ -137,7 +137,7 @@ export default function EvaluationTemplatesPage() {
               <div><h2>{t("templateDetails")}</h2><p>{t("chooseNameVersion")}</p></div>
             </div>
             <div className="evaluation-fields">
-              <label>{t("templateName")}<input required value={name} placeholder="Quarterly performance review" onChange={e => setName(e.target.value)} /></label>
+              <label>{t("templateName")}<input required value={name} placeholder={t("exampleTemplate")} onChange={e => setName(e.target.value)} /></label>
               <label>{t("version")}<input required value={version} placeholder="1.0" onChange={e => setVersion(e.target.value)} /></label>
             </div>
           </section>
@@ -154,7 +154,7 @@ export default function EvaluationTemplatesPage() {
                     <strong>Question {i + 1}</strong>
                     <button type="button" className="evaluation-remove" onClick={() => removeQuestion(q.key)}>{t("remove")}</button>
                   </div>
-                  <label>{t("questionText")}<textarea required rows={2} value={q.questionText} placeholder="How well does the employee work with their team?" onChange={e => editQuestion(q.key, { questionText: e.target.value })} /></label>
+                  <label>{t("questionText")}<textarea required rows={2} value={q.questionText} placeholder={t("exampleQuestion")} onChange={e => editQuestion(q.key, { questionText: e.target.value })} /></label>
                   <label>Answer type
                     <select value={q.questionType} onChange={e => editQuestion(q.key, { questionType: e.target.value as DraftQuestion["questionType"] })}>
                       <option value="NUMERIC">{t("numericScore")}</option>
