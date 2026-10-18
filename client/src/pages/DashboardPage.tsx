@@ -46,8 +46,22 @@ function findUpcomingEvaluations(employees: Array<{
 }
 
 
+function greetingForHour(hour: number): string {
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+}
+
 export default function DashboardPage() {
     const managerName = "Paul";
+    const [greeting, setGreeting] = useState(() => greetingForHour(new Date().getHours()));
+
+    useEffect(() => {
+        const updateGreeting = () => setGreeting(greetingForHour(new Date().getHours()));
+        const interval = window.setInterval(updateGreeting, 60_000);
+        window.addEventListener("focus", updateGreeting);
+        return () => { window.clearInterval(interval); window.removeEventListener("focus", updateGreeting); };
+    }, []);
     const [employeeCounts, setEmployeeCounts] = useState<{ total: number; active: number; notes: number; openWriteUps: number; evaluationsDue: number } | null>(null);
     const [employeeError, setEmployeeError] = useState(false);
     const [completedThisQuarter, setCompletedThisQuarter] = useState<number | null>(null);
@@ -166,7 +180,7 @@ export default function DashboardPage() {
                 <div>
                     <p className="dashboard-eyebrow">Overview</p>
 
-                    <h1>Good evening, {managerName}</h1>
+                    <h1>{greeting}, {managerName}</h1>
 
                     <p>
                         Here is what is happening with your team today.
