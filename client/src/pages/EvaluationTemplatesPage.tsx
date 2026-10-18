@@ -123,7 +123,7 @@ export default function EvaluationTemplatesPage() {
       <header className="evaluation-builder-header">
         <div>
           <Link className="evaluation-back" to="/evaluation-templates">{t("allTemplatesBack")}</Link>
-          <p className="evaluation-eyebrow">Employee performance</p>
+          <p className="evaluation-eyebrow">{t("employeePerformance")}</p>
           <h1>{t("createTemplate")}</h1>
           <p>{t("templatesIntro")}</p>
         </div>
@@ -145,7 +145,7 @@ export default function EvaluationTemplatesPage() {
           <section className="evaluation-panel">
             <div className="evaluation-panel-heading">
               <span className="evaluation-number">02</span>
-              <div><h2>{t("questions")}</h2><p>Add scored questions with a rubric, or written responses.</p></div>
+              <div><h2>{t("questions")}</h2><p>{t("addQuestionsHelp")}</p></div>
             </div>
             <div className="evaluation-questions">
               {questions.map((q, i) => (
@@ -168,7 +168,7 @@ export default function EvaluationTemplatesPage() {
                         <label>{t("maxScore")}<input type="number" value={q.maxScore} onChange={e => editQuestion(q.key, { maxScore: Number(e.target.value) })} /></label>
                       </div>
                       <div className="evaluation-rubric">
-                        <div className="evaluation-rubric-heading"><strong>{t("scoringRubric")}</strong><span>Describe what each score means</span></div>
+                        <div className="evaluation-rubric-heading"><strong>{t("scoringRubric")}</strong><span>{t("rubricInfo")}</span></div>
                         {Number.isSafeInteger(q.minScore) && Number.isSafeInteger(q.maxScore) &&
                           q.minScore <= q.maxScore && q.maxScore - q.minScore <= 20 &&
                           Array.from({ length: q.maxScore - q.minScore + 1 }, (_, offset) => q.minScore + offset).map(score => (
@@ -180,7 +180,7 @@ export default function EvaluationTemplatesPage() {
                           ))}
                       </div>
                     </>
-                  ) : <p className="evaluation-help">The evaluator will enter a written response.</p>}
+                  ) : <p className="evaluation-help">{t("writtenInfo")}</p>}
                 </div>
               ))}
             </div>
@@ -196,8 +196,8 @@ export default function EvaluationTemplatesPage() {
           <section className="evaluation-panel">
             <h2>{t("templateOverview")}</h2>
             <div className="evaluation-stat"><span>{t("questions")}</span><strong>{questions.length}</strong></div>
-            <div className="evaluation-stat"><span>Numeric</span><strong>{questions.filter(q => q.questionType === "NUMERIC").length}</strong></div>
-            <div className="evaluation-stat"><span>Written</span><strong>{questions.filter(q => q.questionType === "TEXT").length}</strong></div>
+            <div className="evaluation-stat"><span>{t("numeric")}</span><strong>{questions.filter(q => q.questionType === "NUMERIC").length}</strong></div>
+            <div className="evaluation-stat"><span>{t("written")}</span><strong>{questions.filter(q => q.questionType === "TEXT").length}</strong></div>
           </section>
           <section className="evaluation-panel">
             <h2>{t("existingTemplates")}</h2>
