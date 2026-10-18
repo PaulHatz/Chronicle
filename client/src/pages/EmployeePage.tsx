@@ -618,9 +618,7 @@ export default function EmployeePage() {
                                 onClick={() =>
                                     setActiveTab("timeline")
                                 }
-                            >
-                                Timeline
-                            </button>
+                            >{t("timeline")}</button>
 
                             <button
                                 className={
@@ -632,9 +630,7 @@ export default function EmployeePage() {
                                 onClick={() =>
                                     setActiveTab("evaluations")
                                 }
-                            >
-                                Evaluations
-                            </button>
+                            >{t("evaluations")}</button>
 
                             <button
                                 className={
@@ -644,9 +640,7 @@ export default function EmployeePage() {
                                 }
                                 type="button"
                                 onClick={() => setActiveTab("notes")}
-                            >
-                                Notes
-                            </button>
+                            >{t("notes")}</button>
 
                             <button
                                 className={
@@ -658,9 +652,7 @@ export default function EmployeePage() {
                                 onClick={() =>
                                     setActiveTab("writeups")
                                 }
-                            >
-                                Write-ups
-                            </button>
+                            >{t("writeUps")}</button>
                         </div>
 
                         <div className="history-panel-heading">
@@ -677,9 +669,7 @@ export default function EmployeePage() {
                                 </p>
                             </div>
 
-                            <button type="button">
-                                Add record
-                                <span>+</span>
+                            <button type="button">{t("addRecord")}<span>+</span>
                             </button>
                         </div>
 
