@@ -1,4 +1,6 @@
 import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 
 import "./LoginPage.css";
@@ -8,6 +10,8 @@ import { login } from "../api/auth";
 
 export default function LoginPage() {
     const {t}=useLanguage();
+    const navigate = useNavigate();
+    const { login: setSession } = useAuth();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -23,14 +27,8 @@ export default function LoginPage() {
                 password
             );
 
-            localStorage.setItem(
-                "token",
-                result.token
-            );
-            alert(result.user.firstName);
-            alert (result.token);
-
-            // navigate("/dashboard");
+            setSession(result.token);
+            navigate("/", { replace: true });
 
         } catch(err) {
 
@@ -39,7 +37,6 @@ export default function LoginPage() {
         }
     }
 
-    console.log("Were here LoginPage.tsx");
 
 
     return (
