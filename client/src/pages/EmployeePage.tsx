@@ -4,7 +4,7 @@ import "./EmployeePage.css";
 import {useLanguage} from "../i18n/LanguageContext";
 
 import { getemployee, getemployeenotes, getemployeewriteups, createManagerNote, createEmployeeWriteUp, resolveEmployeeWriteUp, type WriteUpType, type ManagerNoteType, updateEmployeeProfile, type EmployeeProfileInput } from "../api/employee";
-import {getDepartments,type Department} from "../api/departments";
+import {getDepartmentOptions,type DepartmentOption} from "../api/departments";
 import { getEmployeeEvaluations } from "../api/employee-evaluations";
 import { getEmployeeGoals, createEmployeeGoal, updateEmployeeGoal, deleteEmployeeGoal, type EmployeeGoal } from "../api/goals";
 
@@ -113,7 +113,7 @@ export default function EmployeePage() {
     const {t}=useLanguage();
     const { employeeId } = useParams();
     const [profileDraft,setProfileDraft]=useState<EmployeeProfileInput|null>(null);
-    const [departments,setDepartments]=useState<Department[]>([]);
+    const [departments,setDepartments]=useState<DepartmentOption[]>([]);
     const [profileSaving,setProfileSaving]=useState(false);
     const [profileError,setProfileError]=useState("");
     const [activeTab, setActiveTab] = useState<TabName>("timeline");
@@ -145,7 +145,7 @@ export default function EmployeePage() {
     async function openProfileEditor(){
         setProfileError("");
         try {
-            const [result, available] = await Promise.all([getemployee(Number(employeeId)),getDepartments()]);
+            const [result, available] = await Promise.all([getemployee(Number(employeeId)),getDepartmentOptions()]);
             const value=result.employee;
             setDepartments(available);
             setProfileDraft({firstName:value.firstName,lastName:value.lastName,email:value.email??"",phone:value.phone??"",position:value.position,departmentId:value.departmentId,status:value.status,hireDate:String(value.hireDate).slice(0,10)});

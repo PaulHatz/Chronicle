@@ -71,3 +71,8 @@ export async function removeDepartment(req: Request, res: Response) {
     return res.status(204).send();
   } catch (error) { return fail(error, res); }
 }
+
+
+export async function getDepartmentOptions(_req: Request, res: Response) {
+  try { return res.json(await service.listDepartmentOptions()); } catch (error) { return fail(error, res); }
+}

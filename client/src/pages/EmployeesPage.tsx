@@ -4,7 +4,7 @@ import "./EmployeesPage.css";
 import {useLanguage} from "../i18n/LanguageContext";
 
 import { getemployeelist, addemployee } from "../api/employee";
-import { getDepartments, type Department } from "../api/departments";
+import { getDepartmentOptions, type DepartmentOption } from "../api/departments";
 import { isEvaluationDue } from "../api/evaluationDue";
 
 type EmployeeStatus = "ACTIVE" | "INACTIVE" | "LEAVE";
@@ -30,7 +30,7 @@ export default function EmployeesPage() {
     const {t}=useLanguage();
     
     const [employees, setEmployees] = useState<Employee[]>([]);
-    const [departments, setDepartments] = useState<Department[]>([]);
+    const [departments, setDepartments] = useState<DepartmentOption[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showAddForm, setShowAddForm] = useState(false);
@@ -119,7 +119,7 @@ export default function EmployeesPage() {
     }
     
     useEffect(() => {
-        void getDepartments().then(setDepartments).catch(error => console.error("Failed to load departments:", error));
+        void getDepartmentOptions().then(setDepartments).catch(error => console.error("Failed to load departments:", error));
         let cancelled = false;
     
         async function loadEmployees() {

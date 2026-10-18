@@ -6,9 +6,11 @@ import * as departmentController from "../controllers/departments.controller";
 const router = Router();
 router.use(authenticate);
 
-router.get("/", departmentController.getDepartments);
+router.get("/options", departmentController.getDepartmentOptions);
+router.get("/", requireAdmin, departmentController.getDepartments);
 router.post("/", requireAdmin, departmentController.addDepartment);
 router.patch("/:departmentId", requireAdmin, departmentController.modifyDepartment);
 router.delete("/:departmentId", requireAdmin, departmentController.removeDepartment);
 
 export default router;
+

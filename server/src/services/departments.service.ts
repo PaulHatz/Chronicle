@@ -1,10 +1,4 @@
-import "dotenv/config";
-import { PrismaClient } from "../generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
-});
+import { prisma } from "../lib/prisma";
 
 export type DepartmentInput = {
   name: string;
@@ -39,4 +33,10 @@ export async function updateDepartment(id: number, data: Partial<DepartmentInput
 
 export async function deleteDepartment(id: number) {
   await prisma.department.delete({ where: { id } });
+}
+
+
+// Minimal lookup for employee forms and filters; configuration remains admin-only.
+export async function listDepartmentOptions() {
+  return prisma.department.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } });
 }

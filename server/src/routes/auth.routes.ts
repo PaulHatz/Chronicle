@@ -13,6 +13,6 @@ router.post("/login", login);
 router.use(authenticate);
 
 // Protected routes
-router.get("/me", authenticate, me);
+router.get("/me", me);
 
 export default router;

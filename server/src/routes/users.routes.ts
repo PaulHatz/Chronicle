@@ -1,11 +1,9 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import argon2 from "argon2";
 import "dotenv/config";
-import { PrismaClient } from "../generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { authenticate, type AuthRequest } from "../middleware/auth.middleware";
+import { prisma } from "../lib/prisma";
+import { authenticate, requireRoles, type AuthRequest } from "../middleware/auth.middleware";
 
-const prisma = new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL!})});
 const router = Router();
 const publicFields = {id:true,email:true,firstName:true,lastName:true,role:true,language:true,createdAt:true,updatedAt:true} as const;
 const validLanguage = (v:unknown):v is "fr-CA"|"en-CA" => v==="fr-CA" || v==="en-CA";
@@ -19,16 +17,10 @@ function error(res:Response,e:unknown) {
   console.error(e); return res.status(500).json({message:"Unable to process user request."});
 }
 router.use(authenticate);
-router.use(async(req:Request,res:Response,next:NextFunction)=>{
-  const id=(req as AuthRequest).user?.id;
-  if(!id)return res.status(401).json({message:"Not authenticated."});
-  try{
-    const actor=await prisma.user.findUnique({where:{id},select:{role:true}});
-    if(!actor)return res.status(401).json({message:"Account no longer exists."});
-    if(actor.role!=="ADMIN"&&actor.role!=="MANAGER")return res.status(403).json({message:"Manager access required."});
-    res.locals.actorRole=actor.role;
-    next();
-  }catch(e){error(res,e);}
+router.use(requireRoles("ADMIN", "MANAGER"));
+router.use((req:Request,res:Response,next:NextFunction)=>{
+  res.locals.actorRole=(req as AuthRequest).user!.role;
+  next();
 });
 router.get("/",async(_req,res)=>{try{res.json({users:await prisma.user.findMany({where:res.locals.actorRole==="MANAGER"?{role:"TEAM_LEADER"}:{},select:publicFields,orderBy:[{lastName:"asc"},{firstName:"asc"}]})});}catch(e){error(res,e);}});
 router.post("/",async(req,res)=>{
@@ -93,3 +85,4 @@ router.delete("/:userId",async(req:Request,res:Response)=>{
   }catch(e){return error(res,e);}
 });
 export default router;
+

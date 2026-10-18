@@ -10,3 +10,7 @@ export const getDepartments=()=>call<Department[]>("/departments");
 export const addDepartment=(data:DepartmentInput)=>call<Department>("/departments",{method:"POST",body:JSON.stringify(data)});
 export const modifyDepartment=(id:number,data:DepartmentInput)=>call<Department>(`/departments/${id}`,{method:"PATCH",body:JSON.stringify(data)});
 export const deleteDepartment=(id:number)=>call<void>(`/departments/${id}`,{method:"DELETE"});
+
+
+export type DepartmentOption = Pick<Department,"id"|"name">;
+export const getDepartmentOptions=()=>call<DepartmentOption[]>("/departments/options");
