@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import { getEvaluationTemplates } from "../api/evaluations";
 import { getDepartments, addDepartment, modifyDepartment, deleteDepartment, type Department, type DepartmentInput } from "../api/departments";
 import "./DepartmentsPage.css";
+import {useLanguage} from "../i18n/LanguageContext";
 
 type Template = { id: number; name: string; version: string };
 const blank: DepartmentInput = { name: "", evaluationTemplateId: 0, evaluationFrequencyDays: 90 };
 
 export default function DepartmentsPage() {
+  const {t}=useLanguage();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,8 +64,8 @@ export default function DepartmentsPage() {
 
   return <main className="departments-page">
     <header className="departments-header">
-      <div><p className="departments-eyebrow">Settings / Organization</p><h1>Departments</h1><p>Manage your departments and their evaluation schedules.</p></div>
-      <button className="department-primary" type="button" disabled={loading||busy||templates.length===0} onClick={create}>＋ Add department</button>
+      <div><p className="departments-eyebrow">{t("settings")} / {t("organization")}</p><h1>{t("departments")}</h1><p>{t("manageDepartments")}</p></div>
+      <button className="department-primary" type="button" disabled={loading||busy||templates.length===0} onClick={create}>＋ {t("addDepartment")}</button>
     </header>
     {error && <p className="department-alert department-error" role="alert">{error}</p>}
     {notice && <p className="department-alert department-success" role="status">{notice}</p>}
@@ -72,23 +74,23 @@ export default function DepartmentsPage() {
       {editing !== null && <form className="department-card department-form" onSubmit={save}>
         <h2>{editing === "new" ? "Add department" : "Edit department"}</h2>
         <div className="department-fields">
-          <label>Name<input required value={draft.name} placeholder="Kitchen" onChange={e=>setDraft(d=>({...d,name:e.target.value}))}/></label>
-          <label>Evaluation template<select required value={draft.evaluationTemplateId||""} onChange={e=>setDraft(d=>({...d,evaluationTemplateId:Number(e.target.value)}))}>
-            <option value="" disabled>Select a template</option>
+          <label>{t("departmentName")}<input required value={draft.name} placeholder="Kitchen" onChange={e=>setDraft(d=>({...d,name:e.target.value}))}/></label>
+          <label>{t("evaluationTemplate")}<select required value={draft.evaluationTemplateId||""} onChange={e=>setDraft(d=>({...d,evaluationTemplateId:Number(e.target.value)}))}>
+            <option value="" disabled>{t("selectTemplate")}</option>
             {templates.map(t=><option key={t.id} value={t.id}>{t.name} (v{t.version})</option>)}
           </select></label>
-          <label>Evaluation frequency (days)<input required type="number" min="1" step="1" value={draft.evaluationFrequencyDays} onChange={e=>setDraft(d=>({...d,evaluationFrequencyDays:Number(e.target.value)}))}/></label>
+          <label>{t("frequencyDays")}<input required type="number" min="1" step="1" value={draft.evaluationFrequencyDays} onChange={e=>setDraft(d=>({...d,evaluationFrequencyDays:Number(e.target.value)}))}/></label>
         </div>
-        <div className="department-actions"><button type="button" disabled={busy} onClick={()=>setEditing(null)}>Cancel</button><button className="department-primary" disabled={busy} type="submit">{busy?"Saving…":"Save department"}</button></div>
+        <div className="department-actions"><button type="button" disabled={busy} onClick={()=>setEditing(null)}>{t("cancel")}</button><button className="department-primary" disabled={busy} type="submit">{busy?"Saving…":"Save department"}</button></div>
       </form>}
       <section className="department-card department-directory">
-        <div className="department-list-heading"><h2>All departments</h2><span>{departments.length} total</span></div>
-        {departments.length===0 ? <p className="department-empty">No departments created yet.</p> :
+        <div className="department-list-heading"><h2>{t("allDepartments")}</h2><span>{departments.length} total</span></div>
+        {departments.length===0 ? <p className="department-empty">{t("noDepartments")}</p> :
           departments.map(d=><div className="department-row" key={d.id}>
             <span className="department-icon">▦</span>
             <div className="department-identity"><strong>{d.name}</strong><span>Every {d.evaluationFrequencyDays} days</span></div>
             <div className="department-template"><small>Evaluation template</small><Link to={`/evaluation-templates/${d.evaluationTemplateId}`}>{d.evaluationTemplate.name} · v{d.evaluationTemplate.version}</Link></div>
-            <div className="department-actions"><button type="button" disabled={busy} onClick={()=>edit(d)}>Edit</button><button type="button" disabled={busy} className="department-delete" onClick={()=>void remove(d)}>Delete</button></div>
+            <div className="department-actions"><button type="button" disabled={busy} onClick={()=>edit(d)}>{t("edit")}</button><button type="button" disabled={busy} className="department-delete" onClick={()=>void remove(d)}>{t("delete")}</button></div>
           </div>)}
       </section>
     </>}
