@@ -1,5 +1,6 @@
 import { useId, useState } from "react";
 import "./EmployeePicker.css";
+import {useLanguage} from "../i18n/LanguageContext";
 
 export type EmployeePickerOption = {
   id: number;
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export default function EmployeePicker({ employees, value, onChange, disabled = false, activeOnly = true }: Props) {
+  const {t}=useLanguage();
   const searchId = useId();
   const [search, setSearch] = useState("");
   const query = search.trim().toLocaleLowerCase();
@@ -29,17 +31,17 @@ export default function EmployeePicker({ employees, value, onChange, disabled = 
 
   return (
     <div className="dashboard-employee-picker">
-      <label htmlFor={searchId}>Employee</label>
+      <label htmlFor={searchId}>{t("employeeField")}</label>
       <div className="dashboard-employee-search">
         <span aria-hidden="true">⌕</span>
-        <input id={searchId} type="search" placeholder="Search employees by name or position…"
+        <input id={searchId} type="search" placeholder={t("employeePickerSearch")}
           autoComplete="off" value={search} onChange={event => {
             setSearch(event.target.value);
             if (value) onChange("");
           }} disabled={disabled}/>
       </div>
-      {selectedEmployee && <span className="dashboard-employee-selected" role="status">Selected: {selectedEmployee.firstName} {selectedEmployee.lastName}</span>}
-      <div className="dashboard-employee-results" role="group" aria-label="Choose an employee">
+      {selectedEmployee && <span className="dashboard-employee-selected" role="status">{t("selectedEmployee",{name:`${selectedEmployee.firstName} ${selectedEmployee.lastName}`})}</span>}
+      <div className="dashboard-employee-results" role="group" aria-label={t("chooseEmployeePicker")}>
         {matches.map(employee => (
           <button type="button" key={employee.id} disabled={disabled}
             className={`dashboard-employee-choice${value === String(employee.id) ? " is-selected" : ""}`}
@@ -56,7 +58,7 @@ export default function EmployeePicker({ employees, value, onChange, disabled = 
             {value === String(employee.id) && <span className="dashboard-employee-check" aria-hidden="true">✓</span>}
           </button>
         ))}
-        {matches.length === 0 && <p className="dashboard-employee-empty">No matching employees.</p>}
+        {matches.length === 0 && <p className="dashboard-employee-empty">{t("noMatchingEmployees")}</p>}
       </div>
     </div>
   );
