@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { NavLink, Link, Outlet } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useAuth } from "../auth/AuthContext";
@@ -7,8 +6,6 @@ import "./AppLayout.css";
 export default function AppLayout() {
   const { logout } = useAuth();
   const { t } = useLanguage();
-  return () => { active = false; };
-  }, [isAuthenticated]);
   return (
     <div className="chronicle-shell">
       <header className="chronicle-topbar">
