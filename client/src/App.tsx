@@ -41,7 +41,7 @@ export default function App() {
                 <Route path="/employees/:employeeId/evaluate" element={<EmployeeEvaluationPage />} />
                 <Route path="/employees/:employeeId/evaluations/:evaluationId" element={<EmployeeEvaluationResultPage />} />
                 <Route element={<SettingsLayout />}>
-                  <Route path="/settings" element={<Navigate to="/users" replace />} />
+                  <Route path="/settings" element={<Navigate to="/settings/language" replace />} />
                   <Route path="/departments" element={<DepartmentsPage />} />
                   <Route path="/users" element={<UsersPage />} />
                   <Route path="/settings/language" element={<LanguageSettingsPage />} />
