@@ -1,9 +1,4 @@
-import "dotenv/config";
-import { PrismaClient } from "../generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }) });
-
+import { prisma } from "../lib/prisma";
 export async function getRecentActivity(limit = 8) {
   const [evaluations, notes, writeUps] = await Promise.all([
     prisma.evaluation.findMany({
@@ -35,3 +30,4 @@ export async function getRecentActivity(limit = 8) {
   ];
   return events.sort((a,b) => b.occurredAt.getTime() - a.occurredAt.getTime()).slice(0, limit);
 }
+

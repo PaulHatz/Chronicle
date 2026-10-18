@@ -1,7 +1,4 @@
-import "dotenv/config";
-import { PrismaClient } from "../generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-const prisma = new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL!})});
+import { prisma } from "../lib/prisma";
 export class GoalError extends Error { constructor(public statusCode:number,message:string){super(message);} }
 export type GoalInput={title:string;description:string;status:"COMPLETED"|"INCOMPLETE";duration:Date};
 async function employeeExists(employeeId:number){
@@ -24,3 +21,4 @@ export async function deleteGoal(employeeId:number,goalId:number){
  const result=await prisma.goal.deleteMany({where:{id:goalId,employeeId}});
  if(!result.count)throw new GoalError(404,"Goal not found for this employee.");
 }
+

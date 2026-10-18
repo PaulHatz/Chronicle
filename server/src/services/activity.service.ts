@@ -1,27 +1,17 @@
-import "dotenv/config";
-import { PrismaClient } from "../generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-
-const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL!,
-  });
-  
-  const prisma = new PrismaClient({ adapter });
-
-
-export async function getManagerNotesForEmployeeId(id) {
-    const notes =  await prisma.ManagerNote.findMany({
+import { prisma } from "../lib/prisma";
+export async function getManagerNotesForEmployeeId(id: number) {
+    const notes =  await prisma.managerNote.findMany({
         where: { employeeId: Number(id) }
     });
 
     return notes;
 }
 
-export async function getWriteUpsForEmployeeId(id) {
-    const notes =  await prisma.WriteUp.findMany({
+export async function getWriteUpsForEmployeeId(id: number) {
+    const notes =  await prisma.writeUp.findMany({
         where: { employeeId: Number(id) }
     });
 
     return notes;
 }
+

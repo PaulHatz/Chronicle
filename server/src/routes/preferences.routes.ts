@@ -1,11 +1,8 @@
+import { prisma } from "../lib/prisma";
 import { languageBody, themeBody } from "../validation/schemas";
 import { validateRequest } from "../middleware/validation.middleware";
 import { Router, type Request, type Response } from "express";
-import { PrismaClient } from "../generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
 import { authenticate, type AuthRequest } from "../middleware/auth.middleware";
-import "dotenv/config";
-const prisma=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL!})});
 const router=Router();
 router.use(authenticate);
 router.patch("/language", validateRequest(languageBody),async(req:Request,res:Response)=>{

@@ -1,10 +1,5 @@
-import "dotenv/config";
-import { PrismaClient, Prisma } from "../generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
-});
+import { prisma } from "../lib/prisma";
+import { Prisma } from "../generated/prisma/client";
 
 export type TemplateInput = { name: string; version: string };
 export type QuestionInput = {
@@ -121,3 +116,4 @@ export async function deleteQuestion(id: number) {
 
   await prisma.evaluationQuestion.delete({ where: { id } });
 }
+

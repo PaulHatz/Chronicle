@@ -1,7 +1,4 @@
-import "dotenv/config";
-import { PrismaClient } from "../generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-const prisma = new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL!})});
+import { prisma } from "../lib/prisma";
 export class ActivityError extends Error {constructor(public status:number,message:string){super(message);}}
 async function requireEmployee(employeeId:number){
  const employee=await prisma.employee.findUnique({where:{id:employeeId},select:{id:true}});
@@ -28,3 +25,4 @@ export async function resolveWriteUp(employeeId:number,id:number){
  if(result.count===0)throw new ActivityError(404,"Open write-up not found.");
  return prisma.writeUp.findUniqueOrThrow({where:{id}});
 }
+

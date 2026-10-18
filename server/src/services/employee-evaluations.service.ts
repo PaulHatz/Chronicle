@@ -1,9 +1,4 @@
-import "dotenv/config";
-import { PrismaClient } from "../generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }) });
-
+import { prisma } from "../lib/prisma";
 export class EvaluationError extends Error {
   constructor(public status: number, message: string) { super(message); }
 }
@@ -109,3 +104,4 @@ export async function countEvaluationsCompletedThisQuarter() {
   const end = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 3, 1));
   return prisma.evaluation.count({ where: { completedAt: { gte: start, lt: end } } });
 }
+

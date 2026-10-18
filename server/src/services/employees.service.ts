@@ -1,13 +1,5 @@
+import { prisma } from "../lib/prisma";
 import type { EmployeeInput } from "../validation/schemas";
-import "dotenv/config";
-import { PrismaClient } from "../generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL!,
-  });
-  
-  const prisma = new PrismaClient({ adapter });
 
 function addDays(date: Date, days: number) {
     const due = new Date(date);
