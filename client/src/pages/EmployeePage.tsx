@@ -23,6 +23,7 @@ type Employee = {
     nextEvaluation: string;
     performanceScore: number;
     notes: number;
+    recognitions: number;
     openWriteUps: number;
     completedEvaluations: number;
 };
@@ -157,7 +158,8 @@ export default function EmployeePage() {
                                 lastEvaluation: evaluations.length ? new Date(evaluations[0].completedAt).toLocaleDateString() : "N/A",
                                 nextEvaluation: data.nextEvaluationAt ? new Date(data.nextEvaluationAt).toLocaleDateString() : "N/A",
                                 performanceScore: 4.1,
-                                notes: data_notes.length,   
+                                notes: data_notes.length,
+                                recognitions: data_notes.filter((note: {type?: ManagerNoteType}) => note.type === "POSITIVE").length,
                                 openWriteUps: data_writeups.filter((w: {resolvedAt?:string|null}) => !w.resolvedAt).length,
                                 completedEvaluations: evaluations.length
                             };
@@ -476,8 +478,8 @@ export default function EmployeePage() {
 
                         <div>
                             <span>Recognitions</span>
-                            <strong>4</strong>
-                            <small>This year</small>
+                            <strong>{employee.recognitions}</strong>
+                            <small>Positive manager notes</small>
                         </div>
                     </article>
                 </section>
