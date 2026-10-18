@@ -153,7 +153,7 @@ export default function DashboardPage() {
             } else if (recordAction === "writeup") {
                 await createEmployeeWriteUp(employeeId, { type: warningType, reason: recordContent.trim() });
             } else return;
-            setRecordNotice(recordAction === "recognition" ? "Recognition added." : recordAction === "note" ? "Manager note saved." : "Write-up created.");
+            setRecordNotice(recordAction === "recognition" ? t("recognitionSaved") : recordAction === "note" ? t("noteSaved") : t("writeUpSaved"));
             setRecordAction(null);
             const [activity, list] = await Promise.allSettled([getRecentActivity(), getemployeelist()]);
             if (activity.status === "fulfilled") setRecentActivity(activity.value);
@@ -194,7 +194,7 @@ export default function DashboardPage() {
             {recordNotice && <p className="dashboard-record-notice" role="status">{recordNotice}</p>}
             {recordAction && (
                 <div className="dashboard-record-backdrop" onMouseDown={() => { if (!recordSaving) setRecordAction(null); }}>
-                    <section className="dashboard-record-modal" role="dialog" aria-modal="true" aria-label={recordAction === "recognition" ? "Add recognition" : recordAction === "note" ? "Add manager note" : "Create write-up"} onMouseDown={event => event.stopPropagation()}>
+                    <section className="dashboard-record-modal" role="dialog" aria-modal="true" aria-label={recordAction === "recognition" ? t("addRecognition") : recordAction === "note" ? t("addNoteTitle") : t("createWriteUp")} onMouseDown={event => event.stopPropagation()}>
                         <h2>{recordAction === "recognition" ? "Add recognition" : recordAction === "note" ? "Add manager note" : "Create write-up"}</h2>
                         <p>{t("chooseEmployee")}</p>
                         <form onSubmit={submitRecord}>
@@ -211,14 +211,14 @@ export default function DashboardPage() {
                                     </select>
                                 </label>
                             )}
-                            <label>{recordAction === "recognition" ? "Recognition details" : recordAction === "note" ? "Note" : "Reason / details"}
+                            <label>{recordAction === "recognition" ? t("recognitionDetails") : recordAction === "note" ? t("noteDetails") : t("reasonDetails")}
                                 <textarea required rows={5} maxLength={10000} value={recordContent} onChange={event => setRecordContent(event.target.value)} disabled={recordSaving}/>
                             </label>
                             {recordError && <p className="dashboard-record-error" role="alert">{recordError}</p>}
                             {employeeError && <p className="dashboard-record-error" role="alert">{t("loadEmployeesFailed")}</p>}
                             <div className="dashboard-record-actions">
                                 <button type="button" disabled={recordSaving} onClick={() => setRecordAction(null)}>{t("cancel")}</button>
-                                <button type="submit" disabled={recordSaving || employeeError || !employees.length}>{recordSaving ? "Saving…" : "Save record"}</button>
+                                <button type="submit" disabled={recordSaving || employeeError || !employees.length}>{recordSaving ? t("saving") : t("saveRecord")}</button>
                             </div>
                         </form>
                     </section>
@@ -370,22 +370,22 @@ export default function DashboardPage() {
                         <div className="quick-action-grid">
                             <button type="button" onClick={() => openRecord("note")}>
                                 <span>＋</span>
-                                Add note
+                                {t("addNote")}
                             </button>
 
                             <button type="button" onClick={() => openRecord("recognition")}>
                                 <span>★</span>
-                                Add recognition
+                                {t("addRecognition")}
                             </button>
 
                             <button type="button" onClick={() => openRecord("writeup")}>
                                 <span>!</span>
-                                Create write-up
+                                {t("createWriteUp")}
                             </button>
 
                             <button type="button">
                                 <span>⌕</span>
-                                Find employee
+                                {t("findEmployee")}
                             </button>
                         </div>
                     </article>
