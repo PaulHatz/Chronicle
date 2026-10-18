@@ -61,7 +61,7 @@ export default function UsersPage(){
    {loading?<p className="users-empty">{t("loadingUsers")}</p>:visible.length===0?<p className="users-empty">{users.length?t("noMatchingUsers"):t("noUsers")}</p>:<div className="users-list">{visible.map(user=><div className="users-row" key={user.id}>
     <span className="users-avatar">{user.firstName.charAt(0)}{user.lastName.charAt(0)}</span>
     <div className="users-identity"><strong>{user.firstName} {user.lastName}</strong><span>{user.email}</span></div>
-    <span className="users-role">{roleLabels[user.role]}</span>
+    <span className="users-role">{t(user.role === "ADMIN" ? "administrator" : user.role === "MANAGER" ? "manager" : "teamLeader")}</span>
     <div className="users-row-actions"><button disabled={busy} type="button" onClick={()=>openEdit(user)}>{t("edit")}</button><button disabled={busy} type="button" className="users-delete" onClick={()=>void remove(user)}>{t("delete")}</button></div>
    </div>)}</div>}
   </section>
