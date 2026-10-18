@@ -1070,3 +1070,25 @@
 .goal-edit-link:hover{text-decoration:underline}
 .goal-show-completed{display:block;margin:12px auto 0;padding:8px;border:0;background:none;color:#49649e;font-size:12px;font-weight:700;cursor:pointer}
 .goal-show-completed:hover{text-decoration:underline}
+
+/* Completion sequence: check pops, a line sweeps across the goal, then the card lifts away. */
+.goal-item{overflow:hidden;transform-origin:center top}
+.goal-check{position:relative;transition:background-color 180ms ease,border-color 180ms ease,transform 230ms cubic-bezier(.2,1.5,.4,1)}
+.goal-check.checked{transform:scale(1.08)}
+.goal-check-mark{display:block;opacity:0;transform:scale(.3) rotate(-25deg);transition:opacity 160ms ease,transform 300ms cubic-bezier(.2,1.7,.3,1)}
+.goal-check.checked .goal-check-mark{opacity:1;transform:scale(1) rotate(0)}
+.goal-item .goal-title,.goal-item .goal-body{position:relative;transition:opacity 260ms ease}
+.goal-item .goal-title::after{content:"";position:absolute;left:0;right:0;top:50%;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:left;pointer-events:none}
+.goal-finishing{animation:goal-exit 850ms cubic-bezier(.35,0,.25,1) forwards}
+.goal-finishing .goal-title::after{animation:goal-strike 380ms ease-out 130ms forwards}
+.goal-finishing .goal-title,.goal-finishing .goal-body{text-decoration:none;animation:goal-fade 650ms ease-out 160ms forwards}
+.goal-finishing .goal-check{animation:goal-check-pop 390ms cubic-bezier(.2,1.7,.4,1) both}
+@keyframes goal-strike{to{transform:scaleX(1)}}
+@keyframes goal-fade{to{opacity:.48}}
+@keyframes goal-check-pop{0%{transform:scale(.75)}60%{transform:scale(1.24)}100%{transform:scale(1.08)}}
+@keyframes goal-exit{0%,52%{opacity:1;transform:translateY(0) scale(1);max-height:250px;margin-bottom:0}72%{opacity:.55;transform:translateY(-6px) scale(.98);max-height:250px;margin-bottom:0}100%{opacity:0;transform:translateY(-12px) scale(.97);max-height:0;margin-bottom:0;padding-top:0;padding-bottom:0;border-width:0}}
+@media(prefers-reduced-motion:reduce){
+ .goal-finishing,.goal-finishing .goal-title::after,.goal-finishing .goal-title,.goal-finishing .goal-body,.goal-finishing .goal-check{animation:none!important}
+ .goal-check,.goal-check-mark,.goal-item .goal-title,.goal-item .goal-body{transition:none!important}
+ .goal-finishing .goal-title{text-decoration:line-through}
+}
