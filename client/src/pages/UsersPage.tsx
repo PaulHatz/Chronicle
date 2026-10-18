@@ -41,7 +41,7 @@ export default function UsersPage(){
  }
  const visible=users.filter(user=>`${user.firstName} ${user.lastName} ${user.email} ${t(user.role==="ADMIN"?"administrator":user.role==="MANAGER"?"manager":"teamLeader")}`.toLowerCase().includes(search.trim().toLowerCase()));
  return <main className="users-page">
-  <header className="users-header"><div><p className="users-eyebrow">Settings / Access</p><h1>{t("users")}</h1><p>{t("welcomeAccount")}</p></div></header>
+  <header className="users-header"><div><p className="users-eyebrow">{t("settingsAccess")}</p><h1>{t("users")}</h1><p>{t("welcomeAccount")}</p></div></header>
   {error&&<p className="users-alert users-error" role="alert">{error}</p>}
   {notice&&<p className="users-alert users-success" role="status">{notice}</p>}
   {editing!==null&&<div className="users-modal-backdrop" onMouseDown={()=>{if(!busy)setEditing(null);}}><section className="users-modal" role="dialog" aria-modal="true" aria-labelledby="users-modal-title" onMouseDown={e=>e.stopPropagation()}><div className="users-modal-intro"><span className="users-modal-icon" aria-hidden="true">{editing==="new"?"＋":"✎"}</span><div><p className="users-modal-eyebrow">{t("accountManagement")}</p><h2 id="users-modal-title">{editing==="new"?t("addUser"):t("editUser")}</h2><p>{editing==="new"?t("accountCreateInfo"):t("accountEditInfo")}</p></div><button type="button" className="users-modal-close" aria-label={t("closeEditor")} disabled={busy} onClick={()=>setEditing(null)}>✕</button></div>
