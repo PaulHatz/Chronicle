@@ -109,7 +109,7 @@ const timelineEvents: TimelineEvent[] = [
 type TabName = "timeline" | "evaluations" | "notes" | "writeups";
 
 export default function EmployeePage() {
-    const {t,locale}=useLanguage();
+    const {t}=useLanguage();
     const { employeeId } = useParams();
     const [activeTab, setActiveTab] = useState<TabName>("timeline");
     const [employee, setEmployee] = useState<Employee>();
