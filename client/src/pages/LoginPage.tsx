@@ -51,24 +51,23 @@ export default function LoginPage() {
                     <h1>Chronicle</h1>
 
                     <p>
-                        Keep employee evaluations, manager notes, and
-                        disciplinary records organized in one place.
+                        {t("loginDescription")}
                     </p>
 
                     <div className="brand-features">
                         <div>
                             <span>✓</span>
-                            Employee performance timelines
+                            {t("performanceTimelines")}
                         </div>
 
                         <div>
                             <span>✓</span>
-                            Structured evaluations
+                            {t("structuredEvaluations")}
                         </div>
 
                         <div>
                             <span>✓</span>
-                            Secure manager documentation
+                            {t("secureDocumentation")}
                         </div>
                     </div>
                 </div>
@@ -85,8 +84,7 @@ export default function LoginPage() {
                         <p className="eyebrow">{t("welcomeBack")}</p>
                         <h2>{t("signIn")}</h2>
                         <p>
-                            Enter your credentials to access the management
-                            dashboard.
+                            {t("enterCredentials")}
                         </p>
                     </header>
 
@@ -115,7 +113,7 @@ export default function LoginPage() {
                                 className="forgot-password"
                                 type="button"
                             >
-                                Forgot password?
+                                {t("forgotPassword")}
                             </button>
                         </div>
 
@@ -160,7 +158,7 @@ export default function LoginPage() {
                     </button>
 
                     <p className="login-footer">
-                        Chronicle Employee Performance Platform
+                        {t("loginFooter")}
                     </p>
                 </form>
             </section>
