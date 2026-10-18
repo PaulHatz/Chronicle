@@ -153,9 +153,7 @@ export default function LoginPage() {
                         <span>{t("rememberMe")}</span>
                     </label>
 
-                    <button className="login-button" type="submit">
-                        Sign in
-                    </button>
+                    <button className="login-button" type="submit">{t("signInButton")}</button>
 
                     <p className="login-footer">
                         {t("loginFooter")}
