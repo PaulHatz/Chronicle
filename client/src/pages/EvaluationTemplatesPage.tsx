@@ -155,8 +155,7 @@ export default function EvaluationTemplatesPage() {
                     <button type="button" className="evaluation-remove" onClick={() => removeQuestion(q.key)}>{t("remove")}</button>
                   </div>
                   <label>{t("questionText")}<textarea required rows={2} value={q.questionText} placeholder={t("exampleQuestion")} onChange={e => editQuestion(q.key, { questionText: e.target.value })} /></label>
-                  <label>Answer type
-                    <select value={q.questionType} onChange={e => editQuestion(q.key, { questionType: e.target.value as DraftQuestion["questionType"] })}>
+                  <label>{t("answerType")}<select value={q.questionType} onChange={e => editQuestion(q.key, { questionType: e.target.value as DraftQuestion["questionType"] })}>
                       <option value="NUMERIC">{t("numericScore")}</option>
                       <option value="TEXT">{t("writtenAnswer")}</option>
                     </select>
