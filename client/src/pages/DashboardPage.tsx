@@ -300,13 +300,13 @@ export default function DashboardPage() {
                                         <span
                                             className={`activity-type ${activity.type}`}
                                         >
-                                            {activity.type}
+                                            {t(activity.type==="evaluation"?"activityEvaluationType":activity.type==="note"?"activityNoteType":"activityWriteUpType")}
                                         </span>
                                     </div>
 
-                                    <p>{activity.action}</p>
+                                    <p>{t(activity.action==="Evaluation completed"?"activityEvaluation":activity.action==="Positive note added"?"activityPositive":activity.action==="Improvement note added"?"activityImprovement":activity.action==="Manager note added"?"activityNote":"activityWriteUp")}</p>
                                     {activity.type === "evaluation" && <Link className="dashboard-activity-link" to={`/employees/${activity.employeeId}/evaluations/${activity.recordId}`}>{t("viewResultsShort")}</Link>}
-                                    <span>{activity.detail}</span>
+                                    <span>{activity.type==="writeup"?t(activity.detail==="verbal warning"?"verbalWarning":activity.detail==="written warning"?"writtenWarning":"finalWarning"):activity.detail}</span>
                                 </div>
 
                                 <time dateTime={activity.occurredAt}>{new Date(activity.occurredAt).toLocaleDateString(document.documentElement.lang)}</time>
@@ -347,7 +347,7 @@ export default function DashboardPage() {
                                         <strong>{evaluation.date}</strong>
 
                                         <span>
-                                            {evaluation.daysRemaining < 0 ? `${Math.abs(evaluation.daysRemaining)} ${Math.abs(evaluation.daysRemaining) === 1 ? "day" : "days"} overdue` : evaluation.daysRemaining === 0 ? "Due today" : evaluation.daysRemaining === 1 ? "Tomorrow" : `${evaluation.daysRemaining} days away`}
+                                            {evaluation.daysRemaining < 0 ? t(Math.abs(evaluation.daysRemaining)===1?"dayOverdue":"daysOverduePlural",{count:Math.abs(evaluation.daysRemaining)}) : evaluation.daysRemaining === 0 ? t("dueToday") : evaluation.daysRemaining === 1 ? t("tomorrow") : t("daysAway",{count:evaluation.daysRemaining})}
                                         </span>
                                     </div>
                                 </div>
@@ -355,7 +355,7 @@ export default function DashboardPage() {
                         </div>
 
                         <Link className="panel-button dashboard-schedule-link" to="/employees">
-                            View employee schedule
+                            {t("viewEmployeeSchedule")}
                         </Link>
                     </article>
 
