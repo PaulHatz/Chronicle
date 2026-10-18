@@ -185,11 +185,16 @@ export default function EmployeePage() {
         
             async function loadEmployee() {
                 try {
-                    const data = (await getemployee(Number(employeeId))).employee;
-                    const data_notes = (await getemployeenotes(Number(employeeId))).notes;
-
-                    const data_writeups = (await getemployeewriteups(Number(employeeId))).notes;
-                    const evaluations = await getEmployeeEvaluations(Number(employeeId));
+                    const id = Number(employeeId);
+                    const [profile, notes, writeUps, evaluations] = await Promise.all([
+                        getemployee(id),
+                        getemployeenotes(id),
+                        getemployeewriteups(id),
+                        getEmployeeEvaluations(id),
+                    ]);
+                    const data = profile.employee;
+                    const data_notes = notes.notes;
+                    const data_writeups = writeUps.notes;
 
                     if (!cancelled) {
                             const latestEvaluation = [...evaluations].sort((a,b) => new Date(b.completedAt).getTime()-new Date(a.completedAt).getTime())[0];
