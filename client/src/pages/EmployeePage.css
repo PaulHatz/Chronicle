@@ -1050,3 +1050,20 @@
 .goals-empty{padding:12px 0;color:#7b8598;font-size:13px}
 .goal-form-error{color:#a13d3d;font-size:13px;margin:8px 0}
 .goal-editor-modal{width:min(100%,540px)}
+
+/* Goal controls: add in heading, circular completion, completed history. */
+.goals-card-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.goal-add-button{flex-shrink:0;display:grid;place-items:center;width:32px;height:32px;border-radius:9px;border:1px solid #d7dfec;background:#eff4fc;color:#304d86;font-size:22px;font-weight:600;line-height:1;cursor:pointer}
+.goal-add-button:hover{background:#e2eaf8}
+.goal-item .goal-heading{display:flex;align-items:center;gap:10px}
+.goal-item .goal-title{flex:1;min-width:0;overflow-wrap:anywhere}
+.goal-check{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;padding:0;border-radius:50%;border:2px solid #aab7c9;background:white;color:white;font-size:13px;font-weight:800;cursor:pointer}
+.goal-check:hover{border-color:#39775f}
+.goal-check.checked{background:#2b8063;border-color:#2b8063}
+.goal-check:disabled{cursor:default}
+.goal-finishing .goal-title,.goal-finishing .goal-body{text-decoration:line-through;opacity:.56}
+.goal-item .goal-body{margin-left:32px}
+.goal-edit-link{flex-shrink:0;border:0;background:transparent;color:#49649e;font-size:12px;font-weight:650;cursor:pointer;padding:4px}
+.goal-edit-link:hover{text-decoration:underline}
+.goal-show-completed{display:block;margin:12px auto 0;padding:8px;border:0;background:none;color:#49649e;font-size:12px;font-weight:700;cursor:pointer}
+.goal-show-completed:hover{text-decoration:underline}
