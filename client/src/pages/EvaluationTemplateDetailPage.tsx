@@ -151,7 +151,7 @@ export default function EvaluationTemplateDetailPage() {
               ) : <p className="evaluation-help">{t("writtenResponseInfo")}</p>}
             </section>
           ))}
-          <p className="evaluation-help">Questions linked to existing employee evaluations cannot be edited or deleted. The API will return a conflict in that case.</p>
+          <p className="evaluation-help">{t("lockedQuestions")}</p>
         </div>
       )}
     </main>
