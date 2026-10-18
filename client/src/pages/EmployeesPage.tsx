@@ -225,9 +225,7 @@ export default function EmployeesPage() {
                 </div>
 
                 <button className="add-employee-button" type="button" onClick={() => setShowAddForm(true)}>
-                    <span>+</span>
-                    Add employee
-                </button>
+                    <span>+</span>{t("addEmployee")}</button>
             </header>
 
             {showAddForm && (
@@ -245,13 +243,9 @@ export default function EmployeesPage() {
         >
             <header className="employee-modal-header">
                 <div>
-                    <p className="employee-modal-eyebrow">
-                        Team management
-                    </p>
+                    <p className="employee-modal-eyebrow">{t("teamManagement")}</p>
 
-                    <h2 id="add-employee-title">
-                        Add employee
-                    </h2>
+                    <h2 id="add-employee-title">{t("addEmployee")}</h2>
 
                     <p>
                         {t("createEmployeeProfile")}
@@ -412,9 +406,7 @@ export default function EmployeesPage() {
                         type="button"
                         disabled={isAdding}
                         onClick={() => setShowAddForm(false)}
-                    >
-                        Cancel
-                    </button>
+                    >{t("cancel")}</button>
 
                     <button
                         className="employee-form-submit"
