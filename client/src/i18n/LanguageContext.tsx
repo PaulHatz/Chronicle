@@ -1,5 +1,6 @@
 import {createContext,useCallback,useContext,useEffect,useState,type ReactNode} from "react";
 import {apiFetch} from "../api/client";
+import {useAuth} from "../auth/AuthContext";
 import {translate,type Locale,type MessageKey} from "./messages";
 type LanguageContextValue={locale:Locale;setLocale:(next:Locale)=>void;t:(key:MessageKey,params?:Record<string,string|number>)=>string};
 const Context=createContext<LanguageContextValue|null>(null);
@@ -8,19 +9,20 @@ function getStored():Locale{
  return saved==="en-CA"?"en-CA":"fr-CA";
 }
 export function LanguageProvider({children}:{children:ReactNode}){
+ const {isAuthenticated}=useAuth();
  const [locale,setCurrent]=useState<Locale>(getStored);
  const setLocale=useCallback((next:Locale)=>{
   setCurrent(next);localStorage.setItem("chronicle-language",next);document.documentElement.lang=next;
  },[]);
  useEffect(()=>{
   document.documentElement.lang=locale;
-  if(!localStorage.getItem("token"))return;
+  if(!isAuthenticated)return;
   let active=true;
   void apiFetch("/auth/me").then(res=>res.ok?res.json():null).then(user=>{
    if(active&&(user?.language==="en-CA"||user?.language==="fr-CA"))setLocale(user.language);
   }).catch(()=>{});
   return()=>{active=false;};
- },[setLocale]);
+ },[setLocale,isAuthenticated]);
  const t=useCallback((key:MessageKey,params?:Record<string,string|number>)=>translate(locale,key,params),[locale]);
  return <Context.Provider value={{locale,setLocale,t}}>{children}</Context.Provider>;
 }
