@@ -9,7 +9,7 @@ type Template = { id: number; name: string; version: string };
 const blank: DepartmentInput = { name: "", evaluationTemplateId: 0, evaluationFrequencyDays: 90 };
 
 export default function DepartmentsPage() {
-  const {t}=useLanguage();
+  const {t,locale}=useLanguage();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +70,7 @@ export default function DepartmentsPage() {
     {error && <p className="department-alert department-error" role="alert">{error}</p>}
     {notice && <p className="department-alert department-success" role="status">{notice}</p>}
     {loading ? <section className="department-card">{t("loadingDepartments")}</section> : <>
-      {templates.length === 0 && <section className="department-card">Create an <Link to="/evaluation-templates/new">evaluation template</Link> before adding a department.</section>}
+      {templates.length === 0 && <section className="department-card">{locale==="fr-CA" ? <>Créez un <Link to="/evaluation-templates/new">modèle d’évaluation</Link> avant d’ajouter un département.</> : <>Create an <Link to="/evaluation-templates/new">evaluation template</Link> before adding a department.</>}</section>}
       {editing !== null && <form className="department-card department-form" onSubmit={save}>
         <h2>{editing === "new" ? "Add department" : "Edit department"}</h2>
         <div className="department-fields">
