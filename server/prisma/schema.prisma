@@ -92,6 +92,7 @@ model Employee {
   evaluations Evaluation[]
   notes       ManagerNote[]
   writeUps    WriteUp[]
+  goals       Goal[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 }
@@ -145,4 +146,21 @@ enum WriteUpType {
   VERBAL_WARNING
   WRITTEN_WARNING
   FINAL_WARNING
+}
+
+model Goal {
+  id          Int        @id @default(autoincrement())
+  employeeId  Int
+  employee    Employee   @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  status      GoalStatus @default(INCOMPLETE)
+  duration    DateTime
+
+  @@index([employeeId, duration])
+}
+
+enum GoalStatus {
+  INCOMPLETE
+  COMPLETED
 }
