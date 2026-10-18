@@ -74,3 +74,34 @@ export async function createEmployee(emp) {
     return new_employee;
 
 }
+
+export async function updateEmployee(id: number, input: unknown) {
+    if (!Number.isSafeInteger(id) || id <= 0) throw new Error("Invalid employee ID.");
+    if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("Invalid profile.");
+    const data = input as Record<string, unknown>;
+    const required = ["firstName", "lastName", "position"];
+    if (required.some(key => typeof data[key] !== "string" || !(data[key] as string).trim() || (data[key] as string).length > 100)) throw new Error("Provide valid employee details.");
+    if (data.email !== null && data.email !== "" && (typeof data.email !== "string" || !/^\S+@\S+\.\S+$/.test(data.email) || data.email.length > 254)) throw new Error("Invalid email.");
+    if (data.phone !== null && data.phone !== "" && (typeof data.phone !== "string" || data.phone.length > 50)) throw new Error("Invalid phone.");
+    if (!["ACTIVE","INACTIVE","LEAVE"].includes(data.status as string)) throw new Error("Invalid status.");
+    const departmentId = Number(data.departmentId);
+    if (!Number.isSafeInteger(departmentId) || departmentId <= 0) throw new Error("Invalid department.");
+    if (typeof data.hireDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(data.hireDate)) throw new Error("Invalid hire date.");
+    const hireDate = new Date(data.hireDate + "T00:00:00.000Z");
+    if (Number.isNaN(hireDate.getTime()) || hireDate.toISOString().slice(0,10) !== data.hireDate) throw new Error("Invalid hire date.");
+    const department = await prisma.department.findUnique({where:{id:departmentId}});
+    if (!department) throw new Error("Department not found.");
+    const current = await prisma.employee.findUnique({where:{id}});
+    if (!current) return null;
+    return prisma.employee.update({where:{id},data:{
+        firstName:(data.firstName as string).trim(),
+        lastName:(data.lastName as string).trim(),
+        position:(data.position as string).trim(),
+        email: typeof data.email==="string" && data.email.trim() ? data.email.trim() : null,
+        phone: typeof data.phone==="string" && data.phone.trim() ? data.phone.trim() : null,
+        status:data.status as "ACTIVE"|"INACTIVE"|"LEAVE",
+        departmentId,hireDate,
+        ...((current.departmentId !== departmentId || current.hireDate.getTime() !== hireDate.getTime()) && !current.nextEvaluationAt
+            ? {nextEvaluationAt:addDays(hireDate,department.evaluationFrequencyDays)} : {})
+    },include:{department:true}});
+}
