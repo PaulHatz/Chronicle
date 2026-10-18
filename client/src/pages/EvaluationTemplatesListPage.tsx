@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getEvaluationTemplates } from "../api/evaluations";
 import "./EvaluationTemplatesPage.css";
+import {useLanguage} from "../i18n/LanguageContext";
 
 type Template = { id: number; name: string; version: string };
 
