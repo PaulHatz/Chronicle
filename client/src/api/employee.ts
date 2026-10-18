@@ -66,3 +66,11 @@ export async function resolveEmployeeWriteUp(employeeId:number,writeUpId:number)
  const response=await apiFetch("/activity/writeup/"+employeeId+"/"+writeUpId+"/resolve",{method:"PATCH"});
  const body=await response.json();if(!response.ok)throw new Error(body.message||"Unable to resolve write-up");return body;
 }
+
+export type EmployeeProfileInput={firstName:string;lastName:string;email:string;phone:string;position:string;departmentId:number;status:"ACTIVE"|"INACTIVE"|"LEAVE";hireDate:string};
+export async function updateEmployeeProfile(id:number,input:EmployeeProfileInput){
+ const response=await apiFetch("/employees/"+id,{method:"PATCH",body:JSON.stringify(input)});
+ const body=await response.json().catch(()=>({}));
+ if(!response.ok)throw new Error(body.message||"Unable to update profile.");
+ return body.employee;
+}
