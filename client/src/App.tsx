@@ -14,6 +14,7 @@ import SettingsLayout from "./layout/SettingsLayout";
 import DepartmentsPage from "./pages/DepartmentsPage";
 import UsersPage from "./pages/UsersPage";
 import LanguageSettingsPage from "./pages/LanguageSettingsPage";
+import AppearanceSettingsPage from "./pages/AppearanceSettingsPage";
 import EmployeeEvaluationPage from "./pages/EmployeeEvaluationPage";
 import EmployeeEvaluationResultPage from "./pages/EmployeeEvaluationResultPage";
 export default function App() {
@@ -44,6 +45,7 @@ export default function App() {
                 <Route element={<SettingsLayout />}>
                   <Route path="/settings" element={<Navigate to="/settings/language" replace />} />
                   <Route path="/settings/language" element={<LanguageSettingsPage />} />
+                  <Route path="/settings/appearance" element={<AppearanceSettingsPage />} />
                   <Route element={<RequireRole allow={["ADMIN","MANAGER"]} />}><Route path="/users" element={<UsersPage />} /></Route>
                   <Route element={<RequireRole allow={["ADMIN"]} />}>
                     <Route path="/departments" element={<DepartmentsPage />} />
