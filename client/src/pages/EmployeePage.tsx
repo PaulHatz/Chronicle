@@ -117,6 +117,8 @@ export default function EmployeePage() {
     const [goals, setGoals] = useState<EmployeeGoal[]>([]);
     const [goalsError, setGoalsError] = useState("");
     const [goalsLoading, setGoalsLoading] = useState(true);
+    const [showCompletedGoals, setShowCompletedGoals] = useState(false);
+    const [completingGoals, setCompletingGoals] = useState<number[]>([]);
     const [manageGoals, setManageGoals] = useState(false);
     const [editingGoalId, setEditingGoalId] = useState<number | null>(null);
     const [goalTitle, setGoalTitle] = useState("");
@@ -282,11 +284,16 @@ export default function EmployeePage() {
     }
 
     async function changeGoalStatus(goal: EmployeeGoal) {
+        if (completingGoals.includes(goal.id)) return;
+        const nextStatus = goal.status === "COMPLETED" ? "INCOMPLETE" : "COMPLETED";
+        if (nextStatus === "COMPLETED") setCompletingGoals(current => [...current, goal.id]);
         try {
-            await updateEmployeeGoal(Number(employeeId),goal.id,{status:goal.status === "COMPLETED" ? "INCOMPLETE" : "COMPLETED"});
+            await updateEmployeeGoal(Number(employeeId), goal.id, {status: nextStatus});
+            if (nextStatus === "COMPLETED") await new Promise<void>(resolve => window.setTimeout(resolve, 650));
             setGoals(await getEmployeeGoals(Number(employeeId)));
             setGoalsError("");
         } catch(err) { setGoalsError(err instanceof Error ? err.message : "Unable to update goal."); }
+        finally { setCompletingGoals(current => current.filter(id => id !== goal.id)); }
     }
 
     async function removeGoal(goal: EmployeeGoal) {
@@ -783,32 +790,37 @@ export default function EmployeePage() {
                         </article>
 
                         <article className="profile-side-card">
-                            <div className="side-card-heading">
-                                <h2>Development goals</h2>
-                                <p>Current employee objectives.</p>
+                            <div className="side-card-heading goals-card-heading">
+                                <div><h2>Development goals</h2><p>Current employee objectives.</p></div>
+                                <button className="goal-add-button" type="button" aria-label="Add development goal" title="Add development goal" onClick={() => openGoalEditor()}>+</button>
                             </div>
-
                             {goalsError && <p className="goal-form-error" role="alert">{goalsError}</p>}
                             <div className="goal-list">
                                 {goalsLoading ? <p className="goals-empty">Loading goals…</p> :
-                                    goals.length === 0 ? <p className="goals-empty">No development goals yet.</p> :
-                                    goals.map(goal => (
-                                        <div className="goal-item" key={goal.id}>
+                                    goals.filter(goal => showCompletedGoals ? goal.status === "COMPLETED" : goal.status === "INCOMPLETE").length === 0 ?
+                                      <p className="goals-empty">{showCompletedGoals ? "No completed goals yet." : "No active development goals."}</p> :
+                                    goals.filter(goal => showCompletedGoals ? goal.status === "COMPLETED" : goal.status === "INCOMPLETE").map(goal => (
+                                        <div className={`goal-item${completingGoals.includes(goal.id) ? " goal-finishing" : ""}`} key={goal.id}>
                                             <div className="goal-heading">
-                                                <strong>{goal.title}</strong>
-                                                <span className={`goal-state ${goal.status === "COMPLETED" ? "completed" : "incomplete"}`}>{goal.status === "COMPLETED" ? "✓ Completed" : "○ Incomplete"}</span>
+                                                <button type="button" className={`goal-check${goal.status === "COMPLETED" || completingGoals.includes(goal.id) ? " checked" : ""}`}
+                                                    disabled={completingGoals.includes(goal.id)}
+                                                    aria-label={goal.status === "COMPLETED" ? `Mark ${goal.title} incomplete` : `Mark ${goal.title} completed`}
+                                                    aria-pressed={goal.status === "COMPLETED" || completingGoals.includes(goal.id)}
+                                                    onClick={() => void changeGoalStatus(goal)}>
+                                                    {goal.status === "COMPLETED" || completingGoals.includes(goal.id) ? "✓" : ""}
+                                                </button>
+                                                <strong className="goal-title">{goal.title}</strong>
+                                                <button className="goal-edit-link" type="button" onClick={() => openGoalEditor(goal)}>Edit</button>
                                             </div>
-                                            <p>{goal.description}</p>
-                                            <p className="goal-due">Target: {new Date(goal.duration).toLocaleDateString(undefined,{timeZone:"UTC",year:"numeric",month:"short",day:"numeric"})}</p>
-                                            <div className="goal-inline-actions">
-                                                <button type="button" onClick={() => void changeGoalStatus(goal)}>{goal.status === "COMPLETED" ? "Mark incomplete" : "Mark complete"}</button>
-                                                <button type="button" onClick={() => openGoalEditor(goal)}>Edit</button>
+                                            <div className="goal-body">
+                                                <p>{goal.description}</p>
+                                                <p className="goal-due">Target: {new Date(goal.duration).toLocaleDateString(undefined,{timeZone:"UTC",year:"numeric",month:"short",day:"numeric"})}</p>
                                             </div>
                                         </div>
                                     ))}
                             </div>
-                            <button className="manage-goals-button" type="button" onClick={() => openGoalEditor()}>
-                                Manage goals
+                            <button className="goal-show-completed" type="button" onClick={() => setShowCompletedGoals(current => !current)}>
+                                {showCompletedGoals ? "← Back to active goals" : `View completed goals (${goals.filter(goal => goal.status === "COMPLETED").length}) →`}
                             </button>
                         </article>
                     </aside>
