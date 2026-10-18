@@ -69,7 +69,7 @@ export default function DepartmentsPage() {
     </header>
     {error && <p className="department-alert department-error" role="alert">{error}</p>}
     {notice && <p className="department-alert department-success" role="status">{notice}</p>}
-    {loading ? <section className="department-card">Loading departments…</section> : <>
+    {loading ? <section className="department-card">{t("loadingDepartments")}</section> : <>
       {templates.length === 0 && <section className="department-card">Create an <Link to="/evaluation-templates/new">evaluation template</Link> before adding a department.</section>}
       {editing !== null && <form className="department-card department-form" onSubmit={save}>
         <h2>{editing === "new" ? "Add department" : "Edit department"}</h2>
@@ -89,7 +89,7 @@ export default function DepartmentsPage() {
           departments.map(d=><div className="department-row" key={d.id}>
             <span className="department-icon">▦</span>
             <div className="department-identity"><strong>{d.name}</strong><span>Every {d.evaluationFrequencyDays} days</span></div>
-            <div className="department-template"><small>Evaluation template</small><Link to={`/evaluation-templates/${d.evaluationTemplateId}`}>{d.evaluationTemplate.name} · v{d.evaluationTemplate.version}</Link></div>
+            <div className="department-template"><small>{t("evaluationTemplate")}</small><Link to={`/evaluation-templates/${d.evaluationTemplateId}`}>{d.evaluationTemplate.name} · v{d.evaluationTemplate.version}</Link></div>
             <div className="department-actions"><button type="button" disabled={busy} onClick={()=>edit(d)}>{t("edit")}</button><button type="button" disabled={busy} className="department-delete" onClick={()=>void remove(d)}>{t("delete")}</button></div>
           </div>)}
       </section>
