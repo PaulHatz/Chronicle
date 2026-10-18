@@ -5,7 +5,6 @@ import { useLanguage } from "../i18n/LanguageContext";
 
 type Draft = {firstName:string;lastName:string;email:string;role:UserRole;password:string};
 const blank:Draft={firstName:"",lastName:"",email:"",role:"MANAGER",password:""};
-const roleLabels:Record<UserRole,string>={ADMIN:"Administrator",MANAGER:"Manager",TEAM_LEADER:"Team leader"};
 export default function UsersPage(){
  const {t}=useLanguage();
  const [users,setUsers]=useState<ManagedUser[]>([]);
