@@ -383,10 +383,6 @@ export default function DashboardPage() {
                                 {t("createWriteUp")}
                             </button>
 
-                            <button type="button">
-                                <span>⌕</span>
-                                {t("findEmployee")}
-                            </button>
                         </div>
                     </article>
                 </aside>
