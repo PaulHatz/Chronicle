@@ -2,6 +2,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import "./SettingsLayout.css";
 
 const links = [
+  { to: "/settings/language", label: "Language / Langue", detail: "Personal language preference" },
   { to: "/users", label: "Users", detail: "Accounts and permissions" },
   { to: "/departments", label: "Departments", detail: "Teams and evaluation schedules" },
   { to: "/evaluation-templates", label: "Evaluation templates", detail: "Performance review forms" },
