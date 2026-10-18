@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./EmployeesPage.css";
+import {useLanguage} from "../i18n/LanguageContext";
 
 import { getemployeelist, addemployee } from "../api/employee";
 import { getDepartments, type Department } from "../api/departments";
@@ -26,6 +27,7 @@ type Employee = {
 
 
 export default function EmployeesPage() {
+    const {t}=useLanguage();
     
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [departments, setDepartments] = useState<Department[]>([]);
@@ -215,8 +217,8 @@ export default function EmployeesPage() {
         <main className="employees-page">
             <header className="employees-header">
                 <div>
-                    <p className="employees-eyebrow">Team management</p>
-                    <h1>Employees</h1>
+                    <p className="employees-eyebrow">{t("teamManagement")}</p>
+                    <h1>{t("employees")}</h1>
                     <p className="employees-description">
                         View employee records, performance history,
                         evaluations, notes, and disciplinary actions.
@@ -273,7 +275,7 @@ export default function EmployeesPage() {
             >
                 <div className="employee-form-grid">
                     <label className="employee-form-field">
-                        <span>First name</span>
+                        <span>{t("firstName")}</span>
 
                         <input
                             required
@@ -291,7 +293,7 @@ export default function EmployeesPage() {
                     </label>
 
                     <label className="employee-form-field">
-                        <span>Last name</span>
+                        <span>{t("lastName")}</span>
 
                         <input
                             required
@@ -308,7 +310,7 @@ export default function EmployeesPage() {
                     </label>
 
                     <label className="employee-form-field">
-                        <span>Email address</span>
+                        <span>{t("emailAddress")}</span>
 
                         <input
                             required
@@ -324,7 +326,7 @@ export default function EmployeesPage() {
                         />
                     </label>
                     <label className="employee-form-field">
-                        <span>Phone number</span>
+                        <span>{t("phoneNumber")}</span>
 
                         <input
                             required
@@ -342,7 +344,7 @@ export default function EmployeesPage() {
                     </label>
 
                     <label className="employee-form-field">
-                        <span>Position</span>
+                        <span>{t("position")}</span>
 
                         <input
                             required
@@ -359,7 +361,7 @@ export default function EmployeesPage() {
                     </label>
 
                     <label className="employee-form-field">
-                        <span>Department</span>
+                        <span>{t("department")}</span>
 
                         <select
                             required
@@ -371,7 +373,7 @@ export default function EmployeesPage() {
                                 }))
                             }
                         >
-                            <option value="" disabled>Select a department</option>
+                            <option value="" disabled>{t("selectDepartment")}</option>
                             {departments.map((department) => (
                                 <option key={department.id} value={department.id}>
                                     {department.name}
@@ -383,7 +385,7 @@ export default function EmployeesPage() {
                     
 
 <label className="employee-form-field">
-    <span>Start date</span>
+    <span>{t("startDate")}</span>
 
     <input
         required
@@ -435,7 +437,7 @@ export default function EmployeesPage() {
                     </div>
 
                     <div>
-                        <span>Total employees</span>
+                        <span>{t("totalEmployees")}</span>
                         <strong>{employees.length}</strong>
                     </div>
                 </article>
@@ -446,7 +448,7 @@ export default function EmployeesPage() {
                     </div>
 
                     <div>
-                        <span>Active employees</span>
+                        <span>{t("activeEmployees")}</span>
                         <strong>{activeEmployees}</strong>
                     </div>
                 </article>
@@ -457,7 +459,7 @@ export default function EmployeesPage() {
                     </div>
 
                     <div>
-                        <span>Evaluations due</span>
+                        <span>{t("evaluationsDue")}</span>
                         <strong>{isLoading ? "—" : evaluationsDue}</strong>
                     </div>
                 </article>
@@ -468,7 +470,7 @@ export default function EmployeesPage() {
                     </div>
 
                     <div>
-                        <span>Open write-ups</span>
+                        <span>{t("openWriteUps")}</span>
                         <strong>{employeesWithWriteUps}</strong>
                     </div>
                 </article>
@@ -514,17 +516,17 @@ export default function EmployeesPage() {
                             }
                             aria-label="Filter by status"
                         >
-                            <option value="All">All statuses</option>
-                            <option value="ACTIVE">Active</option>
-                            <option value="LEAVE">On leave</option>
-                            <option value="INACTIVE">Inactive</option>
+                            <option value="All">{t("allStatuses")}</option>
+                            <option value="ACTIVE">{t("active")}</option>
+                            <option value="LEAVE">{t("onLeave")}</option>
+                            <option value="INACTIVE">{t("inactive")}</option>
                         </select>
                     </div>
                 </div>
 
                 <div className="directory-heading">
                     <div>
-                        <h2>Employee directory</h2>
+                        <h2>{t("employeeDirectory")}</h2>
                         <p>
                             {filteredEmployees.length} employee
                             {filteredEmployees.length !== 1 ? "s" : ""}
@@ -579,26 +581,26 @@ export default function EmployeesPage() {
 
                             <div className="employee-metrics">
                                 <div className="employee-metric">
-                                    <span>Last evaluation</span>
+                                    <span>{t("lastEvaluation")}</span>
                                     <strong>
                                         {employee.lastEvaluation}
                                     </strong>
                                 </div>
 
                                 <div className="employee-metric">
-                                    <span>Next evaluation</span>
+                                    <span>{t("nextEvaluation")}</span>
                                     <strong>
                                         {employee.nextEvaluation}
                                     </strong>
                                 </div>
 
                                 <div className="employee-metric compact">
-                                    <span>Notes</span>
+                                    <span>{t("notes")}</span>
                                     <strong>{employee.notes}</strong>
                                 </div>
 
                                 <div className="employee-metric compact">
-                                    <span>Write-ups</span>
+                                    <span>{t("writeUps")}</span>
                                     <strong
 
                                         className={
@@ -625,7 +627,7 @@ export default function EmployeesPage() {
                     {filteredEmployees.length === 0 && (
                         <div className="empty-employees">
                             <div>⌕</div>
-                            <h3>No employees found</h3>
+                            <h3>{t("noEmployees")}</h3>
                             <p>
                                 Try changing your search or filter
                                 selections.
