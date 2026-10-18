@@ -22,7 +22,8 @@ type Employee = {
     manager: string;
     lastEvaluation: string;
     nextEvaluation: string;
-    performanceScore: number;
+    performanceScore: number | null;
+    performanceMaxScore: number;
     notes: number;
     recognitions: number;
     openWriteUps: number;
@@ -157,6 +158,20 @@ export default function EmployeePage() {
                     const evaluations = await getEmployeeEvaluations(Number(employeeId));
 
                     if (!cancelled) {
+                            const latestEvaluation = [...evaluations].sort((a,b) => new Date(b.completedAt).getTime()-new Date(a.completedAt).getTime())[0];
+                            const numericAnswers = (latestEvaluation?.answers ?? []).filter(answer =>
+                                answer.question.questionType === "NUMERIC" &&
+                                typeof answer.scoreAnswer === "number" &&
+                                Number.isFinite(answer.scoreAnswer) &&
+                                typeof answer.question.maxScore === "number" &&
+                                answer.question.maxScore > 0
+                            );
+                            const performanceScore = numericAnswers.length
+                                ? numericAnswers.reduce((sum,answer) => sum + answer.scoreAnswer!, 0) / numericAnswers.length
+                                : null;
+                            const performanceMaxScore = numericAnswers.length
+                                ? numericAnswers.reduce((sum,answer) => sum + answer.question.maxScore!, 0) / numericAnswers.length
+                                : 5;
                             const emp: Employee = {
                                 id: data.id,
                                 name: data.firstName + " " + data.lastName,
@@ -170,7 +185,8 @@ export default function EmployeePage() {
                                 manager: "N/A",
                                 lastEvaluation: evaluations.length ? new Date(evaluations[0].completedAt).toLocaleDateString() : "N/A",
                                 nextEvaluation: data.nextEvaluationAt ? new Date(data.nextEvaluationAt).toLocaleDateString() : "N/A",
-                                performanceScore: 4.1,
+                                performanceScore,
+                                performanceMaxScore,
                                 notes: data_notes.length,
                                 recognitions: data_notes.filter((note: {type?: ManagerNoteType}) => note.type === "POSITIVE").length,
                                 openWriteUps: data_writeups.filter((w: {resolvedAt?:string|null}) => !w.resolvedAt).length,
@@ -503,15 +519,15 @@ export default function EmployeePage() {
                         <div className="performance-score-row">
                             <div className="performance-score">
                                 <strong>
-                                    {employee.performanceScore.toFixed(1)}
+                                    {employee.performanceScore === null ? "—" : employee.performanceScore.toFixed(1)}
                                 </strong>
-                                <span>out of 5</span>
+                                <span>{employee.performanceScore === null ? "No numeric scores" : `out of ${Number(employee.performanceMaxScore.toFixed(1))}`}</span>
                             </div>
 
                             <div className="performance-rating">
-                                <strong>Strong performance</strong>
+                                <strong>{employee.performanceScore === null ? "Not yet scored" : "Latest evaluation"}</strong>
                                 <span>
-                                    Based on the latest evaluation
+                                    {employee.performanceScore === null ? "Complete an evaluation with scored questions" : "Average of numeric answers on the most recent evaluation"}
                                 </span>
                             </div>
                         </div>
@@ -520,7 +536,7 @@ export default function EmployeePage() {
                             <span
                                 style={{
                                     width: `${
-                                        (employee.performanceScore / 5) *
+                                        ((employee.performanceScore ?? 0) / employee.performanceMaxScore) *
                                         100
                                     }%`,
                                 }}
