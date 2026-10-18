@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../api/client";
 import "./LanguageSettingsPage.css";
-type Locale="fr-CA"|"en-CA";
+import { useLanguage } from "../i18n/LanguageContext";
+import type { Locale } from "../i18n/messages";
 export default function LanguageSettingsPage(){
- const [language,setLanguage]=useState<Locale>("fr-CA");
+ const {locale,setLocale,t}=useLanguage();
+ const [language,setLanguage]=useState<Locale>(locale);
  const [loading,setLoading]=useState(true);
  const [saving,setSaving]=useState(false);
  const [error,setError]=useState("");
@@ -14,22 +16,22 @@ export default function LanguageSettingsPage(){
   try{
    const res=await apiFetch("/preferences/language",{method:"PATCH",body:JSON.stringify({language})});
    if(!res.ok){const body=await res.json().catch(()=>({}));throw new Error(body.message||"Unable to save language.");}
-   document.documentElement.lang=language;localStorage.setItem("chronicle-language",language);
+   setLocale(language);
    setNotice(language==="fr-CA"?"Préférence linguistique enregistrée.":"Language preference saved.");
   }catch(e){setError(e instanceof Error?e.message:"Unable to save language.");}
   finally{setSaving(false);}
  }
  return <main className="language-page">
-  <header><p className="language-eyebrow">Settings / Preferences</p><h1>Language / Langue</h1><p>Choose your preferred language for Chronicle. / Choisissez votre langue préférée.</p></header>
+  <header><p className="language-eyebrow">{t("settings")} / {t("preferences")}</p><h1>{t("language")}</h1><p>{t("chooseLanguage")}</p></header>
   <section className="language-card">
-   <h2>Preferred language / Langue préférée</h2><p>Your selection is saved to your user account. / Ce choix est enregistré dans votre compte.</p>
-   {loading?<p>Loading preferences…</p>:<div className="language-options">
+   <h2>{t("preferredLanguage")}</h2><p>{t("languageSavedInfo")}</p>
+   {loading?<p>{t("loadingPreferences")}</p>:<div className="language-options">
     <label className={language==="fr-CA"?"selected":""}><input type="radio" name="locale" value="fr-CA" checked={language==="fr-CA"} onChange={()=>{setLanguage("fr-CA");setNotice("");}}/><span><strong>Français (Canada)</strong><small>Français canadien · Par défaut</small></span></label>
     <label className={language==="en-CA"?"selected":""}><input type="radio" name="locale" value="en-CA" checked={language==="en-CA"} onChange={()=>{setLanguage("en-CA");setNotice("");}}/><span><strong>English (Canada)</strong><small>Canadian English</small></span></label>
    </div>}
    {error&&<p role="alert" className="language-error">{error}</p>}
    {notice&&<p role="status" className="language-success">{notice}</p>}
-   <button type="button" disabled={loading||saving} className="language-save" onClick={()=>void save()}>{saving?"Saving…":"Save preference / Enregistrer"}</button>
+   <button type="button" disabled={loading||saving} className="language-save" onClick={()=>void save()}>{saving?t("saving"):t("savePreference")}</button>
   </section>
  </main>;
 }
