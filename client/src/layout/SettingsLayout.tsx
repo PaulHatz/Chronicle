@@ -22,8 +22,8 @@ export default function SettingsLayout() {
           <p>{t("manageOrganization")}</p>
         </div>
         <nav className="settings-sidebar-nav">
-          {links.filter(link=>role==="ADMIN" || (role==="MANAGER"&&link.to==="/users") || link.to==="/settings/language").map((link,i) => (
-            <div key={link.to} className={"settings-nav-group"+(i>0?" divided":"")}>
+          {links.filter(link=>role==="ADMIN" || (role==="MANAGER"&&link.to==="/users") || link.to==="/settings/language").map(link => (
+            <div key={link.to} className={"settings-nav-group"+(link.to==="/users"||link.to==="/departments"?" divided":"")}>
             <NavLink to={link.to}
               className={({isActive}) => `settings-sidebar-link${isActive ? " active" : ""}`}>
               <strong>{link.to==="/users"?t("users"):link.to==="/departments"?t("departments"):link.to==="/evaluation-templates"?t("evaluationTemplates"):t("language")}</strong>
