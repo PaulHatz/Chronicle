@@ -1,0 +1,23 @@
+/* Chronicle dark theme. Scoped to the signed-in user's selected preference. */
+:root{color-scheme:light;--ui-text:#273650;--ui-muted:#748199;--ui-accent:#49649e;--ui-border:#e1e7f0;--ui-card:#fff}
+:root[data-theme="dark"]{color-scheme:dark;--ui-text:#e6ebf7;--ui-muted:#a7b4ce;--ui-accent:#a5bffe;--ui-border:#36445b;--ui-card:#1c2638}
+:root[data-theme="dark"] body,:root[data-theme="dark"] #root,:root[data-theme="dark"] .chronicle-shell{background:#111927;color:#e6ebf7}
+:root[data-theme="dark"] :is(.chronicle-topbar,.settings-sidebar,.dashboard-panel,.summary-card,.employee-summary-card,.employee-directory,.employee-card,.employee-profile-header,.employee-information-card,.performance-card,.employee-stat-card,.employee-history-panel,.profile-side-card,.evaluation-panel,.department-card,.users-card,.users-modal,.language-card,.employee-modal,.employee-record-modal,.dashboard-record-modal,.appearance-card){background:#1c2638!important;color:#e6ebf7!important;border-color:#36445b!important;box-shadow:none}
+:root[data-theme="dark"] :is(.dashboard-page,.employees-page,.employee-profile-page,.departments-page,.users-page,.evaluation-builder,.language-page,.appearance-page,.settings-main){color:#e6ebf7}
+:root[data-theme="dark"] :is(h1,h2,h3,h4,strong,.chronicle-brand,.employee-identity,.employee-name-row,.users-identity,.department-identity,.dashboard-header,.panel-header,.employee-title-row){color:#f0f4fc}
+:root[data-theme="dark"] :is(p,small,.dashboard-header p,.users-header p,.departments-header p,.employees-description,.evaluation-help,.language-page header p,.employee-position,.employee-contact-row,.goal-due,.timeline-author){color:#aab8d0}
+:root[data-theme="dark"] :is(.chronicle-nav-link,.chronicle-settings-icon,.chronicle-logout,.settings-sidebar-link,.evaluation-back,.back-link,.employee-name-row a,.users-row-actions button,.department-actions button,.profile-secondary-button,.quick-action-grid button,.goal-item,.goal-edit-link){color:#cfdbef}
+:root[data-theme="dark"] :is(.chronicle-nav-link:hover,.chronicle-nav-link.active,.chronicle-settings-icon.active,.settings-sidebar-link:hover,.settings-sidebar-link.active){background:#303d55;color:#c3d5fa;border-color:#435675}
+:root[data-theme="dark"] :is(input,textarea,select,.users-search-row input,.users-form-grid input,.users-form-grid select,.evaluation-fields input,.evaluation-rubric textarea,.department-fields input,.department-fields select,.quick-action-grid button,.sort-button,.filter-group select){background:#242f43!important;color:#edf2ff!important;border-color:#43516b!important}
+:root[data-theme="dark"] input::placeholder,:root[data-theme="dark"] textarea::placeholder{color:#8c9db7}
+:root[data-theme="dark"] :is(.dashboard-record-modal,.employee-record-modal,.employee-modal,.users-modal){background:#202c40!important}
+:root[data-theme="dark"] :is(.users-modal-backdrop,.employee-modal-backdrop,.dashboard-record-backdrop,.employee-record-backdrop){background:rgba(1,6,15,.75)}
+:root[data-theme="dark"] :is(.goal-item,.timeline-event,.activity-item,.evaluation-item,.users-row,.department-row,.employee-metric,.evaluation-question,.evaluation-rubric-row,.evaluation-list-row,.users-modal-intro,.users-form-actions,.users-list-header,.settings-sidebar-heading,.settings-nav-group.divided){border-color:#35445e!important}
+:root[data-theme="dark"] :is(.employee-tabs,.directory-toolbar,.evaluation-list-toolbar,.department-list-heading,.evaluation-question-top,.note-type-button-group){background:#202b3e!important;border-color:#36445b!important}
+:root[data-theme="dark"] :is(.quick-action-grid button:hover,.users-row-actions button:hover,.department-actions button:hover){background:#303f58!important}
+:root[data-theme="dark"] :is(.profile-status,.employee-status,.users-role,.timeline-type,.activity-type,.summary-icon,.stat-icon,.users-avatar,.goal-state,.goal-check,.goal-add-button){filter:brightness(.82) saturate(.85)}
+:root[data-theme="dark"] :is(.chronicle-mark,.users-primary,.department-primary,.evaluation-submit,.add-employee-button,.profile-primary-button){background:#385e9b;color:#fff;border-color:#567fc0}
+:root[data-theme="dark"] a{color:#a6c7ff}
+:root[data-theme="dark"] :is(.chronicle-brand,.settings-sidebar-link,.chronicle-nav-link,.chronicle-settings-icon){text-decoration:none}
+:root[data-theme="dark"] :is(.users-alert.users-success,.department-success,.evaluation-success){background:#17392e;color:#b6ecd0}
+:root[data-theme="dark"] :is(.users-alert.users-error,.department-error,.evaluation-error){background:#3d222b;color:#fac5cc}
