@@ -1096,3 +1096,13 @@
 /* Keep the goal checkbox in its original neutral color when checked. */
 .goal-check.checked{background:#fff;border-color:#aab7c9;color:#304d86}
 .goal-check:hover{border-color:#aab7c9}
+
+.employee-edit-modal{width:min(100%,700px)}
+.employee-edit-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.employee-edit-fields label{min-width:0}
+.employee-edit-fields input,.employee-edit-fields select{width:100%;box-sizing:border-box}
+@media(max-width:600px){.employee-edit-fields{grid-template-columns:1fr}}
+:root[data-theme="dark"] .employee-edit-modal{background:#202c40;color:#e6ebf7}
+:root[data-theme="dark"] .employee-edit-modal h2,:root[data-theme="dark"] .employee-edit-modal label{color:#e6ebf7}
+:root[data-theme="dark"] .employee-edit-modal :is(input,select){background:#263449;color:#e6ebf7;border-color:#445676}
+:root[data-theme="dark"] .employee-edit-modal .employee-record-actions button:not([type="submit"]){background:#263449;color:#dce8fb;border-color:#445676}
