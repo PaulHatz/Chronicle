@@ -1,24 +1,26 @@
+import { Suspense, lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import RequireRole from "./auth/RequireRole";
 
-import LoginPage from "./pages/LoginPage";
-import DashboardPage from "./pages/DashboardPage";
-import EmployeePage from "./pages/EmployeePage";
-import EmployeesPage from "./pages/EmployeesPage";
-import EvaluationTemplatesPage from "./pages/EvaluationTemplatesPage";
-import EvaluationTemplatesListPage from "./pages/EvaluationTemplatesListPage";
-import EvaluationTemplateDetailPage from "./pages/EvaluationTemplateDetailPage";
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const EmployeePage = lazy(() => import("./pages/EmployeePage"));
+const EmployeesPage = lazy(() => import("./pages/EmployeesPage"));
+const EvaluationTemplatesPage = lazy(() => import("./pages/EvaluationTemplatesPage"));
+const EvaluationTemplatesListPage = lazy(() => import("./pages/EvaluationTemplatesListPage"));
+const EvaluationTemplateDetailPage = lazy(() => import("./pages/EvaluationTemplateDetailPage"));
 import AppLayout from "./layout/AppLayout";
 import SettingsLayout from "./layout/SettingsLayout";
-import DepartmentsPage from "./pages/DepartmentsPage";
-import UsersPage from "./pages/UsersPage";
-import LanguageSettingsPage from "./pages/LanguageSettingsPage";
-import AppearanceSettingsPage from "./pages/AppearanceSettingsPage";
-import EmployeeEvaluationPage from "./pages/EmployeeEvaluationPage";
-import EmployeeEvaluationResultPage from "./pages/EmployeeEvaluationResultPage";
+const DepartmentsPage = lazy(() => import("./pages/DepartmentsPage"));
+const UsersPage = lazy(() => import("./pages/UsersPage"));
+const LanguageSettingsPage = lazy(() => import("./pages/LanguageSettingsPage"));
+const AppearanceSettingsPage = lazy(() => import("./pages/AppearanceSettingsPage"));
+const EmployeeEvaluationPage = lazy(() => import("./pages/EmployeeEvaluationPage"));
+const EmployeeEvaluationResultPage = lazy(() => import("./pages/EmployeeEvaluationResultPage"));
 export default function App() {
     return (
+        <Suspense fallback={<main role="status" aria-live="polite" style={{ padding: "2rem" }}>Loading page…</main>}>
         <Routes>
             <Route
                 path="/login"
@@ -62,5 +64,6 @@ export default function App() {
                 element={<Navigate to="/" replace />}
             />
         </Routes>
+        </Suspense>
     );
 }
