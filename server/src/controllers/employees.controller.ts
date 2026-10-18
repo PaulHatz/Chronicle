@@ -72,3 +72,15 @@ export async function addemployee(req: Request, res: Response) {
         });
     }
 }
+export async function updateEmployee(req: Request, res: Response) {
+    try {
+        const employee = await employeeService.updateEmployee(Number(req.params.employeeId),req.body);
+        if (!employee) return res.status(404).json({message:"Employee not found."});
+        return res.json({employee});
+    } catch (err) {
+        if (err instanceof Error && /^(Invalid|Provide|Department not found)/.test(err.message)) return res.status(400).json({message:err.message});
+        if ((err as {code?:string})?.code === "P2002") return res.status(409).json({message:"This email is already in use."});
+        console.error(err);
+        return res.status(500).json({message:"Unable to update employee."});
+    }
+}
