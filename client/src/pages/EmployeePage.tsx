@@ -528,13 +528,13 @@ export default function EmployeePage() {
                                 <strong>
                                     {employee.performanceScore === null ? "—" : employee.performanceScore.toFixed(1)}
                                 </strong>
-                                <span>{employee.performanceScore === null ? "No numeric scores" : `out of ${Number(employee.performanceMaxScore.toFixed(1))}`}</span>
+                                <span>{employee.performanceScore === null ? t("noNumericScores") : t("outOf",{value:Number(employee.performanceMaxScore.toFixed(1))})}</span>
                             </div>
 
                             <div className="performance-rating">
-                                <strong>{employee.performanceScore === null ? "Not yet scored" : "Latest evaluation"}</strong>
+                                <strong>{employee.performanceScore === null ? t("notYetScored") : t("latestEvaluation")}</strong>
                                 <span>
-                                    {employee.performanceScore === null ? "Complete an evaluation with scored questions" : "Average of numeric answers on the most recent evaluation"}
+                                    {employee.performanceScore === null ? t("completeEvaluationPrompt") : t("averageNumeric")}
                                 </span>
                             </div>
                         </div>
@@ -701,10 +701,10 @@ export default function EmployeePage() {
                                                 <span
                                                     className={`timeline-type timeline-type-${event.type}`}
                                                 >
-                                                    {event.type === "note" ? (event.noteType === "POSITIVE" ? t("positiveNote") : event.noteType === "IMPROVEMENT" ? t("improveNote") : t("generalNote")) : getTimelineLabel(event.type)}
+                                                    {event.type === "note" ? (event.noteType === "POSITIVE" ? t("positiveNote") : event.noteType === "IMPROVEMENT" ? t("improveNote") : t("generalNote")) : (event.type === "writeup" ? t("writeUps") : event.type === "evaluation" ? t("evaluations") : event.type === "recognition" ? t("recognitions") : getTimelineLabel(event.type))}
                                                 </span>
 
-                                                <h3>{event.evaluationId ? <Link to={`/employees/${employee.id}/evaluations/${event.evaluationId}`}>{event.title}</Link> : event.title}</h3>
+                                                <h3>{event.evaluationId ? <Link to={`/employees/${employee.id}/evaluations/${event.evaluationId}`}>{event.title}</Link> : (event.type === "writeup" ? t(event.title === "VERBAL_WARNING" ? "verbalWarning" : event.title === "WRITTEN_WARNING" ? "writtenWarning" : "finalWarning") : event.title)}</h3>
                                             </div>
 
                                             <time>{formatProfileDate(event.date)}</time>
