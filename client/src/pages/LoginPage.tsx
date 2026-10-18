@@ -2,10 +2,12 @@ import { useState, type FormEvent } from "react";
 
 
 import "./LoginPage.css";
+import {useLanguage} from "../i18n/LanguageContext";
 
 import { login } from "../api/auth";
 
 export default function LoginPage() {
+    const {t}=useLanguage();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -80,8 +82,8 @@ export default function LoginPage() {
                     </div>
 
                     <header className="login-header">
-                        <p className="eyebrow">Welcome back</p>
-                        <h2>Sign in to your account</h2>
+                        <p className="eyebrow">{t("welcomeBack")}</p>
+                        <h2>{t("signIn")}</h2>
                         <p>
                             Enter your credentials to access the management
                             dashboard.
@@ -89,7 +91,7 @@ export default function LoginPage() {
                     </header>
 
                     <div className="form-group">
-                        <label htmlFor="email">Email address</label>
+                        <label htmlFor="email">{t("emailAddress")}</label>
 
                         <input
                             id="email"
@@ -107,7 +109,7 @@ export default function LoginPage() {
 
                     <div className="form-group">
                         <div className="password-label">
-                            <label htmlFor="password">Password</label>
+                            <label htmlFor="password">{t("password")}</label>
 
                             <button
                                 className="forgot-password"
@@ -150,7 +152,7 @@ export default function LoginPage() {
 
                     <label className="remember-me">
                         <input type="checkbox" />
-                        <span>Remember me</span>
+                        <span>{t("rememberMe")}</span>
                     </label>
 
                     <button className="login-button" type="submit">
