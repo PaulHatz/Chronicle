@@ -443,7 +443,7 @@ export default function EmployeePage() {
                         <h2>{recordForm === "recognition" ? "Add recognition" : recordForm === "note" ? "Add manager note" : "Create write-up"}</h2>
                         <p>Record for {employee.name}</p>
                         <form onSubmit={submitRecord}>
-                            {recordForm !== "writeup" ? <>{recordForm === "note" && <fieldset className="note-type-fieldset"><legend>{t("noteType")}</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>{t("title")}<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
+                            {recordForm !== "writeup" ? <>{recordForm === "note" && <fieldset className="note-type-fieldset"><legend>{t("noteType")}</legend><div className="note-type-button-group" role="group" aria-label={t("noteType")}>{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>{t("title")}<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
                               : <label>{t("warningType")}<select value={warningType} onChange={e=>setWarningType(e.target.value as WriteUpType)}>
                                 <option value="VERBAL_WARNING">{t("verbalWarning")}</option><option value="WRITTEN_WARNING">{t("writtenWarning")}</option><option value="FINAL_WARNING">{t("finalWarning")}</option>
                               </select></label>}
@@ -815,7 +815,7 @@ export default function EmployeePage() {
                         <article className="profile-side-card">
                             <div className="side-card-heading goals-card-heading">
                                 <div><h2>{t("developmentGoals")}</h2><p>{t("currentObjectives")}</p></div>
-                                <button className="goal-add-button" type="button" aria-label="Add development goal" title="Add development goal" onClick={() => openGoalEditor()}>+</button>
+                                <button className="goal-add-button" type="button" aria-label={t("goalAddLabel")} title={t("goalAddLabel")} onClick={() => openGoalEditor()}>+</button>
                             </div>
                             {goalsError && <p className="goal-form-error" role="alert">{goalsError}</p>}
                             <div className="goal-list">
