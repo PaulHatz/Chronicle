@@ -3,7 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import "./EmployeePage.css";
 import {useLanguage} from "../i18n/LanguageContext";
 
-import { getemployee, getemployeenotes, getemployeewriteups, createManagerNote, createEmployeeWriteUp, resolveEmployeeWriteUp, type WriteUpType, type ManagerNoteType } from "../api/employee";
+import { getemployee, getemployeenotes, getemployeewriteups, createManagerNote, createEmployeeWriteUp, resolveEmployeeWriteUp, type WriteUpType, type ManagerNoteType, updateEmployeeProfile, type EmployeeProfileInput } from "../api/employee";
+import {getDepartments,type Department} from "../api/departments";
 import { getEmployeeEvaluations } from "../api/employee-evaluations";
 import { getEmployeeGoals, createEmployeeGoal, updateEmployeeGoal, deleteEmployeeGoal, type EmployeeGoal } from "../api/goals";
 
@@ -111,6 +112,10 @@ type TabName = "timeline" | "evaluations" | "notes" | "writeups";
 export default function EmployeePage() {
     const {t}=useLanguage();
     const { employeeId } = useParams();
+    const [profileDraft,setProfileDraft]=useState<EmployeeProfileInput|null>(null);
+    const [departments,setDepartments]=useState<Department[]>([]);
+    const [profileSaving,setProfileSaving]=useState(false);
+    const [profileError,setProfileError]=useState("");
     const [activeTab, setActiveTab] = useState<TabName>("timeline");
     const [employee, setEmployee] = useState<Employee>();
     const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
@@ -137,6 +142,26 @@ export default function EmployeePage() {
     const [goalSaving, setGoalSaving] = useState(false);
     const [goalFormError, setGoalFormError] = useState("");
 
+    async function openProfileEditor(){
+        setProfileError("");
+        try {
+            const [result, available] = await Promise.all([getemployee(Number(employeeId)),getDepartments()]);
+            const value=result.employee;
+            setDepartments(available);
+            setProfileDraft({firstName:value.firstName,lastName:value.lastName,email:value.email??"",phone:value.phone??"",position:value.position,departmentId:value.departmentId,status:value.status,hireDate:String(value.hireDate).slice(0,10)});
+        }catch(e){setProfileError(e instanceof Error?e.message:"Unable to load profile.");}
+    }
+    async function saveProfile(event:React.FormEvent<HTMLFormElement>){
+        event.preventDefault();
+        if(!profileDraft)return;
+        setProfileSaving(true);setProfileError("");
+        try{
+            await updateEmployeeProfile(Number(employeeId),profileDraft);
+            setProfileDraft(null);
+            setRefreshToken(value=>value+1);
+        }catch(e){setProfileError(e instanceof Error?e.message:"Unable to update profile.");}
+        finally{setProfileSaving(false);}
+    }
     async function submitRecord(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         if (!recordForm) return;
@@ -419,23 +444,31 @@ export default function EmployeePage() {
                     </div>
 
                     <div className="profile-header-actions">
-                        <button
-                            className="profile-secondary-button"
-                            type="button"
-                        >
-                            {t("editProfile")}
-                        </button>
-
-                        <button
-                            className="profile-primary-button"
-                            type="button"
-                        >
-                            {t("addRecord")}
-                            <span>+</span>
-                        </button>
+                        <button className="profile-secondary-button" type="button" onClick={()=>void openProfileEditor()}>{t("editProfile")}</button>
                     </div>
                 </section>
 
+
+                {profileError&&!profileDraft&&<p role="alert" className="employee-record-error">{profileError}</p>}
+                {profileDraft&&<div className="employee-record-backdrop" onMouseDown={()=>{if(!profileSaving)setProfileDraft(null);}}>
+                    <section className="employee-record-modal employee-edit-modal" role="dialog" aria-modal="true" aria-label={t("editProfile")} onMouseDown={e=>e.stopPropagation()}>
+                        <h2>{t("editProfile")}</h2>
+                        <form onSubmit={saveProfile}>
+                            <div className="employee-edit-fields">
+                                <label>{t("firstName")}<input required maxLength={100} value={profileDraft.firstName} onChange={e=>setProfileDraft(d=>d&&({...d,firstName:e.target.value}))}/></label>
+                                <label>{t("lastName")}<input required maxLength={100} value={profileDraft.lastName} onChange={e=>setProfileDraft(d=>d&&({...d,lastName:e.target.value}))}/></label>
+                                <label>{t("emailAddress")}<input type="email" value={profileDraft.email} onChange={e=>setProfileDraft(d=>d&&({...d,email:e.target.value}))}/></label>
+                                <label>{t("phone")}<input type="tel" value={profileDraft.phone} onChange={e=>setProfileDraft(d=>d&&({...d,phone:e.target.value}))}/></label>
+                                <label>{t("position")}<input required maxLength={100} value={profileDraft.position} onChange={e=>setProfileDraft(d=>d&&({...d,position:e.target.value}))}/></label>
+                                <label>{t("departments")}<select value={profileDraft.departmentId} onChange={e=>setProfileDraft(d=>d&&({...d,departmentId:Number(e.target.value)}))}>{departments.map(dep=><option value={dep.id} key={dep.id}>{dep.name}</option>)}</select></label>
+                                <label>{t("status")}<select value={profileDraft.status} onChange={e=>setProfileDraft(d=>d&&({...d,status:e.target.value as EmployeeProfileInput["status"]}))}><option value="ACTIVE">{t("active")}</option><option value="INACTIVE">{t("inactive")}</option><option value="LEAVE">{t("onLeave")}</option></select></label>
+                                <label>{t("hireDate")}<input type="date" required value={profileDraft.hireDate} onChange={e=>setProfileDraft(d=>d&&({...d,hireDate:e.target.value}))}/></label>
+                            </div>
+                            {profileError&&<p className="employee-record-error" role="alert">{profileError}</p>}
+                            <div className="employee-record-actions"><button type="button" disabled={profileSaving} onClick={()=>setProfileDraft(null)}>{t("cancel")}</button><button type="submit" disabled={profileSaving}>{profileSaving?t("saving"):t("saveChanges")}</button></div>
+                        </form>
+                    </section>
+                </div>}
                 {recordForm && <div className="employee-record-backdrop" role="presentation" onMouseDown={() => !savingRecord && setRecordForm(null)}>
                     <section className="employee-record-modal" role="dialog" aria-modal="true" aria-label={recordForm === "recognition" ? t("addRecognition") : recordForm === "note" ? t("addNoteTitle") : t("createWriteUp")} onMouseDown={e=>e.stopPropagation()}>
                         <h2>{recordForm === "recognition" ? t("addRecognition") : recordForm === "note" ? t("addNoteTitle") : t("createWriteUp")}</h2>
@@ -669,8 +702,7 @@ export default function EmployeePage() {
                                 </p>
                             </div>
 
-                            <button type="button">{t("addRecord")}<span>+</span>
-                            </button>
+
                         </div>
 
                         <div className="timeline-list">
