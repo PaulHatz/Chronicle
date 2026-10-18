@@ -13,6 +13,7 @@ datasource db {
 }
 
 model User {
+  sessions     Session[]
   id           Int      @id @default(autoincrement())
   email        String   @unique
   passwordHash String
@@ -165,4 +166,17 @@ model Goal {
 enum GoalStatus {
   INCOMPLETE
   COMPLETED
+}
+
+
+// JWTs are accepted only while their matching server-side session exists.
+model Session {
+  id        String   @id
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
 }

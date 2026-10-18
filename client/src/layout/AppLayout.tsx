@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { NavLink, Link, Outlet } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useAuth } from "../auth/AuthContext";
@@ -6,6 +7,15 @@ import "./AppLayout.css";
 export default function AppLayout() {
   const { logout } = useAuth();
   const { t } = useLanguage();
+  const [signingOut, setSigningOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
+  async function handleLogout() {
+    setSigningOut(true);
+    setLogoutError("");
+    try { await logout(); }
+    catch { setLogoutError("Unable to sign out. Please try again."); }
+    finally { setSigningOut(false); }
+  }
   return (
     <div className="chronicle-shell">
       <header className="chronicle-topbar">
@@ -25,11 +35,13 @@ export default function AppLayout() {
                 <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.07-1.9 1.9-.07-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1 1.57V21h-2.7v-.98a1.7 1.7 0 0 0-1-1.57 1.7 1.7 0 0 0-1.88.34l-.07.06-1.9-1.9.06-.07A1.7 1.7 0 0 0 7.8 15a1.7 1.7 0 0 0-1.57-1H5.25v-2.7h.98a1.7 1.7 0 0 0 1.57-1 1.7 1.7 0 0 0-.34-1.88l-.06-.07 1.9-1.9.07.06a1.7 1.7 0 0 0 1.88.34 1.7 1.7 0 0 0 1-1.57V4h2.7v.98a1.7 1.7 0 0 0 1 1.57 1.7 1.7 0 0 0 1.88-.34l.07-.06 1.9 1.9-.06.07A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.57 1h.98v2.7h-.98A1.7 1.7 0 0 0 19.4 15Z" transform="translate(-.65 -.65)"/>
               </svg>
             </NavLink>
-            <button className="chronicle-logout" type="button" onClick={logout}>{t("signOut")}</button>
+            <button className="chronicle-logout" type="button" onClick={handleLogout} disabled={signingOut} aria-busy={signingOut}>{t("signOut")}</button>
           </div>
         </div>
       </header>
+      {logoutError && <p role="alert">{logoutError}</p>}
       <Outlet />
     </div>
   );
 }
+

@@ -4,6 +4,7 @@ import { IncomingMessage, ServerResponse } from "node:http";
 import { Duplex } from "node:stream";
 import express from "express";
 import jwt from "jsonwebtoken";
+import argon2 from "argon2";
 import app from "../src/app";
 import { prisma } from "../src/lib/prisma";
 import { authenticate, requireRoles } from "../src/middleware/auth.middleware";
@@ -12,14 +13,37 @@ process.env.JWT_SECRET = "authorization-tests-only-not-a-production-secret";
 let actor: any;
 let lookups = 0;
 let failLookup = false;
-prisma.user.findUnique = (async () => {
+const firstSessionId = "11111111-1111-4111-8111-111111111111";
+const secondSessionId = "22222222-2222-4222-8222-222222222222";
+let sessions: Map<string, {id:string;userId:number;expiresAt:Date}>;
+let failRevoke = false;
+let failCreate = false;
+prisma.user.findUnique = (async () => actor) as any;
+prisma.session.findUnique = (async (args: any) => {
     lookups++;
     if (failLookup) throw new Error("Simulated database outage");
-    return actor;
+    const session = sessions.get(args.where.id);
+    return session && actor ? {...session,user:actor} : null;
 }) as any;
-beforeEach(() => { actor = { id: 1, email: "test@example.com", role: "TEAM_LEADER" }; lookups = 0; failLookup = false; });
+prisma.session.deleteMany = (async (args: any) => {
+    if (failRevoke) throw new Error("Simulated revoke failure");
+    const session = sessions.get(args.where.id);
+    if (session?.userId !== args.where.userId) return {count:0};
+    sessions.delete(args.where.id);
+    return {count:1};
+}) as any;
+prisma.session.create = (async (args: any) => {
+    if (failCreate) throw new Error("Simulated create failure");
+    sessions.set(args.data.id,args.data);
+    return args.data;
+}) as any;
+beforeEach(() => {
+    actor = { id: 1, email: "test@example.com", role: "TEAM_LEADER" };
+    lookups = 0; failLookup = false; failRevoke = false; failCreate = false;
+    sessions = new Map([firstSessionId,secondSessionId].map(id=>[id,{id,userId:1,expiresAt:new Date(Date.now()+3600000)}]));
+});
 function token(claims: object = { id: 1, role: "ADMIN" }, options: jwt.SignOptions = {}) {
-    return jwt.sign(claims, process.env.JWT_SECRET!, { expiresIn: "1h", ...options });
+    return jwt.sign({jti:firstSessionId,...claims}, process.env.JWT_SECRET!, { expiresIn: "1h", ...options });
 }
 function dispatch(target: express.Express, path: string, method = "GET", bearer: string | null = token(), body?: object): Promise<{status:number;json:()=>Promise<any>}> {
     return new Promise((resolve,reject) => {
@@ -148,4 +172,63 @@ test("all roles can use department options without configuration fields", async 
         assert.deepEqual(selection,{id:true,name:true});
         assert.deepEqual(await response.json(),[{id:3,name:"Service"}]);
     }
+});
+
+test("logout invalidates a copied token across all data routes and preserves another device", async () => {
+    const copied = token();
+    assert.equal((await request("/departments/options","GET",copied)).status,200);
+    assert.equal((await request("/auth/logout","POST",copied)).status,204);
+    for (const path of protectedRoutes) assert.equal((await request(path,"GET",copied)).status,401,path);
+    assert.equal((await request("/auth/logout","POST",copied)).status,401);
+    assert.equal((await request("/departments/options","GET",token({id:1,jti:secondSessionId}))).status,200);
+});
+test("legacy tokens, missing sessions, expired sessions and mismatched owners are rejected", async () => {
+    const legacy = jwt.sign({id:1},process.env.JWT_SECRET!,{expiresIn:"1h"});
+    assert.equal((await request("/departments/options","GET",legacy)).status,401);
+    sessions.delete(firstSessionId);
+    assert.equal((await request("/departments/options")).status,401);
+    sessions.set(firstSessionId,{id:firstSessionId,userId:1,expiresAt:new Date(0)});
+    assert.equal((await request("/departments/options")).status,401);
+    sessions.set(firstSessionId,{id:firstSessionId,userId:2,expiresAt:new Date(Date.now()+3600000)});
+    assert.equal((await request("/auth/logout","POST")).status,401);
+    assert.ok(sessions.has(firstSessionId));
+});
+test("failed revocation reports failure and permits a retry", async () => {
+    failRevoke = true;
+    const original = console.error; console.error = () => {};
+    try { assert.equal((await request("/auth/logout","POST")).status,503); }
+    finally { console.error = original; }
+    assert.ok(sessions.has(firstSessionId));
+    failRevoke = false;
+    assert.equal((await request("/auth/logout","POST")).status,204);
+    assert.equal((await request("/departments/options")).status,401);
+});
+test("login persists distinct sessions and logout revokes the actual issued JWT", async () => {
+    actor.passwordHash = await argon2.hash("test-password-123");
+    const credentials = {email:actor.email,password:"test-password-123"};
+    const loginA = await request("/auth/login","POST",null,credentials);
+    const loginB = await request("/auth/login","POST",null,credentials);
+    assert.equal(loginA.status,200); assert.equal(loginB.status,200);
+    const a = await loginA.json(), b = await loginB.json();
+    const claimsA = jwt.verify(a.token,process.env.JWT_SECRET!) as jwt.JwtPayload;
+    const claimsB = jwt.verify(b.token,process.env.JWT_SECRET!) as jwt.JwtPayload;
+    assert.notEqual(claimsA.jti,claimsB.jti);
+    assert.equal(sessions.get(claimsA.jti!)?.expiresAt.getTime(),claimsA.exp! * 1000);
+    assert.equal((await request("/auth/logout","POST",a.token)).status,204);
+    assert.equal((await request("/departments/options","GET",a.token)).status,401);
+    assert.equal((await request("/departments/options","GET",b.token)).status,200);
+});
+test("invalid credentials and failed session persistence never issue a usable login", async () => {
+    actor.passwordHash = await argon2.hash("test-password-123");
+    const count = sessions.size;
+    assert.equal((await request("/auth/login","POST",null,{email:actor.email,password:"wrong"})).status,401);
+    assert.equal(sessions.size,count);
+    failCreate = true;
+    const original = console.error; console.error = () => {};
+    try {
+        const response = await request("/auth/login","POST",null,{email:actor.email,password:"test-password-123"});
+        assert.equal(response.status,500);
+        assert.equal((await response.json()).token,undefined);
+    } finally { console.error = original; }
+    assert.equal(sessions.size,count);
 });

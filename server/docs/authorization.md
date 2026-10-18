@@ -30,4 +30,30 @@ The model currently has no user-to-employee or user-to-department assignments. E
 
 From `server`, run `npm ci`, `npx prisma generate`, then `npm test` (Node 20.19+ or 22.12+). Tests exercise the Express app with real signed JWTs and stubbed Prisma calls, without a database or listening socket. Coverage includes route denials, stale token roles, deleted users, invalid JWTs, fail-closed lookup errors, user privilege escalation and minimal department options. These are route-level regression tests, not live PostgreSQL integration tests.
 
-An explicit TypeScript check of the server also exposed pre-existing errors: `result.message` and a missing `AuthRequest` import in `auth.controller.ts`, and untyped `id`/`emp` parameters in `employees.service.ts`. The repository does not currently contain a server tsconfig; repairing the full build is a separate task.
+An explicit TypeScript check of the server still exposes pre-existing untyped `id`/`emp` parameters in `employees.service.ts`. The auth controller type errors were corrected while adding logout. The repository does not currently contain a server tsconfig; repairing the full build is a separate task.
+
+## Revocable login sessions
+
+Each successful login now stores a random session ID and expiry in PostgreSQL and embeds the ID as the signed JWT `jti`. Authentication requires both a valid JWT and an unexpired session belonging to its subject; the user's current role is read through that session. Raw tokens are not stored in the database.
+
+`POST /api/auth/logout` revokes only the authenticated session and returns 204 after the delete succeeds. Copied tokens for that session fail with 401 on subsequent requests. Other logins/devices remain active. Requests already authorized before logout may still finish.
+
+The client waits for successful revocation before removing its token, treats 401 as an already unusable token, and displays a retryable error on network/server failure. A login established in another tab during logout is preserved.
+
+### Existing database rollout
+
+Before starting the updated server, apply the additive SQL once from `server` with an exported database URL:
+
+```sh
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f prisma/sql/add-sessions.sql
+npx prisma generate
+npm test
+```
+
+This repository has no baseline Prisma migration history, so the SQL is supplied as an explicit existing-database upgrade instead of introducing an incomplete migration history. New databases created from the Prisma schema already include `Session` and must not run the additive SQL again.
+
+All previously issued tokens lack session IDs and will be rejected after rollout; users must sign in again. Do not accept old tokens as a fallback. Deploy the updated frontend and backend together. Expired session rows can periodically be removed with `DELETE FROM "Session" WHERE "expiresAt" <= CURRENT_TIMESTAMP;`.
+
+This change retains the current bearer-token transport and localStorage. It implements server-side logout revocation; moving the credential to an HttpOnly cookie remains a separate XSS-hardening change.
+
+Verification now includes actual login-issued JWTs, logout/replay, device isolation, legacy/expired/owner-mismatched sessions, persistence and revocation failures, plus client success/failure/new-login handling. All 20 tests pass with stubbed database calls; no live database was modified or integration-tested.

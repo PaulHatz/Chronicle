@@ -5,11 +5,13 @@ import {
     type ReactNode,
 } from "react";
 
+import { logout as revokeSession } from "../api/auth";
+
 type AuthContextType = {
     isAuthenticated: boolean;
     isLoading: boolean;
     login: (token: string) => void;
-    logout: () => void;
+    logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(
@@ -26,9 +28,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setToken(newToken);
     }
 
-    function logout() {
-        localStorage.removeItem("token");
-        setToken(null);
+    async function logout() {
+        setToken(await revokeSession());
     }
 
     return (

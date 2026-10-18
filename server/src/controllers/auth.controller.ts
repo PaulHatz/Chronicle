@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import type { AuthRequest } from "../middleware/auth.middleware";
 import * as authService from "../services/auth.service";
 
 export async function login(req: Request, res: Response) {
@@ -15,7 +16,7 @@ export async function login(req: Request, res: Response) {
 
         if (!result.success) {
             return res.status(401).json({
-                message: result.message
+                message: "Invalid email or password."
             });
         }
 
@@ -60,5 +61,16 @@ export async function me(
         return res.status(500).json({
             message: "Internal server error."
         });
+    }
+}
+
+export async function logout(req: AuthRequest, res: Response) {
+    if (!req.user || !req.sessionId) return res.status(401).json({ message: "Not authenticated." });
+    try {
+        await authService.revokeSession(req.sessionId, req.user.id);
+        return res.status(204).send();
+    } catch (error) {
+        console.error("Unable to revoke session.", error);
+        return res.status(503).json({ message: "Unable to sign out. Please try again." });
     }
 }

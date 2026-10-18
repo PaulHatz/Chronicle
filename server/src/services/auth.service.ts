@@ -1,15 +1,7 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
-import "dotenv/config";
-import { PrismaClient } from "../generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL!,
-  });
-  
-
-const prisma = new PrismaClient({ adapter });
+import { randomUUID } from "node:crypto";
+import { prisma } from "../lib/prisma";
 
 export async function loginUser(email: string, password: string) {
     
@@ -32,16 +24,15 @@ export async function loginUser(email: string, password: string) {
         };
     }
 
+    const sessionId = randomUUID();
+    const expiresAt = new Date((Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60) * 1000);
     const token = jwt.sign(
-        {
-            id: user.id,
-            role: user.role
-        },
+        { id: user.id, jti: sessionId, exp: Math.floor(expiresAt.getTime() / 1000) },
         process.env.JWT_SECRET!,
-        {
-            expiresIn: "7d"
-        }
+        { algorithm: "HS256" }
     );
+    // Never return a token unless its revocable session was persisted.
+    await prisma.session.create({ data: { id: sessionId, userId: user.id, expiresAt } });
 
     return { 
         user: { firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, language: user.language, darkMode: user.darkMode },
@@ -66,4 +57,9 @@ export async function getCurrentUser(userId: number) {
             createdAt: true
         }
     });
+}
+
+
+export async function revokeSession(sessionId: string, userId: number) {
+    await prisma.session.deleteMany({ where: { id: sessionId, userId } });
 }
