@@ -9,6 +9,7 @@ import EvaluationTemplatesPage from "./pages/EvaluationTemplatesPage";
 import EvaluationTemplatesListPage from "./pages/EvaluationTemplatesListPage";
 import EvaluationTemplateDetailPage from "./pages/EvaluationTemplateDetailPage";
 import AppLayout from "./layout/AppLayout";
+import SettingsLayout from "./layout/SettingsLayout";
 import DepartmentsPage from "./pages/DepartmentsPage";
 import UsersPage from "./pages/UsersPage";
 import EmployeeEvaluationPage from "./pages/EmployeeEvaluationPage";
@@ -38,11 +39,14 @@ export default function App() {
                 />
                 <Route path="/employees/:employeeId/evaluate" element={<EmployeeEvaluationPage />} />
                 <Route path="/employees/:employeeId/evaluations/:evaluationId" element={<EmployeeEvaluationResultPage />} />
-                <Route path="/departments" element={<DepartmentsPage />} />
-                <Route path="/users" element={<UsersPage />} />
-                <Route path="/evaluation-templates" element={<EvaluationTemplatesListPage />} />
-                <Route path="/evaluation-templates/new" element={<EvaluationTemplatesPage />} />
-                <Route path="/evaluation-templates/:templateId" element={<EvaluationTemplateDetailPage />} />
+                <Route element={<SettingsLayout />}>
+                  <Route path="/settings" element={<Navigate to="/users" replace />} />
+                  <Route path="/departments" element={<DepartmentsPage />} />
+                  <Route path="/users" element={<UsersPage />} />
+                  <Route path="/evaluation-templates" element={<EvaluationTemplatesListPage />} />
+                  <Route path="/evaluation-templates/new" element={<EvaluationTemplatesPage />} />
+                  <Route path="/evaluation-templates/:templateId" element={<EvaluationTemplateDetailPage />} />
+                </Route>
               </Route>
             </Route>
 
