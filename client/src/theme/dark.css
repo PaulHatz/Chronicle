@@ -91,3 +91,21 @@
 
 /* Start Evaluation has a dedicated hover selector in EmployeePage.css. */
 :root[data-theme="dark"] .profile-action-list .employee-start-evaluation:hover{background:#34445d!important;color:#e6edfb!important}
+
+/* Employee evaluation form and completed evaluation result pages. */
+:root[data-theme="dark"] .employee-evaluation-page{background:#111927!important;color:#e6ebf7!important}
+:root[data-theme="dark"] .employee-eval-card{background:#1c2638!important;color:#e6ebf7!important;border-color:#36445b!important;box-shadow:none!important}
+:root[data-theme="dark"] :is(.employee-eval-header h1,.employee-eval-card h2){color:#eff4fc!important}
+:root[data-theme="dark"] :is(.employee-eval-header span,.employee-eval-scores legend,.employee-eval-comment){color:#b6c4da!important}
+:root[data-theme="dark"] .employee-eval-scores label{background:#253248!important;border-color:#40516e!important;color:#dae6f8!important}
+:root[data-theme="dark"] .employee-eval-scores label:hover{background:#303f58!important;border-color:#627ba5!important}
+:root[data-theme="dark"] .employee-eval-scores label.selected{background:#334e76!important;border-color:#90aee0!important}
+:root[data-theme="dark"] .employee-eval-scores :is(strong,span){color:#dae6f8!important}
+:root[data-theme="dark"] .employee-eval-comment textarea{background:#242f43!important;border-color:#43516b!important;color:#edf2ff!important}
+:root[data-theme="dark"] .employee-eval-comment textarea:focus{border-color:#8ca9d9!important;outline:2px solid #526d9d!important}
+:root[data-theme="dark"] .employee-eval-footer a{color:#b9c9e4!important}
+:root[data-theme="dark"] .employee-eval-footer button{background:#385e9b!important;color:#fff!important}
+:root[data-theme="dark"] .employee-eval-footer button:hover:not(:disabled){background:#4b73b3!important}
+:root[data-theme="dark"] .employee-eval-error{background:#3d222b!important;color:#fac5cc!important}
+:root[data-theme="dark"] .evaluation-result-score{background:#293d5d!important;color:#e6efff!important}
+:root[data-theme="dark"] :is(.evaluation-result-score p,.evaluation-result-text){color:#c4d1e6!important}
