@@ -12,7 +12,7 @@ function formatProfileDate(value: string | null | undefined): string {
     if (!value) return "N/A";
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return "N/A";
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+    return date.toLocaleDateString(document.documentElement.lang === "fr-CA" ? "fr-CA" : "en-CA", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
 }
 
 type EmployeeStatus = "Active" | "Inactive" | "Leave";
