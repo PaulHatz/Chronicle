@@ -117,3 +117,8 @@
 :root[data-theme="dark"] .language-options label strong{color:#f0f4fc}
 :root[data-theme="dark"] .language-options label small{color:#b5c5de}
 :root[data-theme="dark"] .language-options input{accent-color:#9dbdff}
+
+/* Settings gear: override the light-mode hover surface in the navigation. */
+:root[data-theme="dark"] .chronicle-settings-icon:hover,
+:root[data-theme="dark"] .chronicle-settings-icon:focus-visible,
+:root[data-theme="dark"] .chronicle-settings-icon.active{background:#303d55!important;color:#c3d5fa!important;border-color:#435675!important}
