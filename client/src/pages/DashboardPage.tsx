@@ -203,7 +203,7 @@ export default function DashboardPage() {
                             {recordAction !== "writeup" ? (
                                 <>{recordAction === "note" && <fieldset className="note-type-fieldset"><legend>{t("noteType")}</legend><div className="note-type-button-group" role="group" aria-label={t("noteType")}>{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} disabled={recordSaving} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>{t("title")}<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label></>
                             ) : (
-                                <label>Warning type
+                                <label>{t("warningType")}
                                     <select value={warningType} onChange={event => setWarningType(event.target.value as WriteUpType)} disabled={recordSaving}>
                                         <option value="VERBAL_WARNING">{t("verbalWarning")}</option>
                                         <option value="WRITTEN_WARNING">{t("writtenWarning")}</option>
