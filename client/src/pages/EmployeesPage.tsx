@@ -262,7 +262,7 @@ export default function EmployeesPage() {
                 <button
                     className="employee-modal-close"
                     type="button"
-                    aria-label="Close"
+                    aria-label={t("close")}
                     onClick={() => setShowAddForm(false)}
                 >
                     ×
@@ -349,7 +349,7 @@ export default function EmployeesPage() {
                         <input
                             required
                             type="text"
-                            placeholder="Server"
+                            placeholder={t("examplePosition")}
                             value={newEmployee.position}
                             onChange={(event) =>
                                 setNewEmployee((current) => ({
@@ -483,7 +483,7 @@ export default function EmployeesPage() {
 
                         <input
                             type="search"
-                            placeholder="Search by name, email, or position..."
+                            placeholder={t("searchEmployees")}
                             value={search}
                             onChange={(event) =>
                                 setSearch(event.target.value)
@@ -497,7 +497,7 @@ export default function EmployeesPage() {
                             onChange={(event) =>
                                 setDepartmentFilter(event.target.value)
                             }
-                            aria-label="Filter by department"
+                            aria-label={t("filterDepartment")}
                         >
                             <option value="All">
                                 All departments
@@ -514,7 +514,7 @@ export default function EmployeesPage() {
                             onChange={(event) =>
                                 setStatusFilter(event.target.value)
                             }
-                            aria-label="Filter by status"
+                            aria-label={t("filterStatus")}
                         >
                             <option value="All">{t("allStatuses")}</option>
                             <option value="ACTIVE">{t("active")}</option>
