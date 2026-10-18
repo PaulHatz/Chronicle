@@ -124,7 +124,7 @@ export default function LoginPage() {
                                 id="password"
                                 name="password"
                                 type={showPassword ? "text" : "password"}
-                                placeholder="Enter your password"
+                                placeholder={t("enterPassword")}
                                 value={password}
                                 onChange={(event) =>
                                     setPassword(event.target.value)
