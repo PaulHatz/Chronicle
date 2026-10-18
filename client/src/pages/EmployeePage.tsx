@@ -4,6 +4,7 @@ import "./EmployeePage.css";
 
 import { getemployee, getemployeenotes, getemployeewriteups, createManagerNote, createEmployeeWriteUp, resolveEmployeeWriteUp, type WriteUpType, type ManagerNoteType } from "../api/employee";
 import { getEmployeeEvaluations } from "../api/employee-evaluations";
+import { getEmployeeGoals, createEmployeeGoal, updateEmployeeGoal, deleteEmployeeGoal, type EmployeeGoal, type GoalStatus } from "../api/goals";
 
 
 type EmployeeStatus = "Active" | "Inactive" | "Leave";
@@ -113,6 +114,17 @@ export default function EmployeePage() {
     const [savingRecord, setSavingRecord] = useState(false);
     const [recordError, setRecordError] = useState("");
     const [refreshToken, setRefreshToken] = useState(0);
+    const [goals, setGoals] = useState<EmployeeGoal[]>([]);
+    const [goalsError, setGoalsError] = useState("");
+    const [goalsLoading, setGoalsLoading] = useState(true);
+    const [manageGoals, setManageGoals] = useState(false);
+    const [editingGoalId, setEditingGoalId] = useState<number | null>(null);
+    const [goalTitle, setGoalTitle] = useState("");
+    const [goalDescription, setGoalDescription] = useState("");
+    const [goalDate, setGoalDate] = useState("");
+    const [goalStatus, setGoalStatus] = useState<GoalStatus>("INCOMPLETE");
+    const [goalSaving, setGoalSaving] = useState(false);
+    const [goalFormError, setGoalFormError] = useState("");
 
     async function submitRecord(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -225,6 +237,69 @@ export default function EmployeePage() {
                 cancelled = true;
             };
         }, [employeeId, refreshToken]);
+
+
+    useEffect(() => {
+        const id = Number(employeeId);
+        if (!Number.isSafeInteger(id) || id <= 0) return;
+        let cancelled = false;
+        setGoalsLoading(true);
+        void getEmployeeGoals(id)
+          .then(data => { if (!cancelled) { setGoals(data); setGoalsError(""); } })
+          .catch(err => { if (!cancelled) setGoalsError(err instanceof Error ? err.message : "Unable to load goals."); })
+          .finally(() => { if (!cancelled) setGoalsLoading(false); });
+        return () => { cancelled = true; };
+    }, [employeeId]);
+
+    function openGoalEditor(goal?: EmployeeGoal) {
+        setEditingGoalId(goal?.id ?? null);
+        setGoalTitle(goal?.title ?? "");
+        setGoalDescription(goal?.description ?? "");
+        setGoalDate(goal?.duration.slice(0, 10) ?? "");
+        setGoalStatus(goal?.status ?? "INCOMPLETE");
+        setGoalFormError("");
+        setManageGoals(true);
+    }
+
+    async function saveGoal(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        setGoalFormError("");
+        if (!goalTitle.trim() || !goalDescription.trim() || !goalDate) {
+            setGoalFormError("Title, description, and target date are required.");
+            return;
+        }
+        setGoalSaving(true);
+        try {
+            const input = {title: goalTitle.trim(), description: goalDescription.trim(), duration: goalDate, status: goalStatus};
+            if (editingGoalId === null) await createEmployeeGoal(Number(employeeId), input);
+            else await updateEmployeeGoal(Number(employeeId), editingGoalId, input);
+            setGoals(await getEmployeeGoals(Number(employeeId)));
+            setManageGoals(false);
+            setGoalsError("");
+        } catch (err) {
+            setGoalFormError(err instanceof Error ? err.message : "Unable to save goal.");
+        } finally { setGoalSaving(false); }
+    }
+
+    async function changeGoalStatus(goal: EmployeeGoal) {
+        try {
+            await updateEmployeeGoal(Number(employeeId),goal.id,{status:goal.status === "COMPLETED" ? "INCOMPLETE" : "COMPLETED"});
+            setGoals(await getEmployeeGoals(Number(employeeId)));
+            setGoalsError("");
+        } catch(err) { setGoalsError(err instanceof Error ? err.message : "Unable to update goal."); }
+    }
+
+    async function removeGoal(goal: EmployeeGoal) {
+        if (!window.confirm(`Delete goal "${goal.title}"?`)) return;
+        setGoalSaving(true);
+        try {
+            await deleteEmployeeGoal(Number(employeeId),goal.id);
+            setGoals(await getEmployeeGoals(Number(employeeId)));
+            setManageGoals(false);
+            setGoalsError("");
+        } catch(err) { setGoalFormError(err instanceof Error ? err.message : "Unable to delete goal."); }
+        finally { setGoalSaving(false); }
+    }
 
     if (!employee) {
         return (
@@ -345,6 +420,24 @@ export default function EmployeePage() {
                             <label>{recordForm === "recognition" ? "Recognition details" : recordForm === "note" ? "Note" : "Reason / details"}<textarea required rows={6} maxLength={10000} value={recordContent} onChange={e=>setRecordContent(e.target.value)}/></label>
                             {recordError && <p role="alert" className="employee-record-error">{recordError}</p>}
                             <div className="employee-record-actions"><button type="button" disabled={savingRecord} onClick={()=>setRecordForm(null)}>Cancel</button><button type="submit" disabled={savingRecord}>{savingRecord ? "Saving…" : "Save record"}</button></div>
+                        </form>
+                    </section>
+                </div>}
+                {manageGoals && <div className="employee-record-backdrop" role="presentation" onMouseDown={() => !goalSaving && setManageGoals(false)}>
+                    <section className="employee-record-modal goal-editor-modal" role="dialog" aria-modal="true" aria-label={editingGoalId === null ? "Create development goal" : "Edit development goal"} onMouseDown={event=>event.stopPropagation()}>
+                        <h2>{editingGoalId === null ? "Create development goal" : "Edit development goal"}</h2>
+                        <p>Development goal for {employee.name}</p>
+                        <form onSubmit={saveGoal}>
+                            <label>Title<input required maxLength={200} value={goalTitle} onChange={event=>setGoalTitle(event.target.value)}/></label>
+                            <label>Description<textarea required rows={4} maxLength={10000} value={goalDescription} onChange={event=>setGoalDescription(event.target.value)}/></label>
+                            <label>Target completion date<input required type="date" value={goalDate} onChange={event=>setGoalDate(event.target.value)}/></label>
+                            <label>Status<select value={goalStatus} onChange={event=>setGoalStatus(event.target.value as GoalStatus)}><option value="INCOMPLETE">Incomplete</option><option value="COMPLETED">Completed</option></select></label>
+                            {goalFormError && <p role="alert" className="goal-form-error">{goalFormError}</p>}
+                            <div className="employee-record-actions">
+                                {editingGoalId !== null && <button type="button" disabled={goalSaving} onClick={() => { const goal=goals.find(item=>item.id===editingGoalId); if(goal) void removeGoal(goal); }}>Delete goal</button>}
+                                <button type="button" disabled={goalSaving} onClick={()=>setManageGoals(false)}>Cancel</button>
+                                <button type="submit" disabled={goalSaving}>{goalSaving?"Saving…":"Save goal"}</button>
+                            </div>
                         </form>
                     </section>
                 </div>}
@@ -695,49 +788,26 @@ export default function EmployeePage() {
                                 <p>Current employee objectives.</p>
                             </div>
 
+                            {goalsError && <p className="goal-form-error" role="alert">{goalsError}</p>}
                             <div className="goal-list">
-                                <div className="goal-item">
-                                    <div className="goal-heading">
-                                        <strong>
-                                            Event-night efficiency
-                                        </strong>
-                                        <span>70%</span>
-                                    </div>
-
-                                    <div className="goal-progress">
-                                        <span style={{ width: "70%" }} />
-                                    </div>
-
-                                    <p>
-                                        Improve speed and table
-                                        organization during high-volume
-                                        shifts.
-                                    </p>
-                                </div>
-
-                                <div className="goal-item">
-                                    <div className="goal-heading">
-                                        <strong>
-                                            Team communication
-                                        </strong>
-                                        <span>85%</span>
-                                    </div>
-
-                                    <div className="goal-progress">
-                                        <span style={{ width: "85%" }} />
-                                    </div>
-
-                                    <p>
-                                        Improve communication with support
-                                        staff and team leaders.
-                                    </p>
-                                </div>
+                                {goalsLoading ? <p className="goals-empty">Loading goals…</p> :
+                                    goals.length === 0 ? <p className="goals-empty">No development goals yet.</p> :
+                                    goals.map(goal => (
+                                        <div className="goal-item" key={goal.id}>
+                                            <div className="goal-heading">
+                                                <strong>{goal.title}</strong>
+                                                <span className={`goal-state ${goal.status === "COMPLETED" ? "completed" : "incomplete"}`}>{goal.status === "COMPLETED" ? "✓ Completed" : "○ Incomplete"}</span>
+                                            </div>
+                                            <p>{goal.description}</p>
+                                            <p className="goal-due">Target: {new Date(goal.duration).toLocaleDateString(undefined,{timeZone:"UTC",year:"numeric",month:"short",day:"numeric"})}</p>
+                                            <div className="goal-inline-actions">
+                                                <button type="button" onClick={() => void changeGoalStatus(goal)}>{goal.status === "COMPLETED" ? "Mark incomplete" : "Mark complete"}</button>
+                                                <button type="button" onClick={() => openGoalEditor(goal)}>Edit</button>
+                                            </div>
+                                        </div>
+                                    ))}
                             </div>
-
-                            <button
-                                className="manage-goals-button"
-                                type="button"
-                            >
+                            <button className="manage-goals-button" type="button" onClick={() => openGoalEditor()}>
                                 Manage goals
                             </button>
                         </article>
