@@ -38,7 +38,7 @@ export const messages = {
   saveRecord:"Save record",selectEmployee:"Employee",noteType:"Note type",
   positive:"Positive",general:"General",needsImprovement:"Needs improvement",
   verbalWarning:"Verbal warning",writtenWarning:"Written warning",finalWarning:"Final warning",
-  createTemplate:"Create evaluation template",back:"Back"
+  createTemplate:"Create evaluation template",back:"Back",
   teamManagement: "Team management",
   addEmployee: "Add employee",
   employeeDirectoryDescription: "View employee records, performance history, evaluations, notes, and disciplinary actions.",
@@ -318,7 +318,7 @@ export const messages = {
   saveRecord:"Enregistrer",selectEmployee:"Employé",noteType:"Type de note",
   positive:"Positive",general:"Générale",needsImprovement:"À améliorer",
   verbalWarning:"Avertissement verbal",writtenWarning:"Avertissement écrit",finalWarning:"Dernier avertissement",
-  createTemplate:"Créer un modèle d’évaluation",back:"Retour"
+  createTemplate:"Créer un modèle d’évaluation",back:"Retour",
   teamManagement: "Gestion de l’équipe",
   addEmployee: "Ajouter un employé",
   employeeDirectoryDescription: "Consultez les dossiers des employés, l’historique du rendement, les évaluations, les notes et les mesures disciplinaires.",
