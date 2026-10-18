@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./EmployeePage.css";
+import {useLanguage} from "../i18n/LanguageContext";
 
 import { getemployee, getemployeenotes, getemployeewriteups, createManagerNote, createEmployeeWriteUp, resolveEmployeeWriteUp, type WriteUpType, type ManagerNoteType } from "../api/employee";
 import { getEmployeeEvaluations } from "../api/employee-evaluations";
@@ -108,6 +109,7 @@ const timelineEvents: TimelineEvent[] = [
 type TabName = "timeline" | "evaluations" | "notes" | "writeups";
 
 export default function EmployeePage() {
+    const {t,locale}=useLanguage();
     const { employeeId } = useParams();
     const [activeTab, setActiveTab] = useState<TabName>("timeline");
     const [employee, setEmployee] = useState<Employee>();
@@ -334,7 +336,7 @@ export default function EmployeePage() {
             <main className="employee-profile-page">
                 <section className="employee-not-found">
                     <div className="not-found-icon">?</div>
-                    <h1>Employee not found</h1>
+                    <h1>{t("employeeNotFound")}</h1>
                     <p>
                         The employee record you requested does not exist.
                     </p>
@@ -441,13 +443,13 @@ export default function EmployeePage() {
                         <h2>{recordForm === "recognition" ? "Add recognition" : recordForm === "note" ? "Add manager note" : "Create write-up"}</h2>
                         <p>Record for {employee.name}</p>
                         <form onSubmit={submitRecord}>
-                            {recordForm !== "writeup" ? <>{recordForm === "note" && <fieldset className="note-type-fieldset"><legend>Note type</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>Title<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
+                            {recordForm !== "writeup" ? <>{recordForm === "note" && <fieldset className="note-type-fieldset"><legend>Note type</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>{t("title")}<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
                               : <label>Warning type<select value={warningType} onChange={e=>setWarningType(e.target.value as WriteUpType)}>
                                 <option value="VERBAL_WARNING">Verbal warning</option><option value="WRITTEN_WARNING">Written warning</option><option value="FINAL_WARNING">Final warning</option>
                               </select></label>}
                             <label>{recordForm === "recognition" ? "Recognition details" : recordForm === "note" ? "Note" : "Reason / details"}<textarea required rows={6} maxLength={10000} value={recordContent} onChange={e=>setRecordContent(e.target.value)}/></label>
                             {recordError && <p role="alert" className="employee-record-error">{recordError}</p>}
-                            <div className="employee-record-actions"><button type="button" disabled={savingRecord} onClick={()=>setRecordForm(null)}>Cancel</button><button type="submit" disabled={savingRecord}>{savingRecord ? "Saving…" : "Save record"}</button></div>
+                            <div className="employee-record-actions"><button type="button" disabled={savingRecord} onClick={()=>setRecordForm(null)}>{t("cancel")}</button><button type="submit" disabled={savingRecord}>{savingRecord ? "Saving…" : "Save record"}</button></div>
                         </form>
                     </section>
                 </div>}
@@ -456,14 +458,14 @@ export default function EmployeePage() {
                         <h2>{editingGoalId === null ? "Create development goal" : "Edit development goal"}</h2>
                         <p>Development goal for {employee.name}</p>
                         <form onSubmit={saveGoal}>
-                            <label>Title<input required maxLength={200} value={goalTitle} onChange={event=>setGoalTitle(event.target.value)}/></label>
-                            <label>Description<textarea required rows={4} maxLength={10000} value={goalDescription} onChange={event=>setGoalDescription(event.target.value)}/></label>
-                            <label>Target completion date<input required type="date" value={goalDate} onChange={event=>setGoalDate(event.target.value)}/></label>
+                            <label>{t("title")}<input required maxLength={200} value={goalTitle} onChange={event=>setGoalTitle(event.target.value)}/></label>
+                            <label>{t("description")}<textarea required rows={4} maxLength={10000} value={goalDescription} onChange={event=>setGoalDescription(event.target.value)}/></label>
+                            <label>{t("targetDate")}<input required type="date" value={goalDate} onChange={event=>setGoalDate(event.target.value)}/></label>
                             
                             {goalFormError && <p role="alert" className="goal-form-error">{goalFormError}</p>}
                             <div className="employee-record-actions">
-                                {editingGoalId !== null && <button type="button" disabled={goalSaving} onClick={() => { const goal=goals.find(item=>item.id===editingGoalId); if(goal) void removeGoal(goal); }}>Delete goal</button>}
-                                <button type="button" disabled={goalSaving} onClick={()=>setManageGoals(false)}>Cancel</button>
+                                {editingGoalId !== null && <button type="button" disabled={goalSaving} onClick={() => { const goal=goals.find(item=>item.id===editingGoalId); if(goal) void removeGoal(goal); }}>{t("deleteGoal")}</button>}
+                                <button type="button" disabled={goalSaving} onClick={()=>setManageGoals(false)}>{t("cancel")}</button>
                                 <button type="submit" disabled={goalSaving}>{goalSaving?"Saving…":"Save goal"}</button>
                             </div>
                         </form>
@@ -476,38 +478,38 @@ export default function EmployeePage() {
                                 <p className="section-eyebrow">
                                     Employee information
                                 </p>
-                                <h2>Profile details</h2>
+                                <h2>{t("profileDetails")}</h2>
                             </div>
                         </div>
 
                         <dl className="employee-details-grid">
                             <div>
-                                <dt>Position</dt>
+                                <dt>{t("position")}</dt>
                                 <dd>{employee.position}</dd>
                             </div>
 
                             <div>
-                                <dt>Department</dt>
+                                <dt>{t("department")}</dt>
                                 <dd>{employee.department}</dd>
                             </div>
 
                             <div>
-                                <dt>Hire date</dt>
+                                <dt>{t("hireDate")}</dt>
                                 <dd>{employee.hireDate}</dd>
                             </div>
 
                             <div>
-                                <dt>Direct manager</dt>
+                                <dt>{t("directManager")}</dt>
                                 <dd>{employee.manager}</dd>
                             </div>
 
                             <div>
-                                <dt>Last evaluation</dt>
+                                <dt>{t("lastEvaluation")}</dt>
                                 <dd>{employee.lastEvaluation}</dd>
                             </div>
 
                             <div>
-                                <dt>Next evaluation</dt>
+                                <dt>{t("nextEvaluation")}</dt>
                                 <dd>{employee.nextEvaluation}</dd>
                             </div>
                         </dl>
@@ -519,7 +521,7 @@ export default function EmployeePage() {
                                 <p className="section-eyebrow">
                                     Current performance
                                 </p>
-                                <h2>Performance score</h2>
+                                <h2>{t("performanceScore")}</h2>
                             </div>
                         </div>
 
@@ -551,7 +553,7 @@ export default function EmployeePage() {
                         </div>
 
                         <div className="evaluation-date-box">
-                            <span>Next evaluation</span>
+                            <span>{t("nextEvaluation")}</span>
                             <strong>{employee.nextEvaluation}</strong>
                         </div>
                     </article>
@@ -562,7 +564,7 @@ export default function EmployeePage() {
                         <div className="stat-icon stat-icon-blue">✓</div>
 
                         <div>
-                            <span>Evaluations</span>
+                            <span>{t("evaluations")}</span>
                             <strong>
                                 {employee.completedEvaluations}
                             </strong>
@@ -578,7 +580,7 @@ export default function EmployeePage() {
                         <div>
                             <span>Manager notes</span>
                             <strong>{employee.notes}</strong>
-                            <small>Total records</small>
+                            <small>{t("totalRecords")}</small>
                         </div>
                     </article>
 
@@ -588,7 +590,7 @@ export default function EmployeePage() {
                         <div>
                             <span>Open write-ups</span>
                             <strong>{employee.openWriteUps}</strong>
-                            <small>Require follow-up</small>
+                            <small>{t("requiresFollowUp")}</small>
                         </div>
                     </article>
 
@@ -598,9 +600,9 @@ export default function EmployeePage() {
                         </div>
 
                         <div>
-                            <span>Recognitions</span>
+                            <span>{t("recognitions")}</span>
                             <strong>{employee.recognitions}</strong>
-                            <small>Positive manager notes</small>
+                            <small>{t("positiveNotes")}</small>
                         </div>
                     </article>
                 </section>
@@ -713,7 +715,7 @@ export default function EmployeePage() {
                                         <p>{event.description}</p>
                                         {event.writeUpId && <div className="writeup-resolution">
                                             <span>{event.resolvedAt ? "Resolved" : "Open"}</span>
-                                            {!event.resolvedAt && <button type="button" onClick={() => void resolveRecord(event.writeUpId!)}>Mark resolved</button>}
+                                            {!event.resolvedAt && <button type="button" onClick={() => void resolveRecord(event.writeUpId!)}>{t("markResolved")}</button>}
                                         </div>}
                                         {event.evaluationId && <Link className="evaluation-timeline-link" to={`/employees/${employee.id}/evaluations/${event.evaluationId}`}>View evaluation results →</Link>}
 
@@ -741,7 +743,7 @@ export default function EmployeePage() {
                     <aside className="employee-profile-sidebar">
                         <article className="profile-side-card">
                             <div className="side-card-heading">
-                                <h2>Quick actions</h2>
+                                <h2>{t("quickActions")}</h2>
                                 <p>
                                     Add an event to the employee record.
                                 </p>
@@ -754,7 +756,7 @@ export default function EmployeePage() {
                                     </span>
 
                                     <div>
-                                        <strong>Add manager note</strong>
+                                        <strong>{t("addNote")}</strong>
                                         <small>
                                             Record feedback or coaching
                                         </small>
@@ -769,7 +771,7 @@ export default function EmployeePage() {
                                     </span>
 
                                     <div>
-                                        <strong>Start evaluation</strong>
+                                        <strong>{t("startEvaluation")}</strong>
                                         <small>
                                             Complete a performance review
                                         </small>
@@ -784,7 +786,7 @@ export default function EmployeePage() {
                                     </span>
 
                                     <div>
-                                        <strong>Add recognition</strong>
+                                        <strong>{t("addRecognition")}</strong>
                                         <small>
                                             Recognize positive performance
                                         </small>
@@ -799,7 +801,7 @@ export default function EmployeePage() {
                                     </span>
 
                                     <div>
-                                        <strong>Create write-up</strong>
+                                        <strong>{t("createWriteUp")}</strong>
                                         <small>
                                             Document disciplinary action
                                         </small>
@@ -812,12 +814,12 @@ export default function EmployeePage() {
 
                         <article className="profile-side-card">
                             <div className="side-card-heading goals-card-heading">
-                                <div><h2>Development goals</h2><p>Current employee objectives.</p></div>
+                                <div><h2>{t("developmentGoals")}</h2><p>{t("currentObjectives")}</p></div>
                                 <button className="goal-add-button" type="button" aria-label="Add development goal" title="Add development goal" onClick={() => openGoalEditor()}>+</button>
                             </div>
                             {goalsError && <p className="goal-form-error" role="alert">{goalsError}</p>}
                             <div className="goal-list">
-                                {goalsLoading ? <p className="goals-empty">Loading goals…</p> :
+                                {goalsLoading ? <p className="goals-empty">{t("loadingGoals")}</p> :
                                     goals.filter(goal => showCompletedGoals ? goal.status === "COMPLETED" : goal.status === "INCOMPLETE").length === 0 ?
                                       <p className="goals-empty">{showCompletedGoals ? "No completed goals yet." : "No active development goals."}</p> :
                                     goals.filter(goal => showCompletedGoals ? goal.status === "COMPLETED" : goal.status === "INCOMPLETE").map(goal => (
@@ -831,7 +833,7 @@ export default function EmployeePage() {
                                                     <span className="goal-check-mark" aria-hidden="true">✓</span>
                                                 </button>
                                                 <strong className="goal-title">{goal.title}</strong>
-                                                <button className="goal-edit-link" type="button" onClick={() => openGoalEditor(goal)}>Edit</button>
+                                                <button className="goal-edit-link" type="button" onClick={() => openGoalEditor(goal)}>{t("edit")}</button>
                                             </div>
                                             <div className="goal-body">
                                                 <p>{goal.description}</p>
