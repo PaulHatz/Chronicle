@@ -32,7 +32,7 @@ export default function EvaluationTemplatesListPage() {
       <div className="evaluation-panel evaluation-template-list">
         <div className="evaluation-list-toolbar">
           <h2>All templates <span>({templates.length})</span></h2>
-          <input aria-label="Search evaluation templates" placeholder="Search by name or version…" value={search} onChange={e => setSearch(e.target.value)} />
+          <input aria-label={t("searchTemplateLabel")} placeholder={t("searchTemplates")} value={search} onChange={e => setSearch(e.target.value)} />
         </div>
         {loading ? <p className="evaluation-help">{t("loadingTemplates")}</p> :
           error ? <p className="evaluation-error" role="alert">{error}</p> :
