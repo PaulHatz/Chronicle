@@ -19,6 +19,7 @@ model User {
   firstName    String
   lastName     String
   role         UserRole @default(MANAGER)
+  language     String   @default("fr-CA")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
