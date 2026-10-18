@@ -21,3 +21,8 @@
 :root[data-theme="dark"] :is(.chronicle-brand,.settings-sidebar-link,.chronicle-nav-link,.chronicle-settings-icon){text-decoration:none}
 :root[data-theme="dark"] :is(.users-alert.users-success,.department-success,.evaluation-success){background:#17392e;color:#b6ecd0}
 :root[data-theme="dark"] :is(.users-alert.users-error,.department-error,.evaluation-error){background:#3d222b;color:#fac5cc}
+
+/* Page canvases must be themed too; the page CSS gives them light backgrounds. */
+:root[data-theme="dark"] :is(.dashboard-page,.employees-page,.employee-profile-page){background:#111927!important;color:#e6ebf7!important}
+:root[data-theme="dark"] :is(.dashboard-header h1,.employees-header h1,.employee-title-row h1){color:#f0f4fc!important}
+:root[data-theme="dark"] :is(.dashboard-header>div>p:last-child,.employees-description){color:#aab8d0!important}
