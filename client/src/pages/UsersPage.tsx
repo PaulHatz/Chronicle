@@ -40,10 +40,10 @@ export default function UsersPage(){
  }
  const visible=users.filter(user=>`${user.firstName} ${user.lastName} ${user.email} ${roleLabels[user.role]}`.toLowerCase().includes(search.trim().toLowerCase()));
  return <main className="users-page">
-  <header className="users-header"><div><p className="users-eyebrow">Settings / Access</p><h1>Users</h1><p>Manage team accounts, access roles and sign-in credentials.</p></div><button type="button" className="users-primary" disabled={busy||loading} onClick={openCreate}>＋ Add user</button></header>
+  <header className="users-header"><div><p className="users-eyebrow">Settings / Access</p><h1>Users</h1><p>Manage team accounts, access roles and sign-in credentials.</p></div></header>
   {error&&<p className="users-alert users-error" role="alert">{error}</p>}
   {notice&&<p className="users-alert users-success" role="status">{notice}</p>}
-  {editing!==null&&<section className="users-card users-editor"><div className="users-card-header"><h2>{editing==="new"?"Add user":"Edit user"}</h2><button type="button" aria-label="Close editor" onClick={()=>setEditing(null)}>✕</button></div>
+  {editing!==null&&<div className="users-modal-backdrop" onMouseDown={()=>{if(!busy)setEditing(null);}}><section className="users-modal" role="dialog" aria-modal="true" aria-labelledby="users-modal-title" onMouseDown={e=>e.stopPropagation()}><div className="users-modal-intro"><span className="users-modal-icon" aria-hidden="true">{editing==="new"?"＋":"✎"}</span><div><p className="users-modal-eyebrow">Account management</p><h2 id="users-modal-title">{editing==="new"?"Add new user":"Edit user"}</h2><p>{editing==="new"?"Create an account and assign its access level.":"Update account details or reset the password."}</p></div><button type="button" className="users-modal-close" aria-label="Close editor" disabled={busy} onClick={()=>setEditing(null)}>✕</button></div>
    <form onSubmit={save}>
     <div className="users-form-grid">
      <label>First name<input autoComplete="given-name" required maxLength={100} value={draft.firstName} onChange={e=>setDraft(d=>({...d,firstName:e.target.value}))}/></label>
@@ -52,11 +52,11 @@ export default function UsersPage(){
      <label>Role<select value={draft.role} onChange={e=>setDraft(d=>({...d,role:e.target.value as UserRole}))}><option value="ADMIN">Administrator</option><option value="MANAGER">Manager</option><option value="TEAM_LEADER">Team leader</option></select></label>
      <label>Password {editing!=="new"&&<small>(leave blank to keep current)</small>}<input type="password" autoComplete="new-password" minLength={12} maxLength={256} required={editing==="new"} value={draft.password} onChange={e=>setDraft(d=>({...d,password:e.target.value}))}/></label>
     </div>
-    <div className="users-form-actions"><button type="button" onClick={()=>setEditing(null)} disabled={busy}>Cancel</button><button className="users-primary" type="submit" disabled={busy}>{busy?"Saving…":editing==="new"?"Create user":"Save changes"}</button></div>
+    {error&&<p className="users-modal-error" role="alert">{error}</p>}<div className="users-form-actions"><button type="button" onClick={()=>setEditing(null)} disabled={busy}>Cancel</button><button className="users-primary" type="submit" disabled={busy}>{busy?"Saving…":editing==="new"?"Create user":"Save changes"}</button></div>
    </form>
-  </section>}
+  </section></div>}
   <section className="users-card">
-   <div className="users-list-header"><div><h2>All users</h2><span>{users.length} total accounts</span></div><input type="search" aria-label="Search users" placeholder="Search users…" value={search} onChange={e=>setSearch(e.target.value)}/></div>
+   <div className="users-list-header"><div><h2>All users</h2><span>{users.length} total accounts</span></div><button type="button" className="users-add-icon" title="Add user" aria-label="Add user" disabled={busy||loading} onClick={openCreate}>+</button></div><div className="users-search-row"><input type="search" aria-label="Search users" placeholder="Search users by name, email or role…" value={search} onChange={e=>setSearch(e.target.value)}/></div>
    {loading?<p className="users-empty">Loading users…</p>:visible.length===0?<p className="users-empty">{users.length?"No users match your search.":"No users found."}</p>:<div className="users-list">{visible.map(user=><div className="users-row" key={user.id}>
     <span className="users-avatar">{user.firstName.charAt(0)}{user.lastName.charAt(0)}</span>
     <div className="users-identity"><strong>{user.firstName} {user.lastName}</strong><span>{user.email}</span></div>
