@@ -26,3 +26,36 @@
 :root[data-theme="dark"] :is(.dashboard-page,.employees-page,.employee-profile-page){background:#111927!important;color:#e6ebf7!important}
 :root[data-theme="dark"] :is(.dashboard-header h1,.employees-header h1,.employee-title-row h1){color:#f0f4fc!important}
 :root[data-theme="dark"] :is(.dashboard-header>div>p:last-child,.employees-description){color:#aab8d0!important}
+
+/* Organization page canvases: individual page styles otherwise force pale backgrounds. */
+:root[data-theme="dark"] :is(.departments-page,.evaluation-builder){background:#111927!important;color:#e6ebf7!important}
+:root[data-theme="dark"] :is(.departments-header h1,.evaluation-builder h1,.department-card h2,.evaluation-panel h2){color:#f0f4fc!important}
+:root[data-theme="dark"] :is(.departments-header p:last-child,.evaluation-builder-header p:last-child,.evaluation-panel-heading p,.department-fields label,.evaluation-builder label,.evaluation-stat,.evaluation-rubric-display span){color:#b1bfd5!important}
+
+/* Secondary/outline buttons are dark surfaces rather than white rectangles. */
+:root[data-theme="dark"] :is(
+ .chronicle-logout,.secondary-button,.profile-secondary-button,.employee-form-cancel,
+ .department-actions button:not(.department-primary),.evaluation-detail-actions button:not(.evaluation-submit),
+ .users-row-actions button,.users-form-actions button:not(.users-primary),.users-modal-close,
+ .sort-button,.text-button,.goal-inline-actions button,.goal-edit-link,.goal-add-button,
+ .dashboard-record-actions button:not([type="submit"]),.employee-record-actions button:not([type="submit"]),
+ .evaluation-add,.evaluation-remove,.evaluation-back,.panel-button,.view-employee-button
+){background:#263348!important;border-color:#465671!important;color:#d9e5f8!important;box-shadow:none}
+:root[data-theme="dark"] :is(
+ .chronicle-logout,.secondary-button,.profile-secondary-button,.employee-form-cancel,
+ .department-actions button:not(.department-primary),.evaluation-detail-actions button:not(.evaluation-submit),
+ .users-row-actions button,.users-form-actions button:not(.users-primary),.sort-button,
+ .goal-inline-actions button,.evaluation-add,.panel-button,.view-employee-button
+):hover:not(:disabled){background:#34445f!important;border-color:#6982af!important}
+:root[data-theme="dark"] :is(.department-actions .department-delete,.evaluation-detail-actions .evaluation-remove,.users-row-actions .users-delete){color:#f3a5af!important}
+
+/* Inner panels, decorative accents, and template rows. */
+:root[data-theme="dark"] :is(.evaluation-question,.evaluation-rubric,.evaluation-rubric-row,.evaluation-list-row,.evaluation-version,
+ .evaluation-template-symbol,.evaluation-number,.department-icon,.users-modal-icon,
+ .employee-modal-header,.employee-tabs,.dashboard-record-actions,.employee-record-actions){background:#253248!important;border-color:#3a4b66!important}
+:root[data-theme="dark"] :is(.evaluation-list-link:hover,.evaluation-list-link:focus-visible,.evaluation-list-row:hover){background:#303f57!important}
+:root[data-theme="dark"] :is(.evaluation-template-symbol,.evaluation-number,.evaluation-rubric-row span,.evaluation-rubric-display strong,
+ .department-icon,.evaluation-version){color:#b4ccf6!important}
+:root[data-theme="dark"] :is(.evaluation-stat,.evaluation-existing,.evaluation-list-toolbar,.evaluation-list-row,.evaluation-rubric-display,.department-list-heading,.department-row){border-color:#3a4962!important}
+:root[data-theme="dark"] :is(.evaluation-stat strong,.evaluation-existing strong,.department-identity strong){color:#eff4fc!important}
+:root[data-theme="dark"] :is(.evaluation-list-row span,.evaluation-existing span,.department-identity span,.department-template small){color:#aebbd2!important}
