@@ -5,6 +5,7 @@ import {
   getEvaluationTemplates, type NewQuestion,
 } from "../api/evaluations";
 import "./EvaluationTemplatesPage.css";
+import {useLanguage} from "../i18n/LanguageContext";
 
 type DraftQuestion = {
   key: number;
@@ -21,6 +22,7 @@ const newQuestion = (key: number): DraftQuestion => ({
 });
 
 export default function EvaluationTemplatesPage() {
+  const {t}=useLanguage();
   const [name, setName] = useState("");
   const [version, setVersion] = useState("1.0");
   const [questions, setQuestions] = useState<DraftQuestion[]>([newQuestion(1)]);
@@ -120,10 +122,10 @@ export default function EvaluationTemplatesPage() {
     <main className="evaluation-builder">
       <header className="evaluation-builder-header">
         <div>
-          <Link className="evaluation-back" to="/evaluation-templates">← All templates</Link>
+          <Link className="evaluation-back" to="/evaluation-templates">{t("allTemplatesBack")}</Link>
           <p className="evaluation-eyebrow">Employee performance</p>
-          <h1>Create evaluation template</h1>
-          <p>Build reusable evaluation templates with scored and written questions.</p>
+          <h1>{t("createTemplate")}</h1>
+          <p>{t("templatesIntro")}</p>
         </div>
       </header>
 
@@ -132,41 +134,41 @@ export default function EvaluationTemplatesPage() {
           <section className="evaluation-panel">
             <div className="evaluation-panel-heading">
               <span className="evaluation-number">01</span>
-              <div><h2>Template details</h2><p>Choose a name and version.</p></div>
+              <div><h2>{t("templateDetails")}</h2><p>{t("chooseNameVersion")}</p></div>
             </div>
             <div className="evaluation-fields">
-              <label>Template name<input required value={name} placeholder="Quarterly performance review" onChange={e => setName(e.target.value)} /></label>
-              <label>Version<input required value={version} placeholder="1.0" onChange={e => setVersion(e.target.value)} /></label>
+              <label>{t("templateName")}<input required value={name} placeholder="Quarterly performance review" onChange={e => setName(e.target.value)} /></label>
+              <label>{t("version")}<input required value={version} placeholder="1.0" onChange={e => setVersion(e.target.value)} /></label>
             </div>
           </section>
 
           <section className="evaluation-panel">
             <div className="evaluation-panel-heading">
               <span className="evaluation-number">02</span>
-              <div><h2>Questions</h2><p>Add scored questions with a rubric, or written responses.</p></div>
+              <div><h2>{t("questions")}</h2><p>Add scored questions with a rubric, or written responses.</p></div>
             </div>
             <div className="evaluation-questions">
               {questions.map((q, i) => (
                 <div className="evaluation-question" key={q.key}>
                   <div className="evaluation-question-top">
                     <strong>Question {i + 1}</strong>
-                    <button type="button" className="evaluation-remove" onClick={() => removeQuestion(q.key)}>Remove</button>
+                    <button type="button" className="evaluation-remove" onClick={() => removeQuestion(q.key)}>{t("remove")}</button>
                   </div>
-                  <label>Question text<textarea required rows={2} value={q.questionText} placeholder="How well does the employee work with their team?" onChange={e => editQuestion(q.key, { questionText: e.target.value })} /></label>
+                  <label>{t("questionText")}<textarea required rows={2} value={q.questionText} placeholder="How well does the employee work with their team?" onChange={e => editQuestion(q.key, { questionText: e.target.value })} /></label>
                   <label>Answer type
                     <select value={q.questionType} onChange={e => editQuestion(q.key, { questionType: e.target.value as DraftQuestion["questionType"] })}>
-                      <option value="NUMERIC">Numeric score</option>
-                      <option value="TEXT">Written answer</option>
+                      <option value="NUMERIC">{t("numericScore")}</option>
+                      <option value="TEXT">{t("writtenAnswer")}</option>
                     </select>
                   </label>
                   {q.questionType === "NUMERIC" ? (
                     <>
                       <div className="evaluation-range">
-                        <label>Minimum score<input type="number" value={q.minScore} onChange={e => editQuestion(q.key, { minScore: Number(e.target.value) })} /></label>
-                        <label>Maximum score<input type="number" value={q.maxScore} onChange={e => editQuestion(q.key, { maxScore: Number(e.target.value) })} /></label>
+                        <label>{t("minScore")}<input type="number" value={q.minScore} onChange={e => editQuestion(q.key, { minScore: Number(e.target.value) })} /></label>
+                        <label>{t("maxScore")}<input type="number" value={q.maxScore} onChange={e => editQuestion(q.key, { maxScore: Number(e.target.value) })} /></label>
                       </div>
                       <div className="evaluation-rubric">
-                        <div className="evaluation-rubric-heading"><strong>Scoring rubric</strong><span>Describe what each score means</span></div>
+                        <div className="evaluation-rubric-heading"><strong>{t("scoringRubric")}</strong><span>Describe what each score means</span></div>
                         {Number.isSafeInteger(q.minScore) && Number.isSafeInteger(q.maxScore) &&
                           q.minScore <= q.maxScore && q.maxScore - q.minScore <= 20 &&
                           Array.from({ length: q.maxScore - q.minScore + 1 }, (_, offset) => q.minScore + offset).map(score => (
@@ -182,7 +184,7 @@ export default function EvaluationTemplatesPage() {
                 </div>
               ))}
             </div>
-            <button type="button" className="evaluation-add" onClick={appendQuestion}>＋ Add question</button>
+            <button type="button" className="evaluation-add" onClick={appendQuestion}>＋ {t("addQuestion")}</button>
           </section>
           {error && <div className="evaluation-error" role="alert">{error}</div>}
           {success && <div className="evaluation-success" role="status">{success}</div>}
@@ -192,19 +194,19 @@ export default function EvaluationTemplatesPage() {
         </form>
         <aside className="evaluation-sidebar">
           <section className="evaluation-panel">
-            <h2>Template overview</h2>
-            <div className="evaluation-stat"><span>Questions</span><strong>{questions.length}</strong></div>
+            <h2>{t("templateOverview")}</h2>
+            <div className="evaluation-stat"><span>{t("questions")}</span><strong>{questions.length}</strong></div>
             <div className="evaluation-stat"><span>Numeric</span><strong>{questions.filter(q => q.questionType === "NUMERIC").length}</strong></div>
             <div className="evaluation-stat"><span>Written</span><strong>{questions.filter(q => q.questionType === "TEXT").length}</strong></div>
           </section>
           <section className="evaluation-panel">
-            <h2>Existing templates</h2>
+            <h2>{t("existingTemplates")}</h2>
             {templates.length ? templates.map(template =>
               <div key={template.id} className="evaluation-existing">
                 <strong>{template.name}</strong>
                 <span>v{template.version}</span>
               </div>
-            ) : <p className="evaluation-help">No templates loaded yet.</p>}
+            ) : <p className="evaluation-help">{t("noTemplatesLoaded")}</p>}
           </section>
         </aside>
       </div>
