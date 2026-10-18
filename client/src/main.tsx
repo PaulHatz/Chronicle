@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import App from "./App";
 import { AuthProvider } from "./auth/AuthContext";
+import { RoleProvider } from "./auth/RoleContext";
 import { LanguageProvider } from "./i18n/LanguageContext";
 
 ReactDOM.createRoot(
@@ -10,7 +11,7 @@ ReactDOM.createRoot(
 ).render(
     <BrowserRouter>
         <AuthProvider>
-            <LanguageProvider><App /></LanguageProvider>
+            <RoleProvider><LanguageProvider><App /></LanguageProvider></RoleProvider>
         </AuthProvider>
     </BrowserRouter>
 );
