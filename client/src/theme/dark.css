@@ -109,3 +109,11 @@
 :root[data-theme="dark"] .employee-eval-error{background:#3d222b!important;color:#fac5cc!important}
 :root[data-theme="dark"] .evaluation-result-score{background:#293d5d!important;color:#e6efff!important}
 :root[data-theme="dark"] :is(.evaluation-result-score p,.evaluation-result-text){color:#c4d1e6!important}
+
+/* Language preference cards: keep selected and unselected states readable in dark mode. */
+:root[data-theme="dark"] .language-options label{background:#202c40;color:#e6ebf7;border-color:#40516b}
+:root[data-theme="dark"] .language-options label:hover{background:#293a54;border-color:#6682ad}
+:root[data-theme="dark"] .language-options label.selected{background:#334e76;border-color:#90aee0}
+:root[data-theme="dark"] .language-options label strong{color:#f0f4fc}
+:root[data-theme="dark"] .language-options label small{color:#b5c5de}
+:root[data-theme="dark"] .language-options input{accent-color:#9dbdff}
