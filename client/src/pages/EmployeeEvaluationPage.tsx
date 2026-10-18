@@ -2,8 +2,10 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getEmployeeEvaluationForm, submitEmployeeEvaluation, type EmployeeEvaluationForm, type EvaluationAnswerInput } from "../api/employee-evaluations";
 import "./EmployeeEvaluationPage.css";
+import {useLanguage} from "../i18n/LanguageContext";
 
 export default function EmployeeEvaluationPage(){
+ const {t}=useLanguage();
  const {employeeId}=useParams();
  const navigate=useNavigate();
  const id=Number(employeeId);
@@ -45,25 +47,25 @@ export default function EmployeeEvaluationPage(){
    finally{setSaving(false);}
  }
  return <main className="employee-evaluation-page">
-  <Link className="employee-eval-back" to={`/employees/${id}`}>← Employee profile</Link>
-  {loading?<div className="employee-eval-card">Loading evaluation…</div>:!form?<div className="employee-eval-error">{error||"Evaluation unavailable."}</div>:<>
-   <header className="employee-eval-header"><p>Employee performance / New evaluation</p><h1>{form.template.name}</h1>
+  <Link className="employee-eval-back" to={`/employees/${id}`}>{t("employeeProfileBack")}</Link>
+  {loading?<div className="employee-eval-card">{t("loadingEvaluation")}</div>:!form?<div className="employee-eval-error">{error||"Evaluation unavailable."}</div>:<>
+   <header className="employee-eval-header"><p>{t("newEvaluation")}</p><h1>{form.template.name}</h1>
    <span>{form.employee.firstName} {form.employee.lastName} · {form.employee.department} · Version {form.template.version}</span></header>
    <form className="employee-eval-form" onSubmit={submit}>
     {form.template.questions.map((q,index)=><section className="employee-eval-card" key={q.id}>
      <p className="employee-eval-index">Question {index+1} of {form.template.questions.length}</p><h2>{q.questionText}</h2>
      {q.questionType==="NUMERIC"&&q.minScore!==null&&q.maxScore!==null?<>
-      <fieldset className="employee-eval-scores"><legend>Choose a score</legend>
+      <fieldset className="employee-eval-scores"><legend>{t("chooseScore")}</legend>
        {Array.from({length:q.maxScore-q.minScore+1},(_,i)=>q.minScore!+i).map(score=><label key={score} className={answers[q.id]?.score===String(score)?"selected":""}>
         <input required type="radio" name={`score-${q.id}`} value={score} checked={answers[q.id]?.score===String(score)} onChange={()=>change(q.id,"score",String(score))}/>
         <strong>{score}</strong><span>{q.rubric?.[String(score)]||"No description"}</span>
        </label>)}
       </fieldset>
-      <label className="employee-eval-comment">Additional comment (optional)<textarea rows={3} value={answers[q.id]?.text??""} onChange={e=>change(q.id,"text",e.target.value)}/></label>
-     </>:<label className="employee-eval-comment">Written response<textarea required rows={5} value={answers[q.id]?.text??""} onChange={e=>change(q.id,"text",e.target.value)} placeholder="Write your evaluation…"/></label>}
+      <label className="employee-eval-comment">{t("additionalComment")}<textarea rows={3} value={answers[q.id]?.text??""} onChange={e=>change(q.id,"text",e.target.value)}/></label>
+     </>:<label className="employee-eval-comment">{t("writtenResponse")}<textarea required rows={5} value={answers[q.id]?.text??""} onChange={e=>change(q.id,"text",e.target.value)} placeholder="Write your evaluation…"/></label>}
     </section>)}
     {error&&<div className="employee-eval-error" role="alert">{error}</div>}
-    <div className="employee-eval-footer"><Link to={`/employees/${id}`}>Cancel</Link><button disabled={saving||form.template.questions.length===0} type="submit">{saving?"Submitting…":"Complete evaluation"}</button></div>
+    <div className="employee-eval-footer"><Link to={`/employees/${id}`}>{t("cancel")}</Link><button disabled={saving||form.template.questions.length===0} type="submit">{saving?"Submitting…":"Complete evaluation"}</button></div>
    </form>
   </>}
  </main>;
