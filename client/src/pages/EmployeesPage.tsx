@@ -220,8 +220,7 @@ export default function EmployeesPage() {
                     <p className="employees-eyebrow">{t("teamManagement")}</p>
                     <h1>{t("employees")}</h1>
                     <p className="employees-description">
-                        View employee records, performance history,
-                        evaluations, notes, and disciplinary actions.
+                        {t("employeeDirectoryDescription")}
                     </p>
                 </div>
 
@@ -255,7 +254,7 @@ export default function EmployeesPage() {
                     </h2>
 
                     <p>
-                        Create a new employee profile for your team.
+                        {t("createEmployeeProfile")}
                     </p>
                 </div>
 
@@ -500,7 +499,7 @@ export default function EmployeesPage() {
                             aria-label={t("filterDepartment")}
                         >
                             <option value="All">
-                                All departments
+                                {t("allDepartmentsFilter")}
                             </option>
                             {departments.map((department) => (
                                 <option key={department.id} value={department.name}>
@@ -534,7 +533,7 @@ export default function EmployeesPage() {
                     </div>
 
                     <button className="sort-button" type="button">
-                        Sort: Name
+                        {t("sortByName")}
                         <span>⌄</span>
                     </button>
                 </div>
@@ -618,7 +617,7 @@ export default function EmployeesPage() {
                                 className="view-employee-button"
                                 to={`/employees/${employee.id}`}
                             >
-                                View profile
+                                {t("viewProfile")}
                                 <span>→</span>
                             </Link> 
                         </article>
