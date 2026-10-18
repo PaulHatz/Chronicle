@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import RequireRole from "./auth/RequireRole";
 
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -42,12 +43,14 @@ export default function App() {
                 <Route path="/employees/:employeeId/evaluations/:evaluationId" element={<EmployeeEvaluationResultPage />} />
                 <Route element={<SettingsLayout />}>
                   <Route path="/settings" element={<Navigate to="/settings/language" replace />} />
-                  <Route path="/departments" element={<DepartmentsPage />} />
-                  <Route path="/users" element={<UsersPage />} />
                   <Route path="/settings/language" element={<LanguageSettingsPage />} />
-                  <Route path="/evaluation-templates" element={<EvaluationTemplatesListPage />} />
-                  <Route path="/evaluation-templates/new" element={<EvaluationTemplatesPage />} />
-                  <Route path="/evaluation-templates/:templateId" element={<EvaluationTemplateDetailPage />} />
+                  <Route element={<RequireRole allow={["ADMIN","MANAGER"]} />}><Route path="/users" element={<UsersPage />} /></Route>
+                  <Route element={<RequireRole allow={["ADMIN"]} />}>
+                    <Route path="/departments" element={<DepartmentsPage />} />
+                    <Route path="/evaluation-templates" element={<EvaluationTemplatesListPage />} />
+                    <Route path="/evaluation-templates/new" element={<EvaluationTemplatesPage />} />
+                    <Route path="/evaluation-templates/:templateId" element={<EvaluationTemplateDetailPage />} />
+                  </Route>
                 </Route>
               </Route>
             </Route>
