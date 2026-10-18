@@ -89,7 +89,7 @@ export default function EvaluationTemplateDetailPage() {
     <main className="evaluation-builder">
       <header className="evaluation-builder-header">
         <Link className="evaluation-back" to="/evaluation-templates">{t("allTemplatesBack")}</Link>
-        <p className="evaluation-eyebrow">Settings / Evaluation templates</p>
+        <p className="evaluation-eyebrow">{t("settingsEvaluationTemplates")}</p>
         <h1>{template?.name ?? "Evaluation template"}</h1>
         {template && <p>Version {template.version} · {template.questions.length} questions</p>}
       </header>
