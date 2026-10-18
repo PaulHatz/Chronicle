@@ -310,7 +310,7 @@ export default function EmployeePage() {
         if (nextStatus === "COMPLETED") setCompletingGoals(current => [...current, goal.id]);
         try {
             await updateEmployeeGoal(Number(employeeId), goal.id, {status: nextStatus});
-            if (nextStatus === "COMPLETED") await new Promise<void>(resolve => window.setTimeout(resolve, 650));
+            if (nextStatus === "COMPLETED") await new Promise<void>(resolve => window.setTimeout(resolve, 850));
             setGoals(await getEmployeeGoals(Number(employeeId)));
             setGoalsError("");
         } catch(err) { setGoalsError(err instanceof Error ? err.message : "Unable to update goal."); }
@@ -828,7 +828,7 @@ export default function EmployeePage() {
                                                     aria-label={goal.status === "COMPLETED" ? `Mark ${goal.title} incomplete` : `Mark ${goal.title} completed`}
                                                     aria-pressed={goal.status === "COMPLETED" || completingGoals.includes(goal.id)}
                                                     onClick={() => void changeGoalStatus(goal)}>
-                                                    {goal.status === "COMPLETED" || completingGoals.includes(goal.id) ? "✓" : ""}
+                                                    <span className="goal-check-mark" aria-hidden="true">✓</span>
                                                 </button>
                                                 <strong className="goal-title">{goal.title}</strong>
                                                 <button className="goal-edit-link" type="button" onClick={() => openGoalEditor(goal)}>Edit</button>
