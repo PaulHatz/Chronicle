@@ -2,11 +2,14 @@ import { useEffect, useState, type FormEvent } from "react";
 import { addUser, editUser, listUsers, removeUser, type ManagedUser, type UserRole } from "../api/users";
 import "./UsersPage.css";
 import { useLanguage } from "../i18n/LanguageContext";
+import {useRole} from "../auth/RoleContext";
 
 type Draft = {firstName:string;lastName:string;email:string;role:UserRole;password:string};
-const blank:Draft={firstName:"",lastName:"",email:"",role:"MANAGER",password:""};
+const blank:Draft={firstName:"",lastName:"",email:"",role:"TEAM_LEADER",password:""};
 export default function UsersPage(){
  const {t}=useLanguage();
+ const {role:actorRole}=useRole();
+ const isAdmin=actorRole==="ADMIN";
  const [users,setUsers]=useState<ManagedUser[]>([]);
  const [loading,setLoading]=useState(true);
  const [busy,setBusy]=useState(false);
@@ -50,7 +53,7 @@ export default function UsersPage(){
      <label>{t("firstName")}<input autoComplete="given-name" required maxLength={100} value={draft.firstName} onChange={e=>setDraft(d=>({...d,firstName:e.target.value}))}/></label>
      <label>{t("lastName")}<input autoComplete="family-name" required maxLength={100} value={draft.lastName} onChange={e=>setDraft(d=>({...d,lastName:e.target.value}))}/></label>
      <label>{t("emailAddress")}<input type="email" autoComplete="email" required maxLength={254} value={draft.email} onChange={e=>setDraft(d=>({...d,email:e.target.value}))}/></label>
-     <label>{t("role")}<select value={draft.role} onChange={e=>setDraft(d=>({...d,role:e.target.value as UserRole}))}><option value="ADMIN">{t("administrator")}</option><option value="MANAGER">{t("manager")}</option><option value="TEAM_LEADER">{t("teamLeader")}</option></select></label>
+     <label>{t("role")}<select value={draft.role} onChange={e=>setDraft(d=>({...d,role:e.target.value as UserRole}))}>{isAdmin&&<option value="ADMIN">{t("administrator")}</option>}{isAdmin&&<option value="MANAGER">{t("manager")}</option>}<option value="TEAM_LEADER">{t("teamLeader")}</option></select></label>
      <label>{t("password")} {editing!=="new"&&<small>{t("passwordHint")}</small>}<input type="password" autoComplete="new-password" minLength={12} maxLength={256} required={editing==="new"} value={draft.password} onChange={e=>setDraft(d=>({...d,password:e.target.value}))}/></label>
     </div>
     {error&&<p className="users-modal-error" role="alert">{error}</p>}<div className="users-form-actions"><button type="button" onClick={()=>setEditing(null)} disabled={busy}>{t("cancel")}</button><button className="users-primary" type="submit" disabled={busy}>{busy?t("saving"):editing==="new"?t("createUser"):t("saveChanges")}</button></div>
@@ -62,7 +65,7 @@ export default function UsersPage(){
     <span className="users-avatar">{user.firstName.charAt(0)}{user.lastName.charAt(0)}</span>
     <div className="users-identity"><strong>{user.firstName} {user.lastName}</strong><span>{user.email}</span></div>
     <span className="users-role">{t(user.role === "ADMIN" ? "administrator" : user.role === "MANAGER" ? "manager" : "teamLeader")}</span>
-    <div className="users-row-actions"><button disabled={busy} type="button" onClick={()=>openEdit(user)}>{t("edit")}</button><button disabled={busy} type="button" className="users-delete" onClick={()=>void remove(user)}>{t("delete")}</button></div>
+    <div className="users-row-actions"><button disabled={busy} type="button" onClick={()=>openEdit(user)}>{t("edit")}</button>{isAdmin&&<button disabled={busy} type="button" className="users-delete" onClick={()=>void remove(user)}>{t("delete")}</button>}</div>
    </div>)}</div>}
   </section>
  </main>;
