@@ -17,4 +17,15 @@ router.patch("/language",async(req:Request,res:Response)=>{
   return res.json({language});
  }catch(e){console.error(e);return res.status(500).json({message:"Unable to save language."});}
 });
+router.patch("/theme",async(req:Request,res:Response)=>{
+ const darkMode=req.body?.darkMode;
+ if(typeof darkMode!=="boolean")return res.status(400).json({message:"darkMode must be a boolean."});
+ const id=(req as AuthRequest).user?.id;
+ if(!id)return res.status(401).json({message:"Not authenticated."});
+ try{
+  const result=await prisma.user.updateMany({where:{id},data:{darkMode}});
+  if(!result.count)return res.status(404).json({message:"User not found."});
+  return res.json({darkMode});
+ }catch(e){console.error(e);return res.status(500).json({message:"Unable to save appearance preference."});}
+});
 export default router;
