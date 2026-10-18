@@ -2,6 +2,8 @@ import { Suspense, lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import RequireRole from "./auth/RequireRole";
+import AppLayout from "./layout/AppLayout";
+import SettingsLayout from "./layout/SettingsLayout";
 
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
@@ -10,8 +12,6 @@ const EmployeesPage = lazy(() => import("./pages/EmployeesPage"));
 const EvaluationTemplatesPage = lazy(() => import("./pages/EvaluationTemplatesPage"));
 const EvaluationTemplatesListPage = lazy(() => import("./pages/EvaluationTemplatesListPage"));
 const EvaluationTemplateDetailPage = lazy(() => import("./pages/EvaluationTemplateDetailPage"));
-import AppLayout from "./layout/AppLayout";
-import SettingsLayout from "./layout/SettingsLayout";
 const DepartmentsPage = lazy(() => import("./pages/DepartmentsPage"));
 const UsersPage = lazy(() => import("./pages/UsersPage"));
 const LanguageSettingsPage = lazy(() => import("./pages/LanguageSettingsPage"));
