@@ -146,7 +146,7 @@ export default function EvaluationTemplateDetailPage() {
                   {q.rubric && Object.entries(q.rubric).sort(([a],[b])=>Number(a)-Number(b)).map(([score,description]) => (
                     <div className="evaluation-rubric-display" key={score}><strong>{score}</strong><span>{description}</span></div>
                   ))}
-                  {!q.rubric && <p className="evaluation-help"{t("noRubric")}</p>}
+                  {!q.rubric && <p className="evaluation-help">{t("noRubric")}</p>}
                 </div>
               ) : <p className="evaluation-help">{t("writtenResponseInfo")}</p>}
             </section>
