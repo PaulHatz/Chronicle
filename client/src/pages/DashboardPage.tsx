@@ -215,7 +215,7 @@ export default function DashboardPage() {
                                 <textarea required rows={5} maxLength={10000} value={recordContent} onChange={event => setRecordContent(event.target.value)} disabled={recordSaving}/>
                             </label>
                             {recordError && <p className="dashboard-record-error" role="alert">{recordError}</p>}
-                            {employeeError && <p className="dashboard-record-error" role="alert">Unable to load employees. Please reload the dashboard.</p>}
+                            {employeeError && <p className="dashboard-record-error" role="alert">{t("loadEmployeesFailed")}</p>}
                             <div className="dashboard-record-actions">
                                 <button type="button" disabled={recordSaving} onClick={() => setRecordAction(null)}>{t("cancel")}</button>
                                 <button type="submit" disabled={recordSaving || employeeError || !employees.length}>{recordSaving ? "Saving…" : "Save record"}</button>
@@ -246,7 +246,7 @@ export default function DashboardPage() {
                     <div className="summary-card-info">
                         <p>{t("evaluationsDue")}</p>
                         <strong>{employeeCounts?.evaluationsDue ?? "—"}</strong>
-                        <span className="summary-card-subtext">Due today or overdue</span>
+                        <span className="summary-card-subtext">{t("dueOverdue")}</span>
                     </div>
                 </article>
                 <article className="summary-card">
@@ -280,7 +280,7 @@ export default function DashboardPage() {
 
                     <div className="activity-list">
                         {activityLoading && <p className="dashboard-activity-message">{t("loadingActivity")}</p>}
-                        {activityError && <p className="dashboard-activity-message" role="alert">Unable to load recent activity.</p>}
+                        {activityError && <p className="dashboard-activity-message" role="alert">{t("activityFailed")}</p>}
                         {!activityLoading && !activityError && recentActivity.length === 0 && <p className="dashboard-activity-message">{t("noActivity")}</p>}
                         {recentActivity.map((activity) => (
                             <div
@@ -305,7 +305,7 @@ export default function DashboardPage() {
                                     </div>
 
                                     <p>{activity.action}</p>
-                                    {activity.type === "evaluation" && <Link className="dashboard-activity-link" to={`/employees/${activity.employeeId}/evaluations/${activity.recordId}`}>View results →</Link>}
+                                    {activity.type === "evaluation" && <Link className="dashboard-activity-link" to={`/employees/${activity.employeeId}/evaluations/${activity.recordId}`}>{t("viewResultsShort")}</Link>}
                                     <span>{activity.detail}</span>
                                 </div>
 
@@ -325,9 +325,9 @@ export default function DashboardPage() {
                         </div>
 
                         <div className="evaluation-list">
-                            {!employeeCounts && !employeeError && <p className="dashboard-activity-message">Loading scheduled evaluations…</p>}
-                            {employeeError && <p className="dashboard-activity-message" role="alert">Unable to load evaluation schedule.</p>}
-                            {employeeCounts && upcomingEvaluations.length === 0 && <p className="dashboard-activity-message">No overdue or upcoming evaluations in the next 30 days.</p>}
+                            {!employeeCounts && !employeeError && <p className="dashboard-activity-message">{t("loadingScheduled")}</p>}
+                            {employeeError && <p className="dashboard-activity-message" role="alert">{t("invalidSchedule")}</p>}
+                            {employeeCounts && upcomingEvaluations.length === 0 && <p className="dashboard-activity-message">{t("noUpcoming")}</p>}
                             {upcomingEvaluations.map((evaluation) => (
                                 <div
                                     className="evaluation-item"
