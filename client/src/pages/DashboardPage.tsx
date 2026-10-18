@@ -354,9 +354,6 @@ export default function DashboardPage() {
                             ))}
                         </div>
 
-                        <Link className="panel-button dashboard-schedule-link" to="/employees">
-                            {t("viewEmployeeSchedule")}
-                        </Link>
                     </article>
 
                     <article className="dashboard-panel quick-actions-panel">
