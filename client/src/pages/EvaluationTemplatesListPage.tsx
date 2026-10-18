@@ -22,7 +22,7 @@ export default function EvaluationTemplatesListPage() {
     <main className="evaluation-builder">
       <div className="evaluation-list-header">
         <div>
-          <p className="evaluation-eyebrow">Settings / Evaluations</p>
+          <p className="evaluation-eyebrow">{t("settingsEvaluations")}</p>
           <h1>{t("evaluationTemplates")}</h1>
           <p className="evaluation-help">{t("manageTemplates")}</p>
         </div>
@@ -39,7 +39,7 @@ export default function EvaluationTemplatesListPage() {
           <div className="evaluation-list-rows">
             {visible.map(t => <Link className="evaluation-list-row evaluation-list-link" to={`/evaluation-templates/${t.id}`} key={t.id}>
               <div className="evaluation-template-symbol">▤</div>
-              <div><strong>{t.name}</strong><span>Evaluation template</span></div>
+              <div><strong>{t.name}</strong><span>{t("evaluationTemplate")}</span></div>
               <span className="evaluation-version">v{t.version}</span><span aria-hidden="true">→</span>
             </Link>)}
           </div>}
