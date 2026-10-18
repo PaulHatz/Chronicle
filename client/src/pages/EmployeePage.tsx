@@ -394,7 +394,7 @@ export default function EmployeePage() {
                                 <span
                                     className={`profile-status profile-status-${employee.status.toLowerCase()}`}
                                 >
-                                    {employee.status === "Leave" ? t("onLeave") : employee.status === "Active" ? t("active") : t("inactive")}
+                                    {employee.status.toUpperCase() === "LEAVE" ? t("onLeave") : employee.status.toUpperCase() === "ACTIVE" ? t("active") : t("inactive")}
                                 </span>
                             </div>
 
@@ -441,7 +441,7 @@ export default function EmployeePage() {
                         <h2>{recordForm === "recognition" ? t("addRecognition") : recordForm === "note" ? t("addNoteTitle") : t("createWriteUp")}</h2>
                         <p>{t("recordFor",{name:employee.name})}</p>
                         <form onSubmit={submitRecord}>
-                            {recordForm !== "writeup" ? <>{recordForm === "note" && <fieldset className="note-type-fieldset"><legend>{t("noteType")}</legend><div className="note-type-button-group" role="group" aria-label={t("noteType")}>{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{t(value === "GENERAL" ? "general" : value === "POSITIVE" ? "positive" : "needsImprovement")}</button>)}</div></fieldset>}<label>{t("title")}<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
+                            {recordForm !== "writeup" ? <>{recordForm === "note" && <fieldset className="note-type-fieldset"><legend>{t("noteType")}</legend><div className="note-type-button-group" role="group" aria-label={t("noteType")}>{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{t(value === "GENERAL" ? "general" : value === "POSITIVE" ? "positive" : "needsImprovement")}</button>)}</div></fieldset>}<label>{t("title")}<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
                               : <label>{t("warningType")}<select value={warningType} onChange={e=>setWarningType(e.target.value as WriteUpType)}>
                                 <option value="VERBAL_WARNING">{t("verbalWarning")}</option><option value="WRITTEN_WARNING">{t("writtenWarning")}</option><option value="FINAL_WARNING">{t("finalWarning")}</option>
                               </select></label>}
