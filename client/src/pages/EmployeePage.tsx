@@ -394,9 +394,7 @@ export default function EmployeePage() {
                                 <span
                                     className={`profile-status profile-status-${employee.status.toLowerCase()}`}
                                 >
-                                    {employee.status === "Leave"
-                                        ? "On leave"
-                                        : employee.status}
+                                    {employee.status === "Leave" ? t("onLeave") : employee.status === "Active" ? t("active") : t("inactive")}
                                 </span>
                             </div>
 
@@ -425,36 +423,36 @@ export default function EmployeePage() {
                             className="profile-secondary-button"
                             type="button"
                         >
-                            Edit profile
+                            {t("editProfile")}
                         </button>
 
                         <button
                             className="profile-primary-button"
                             type="button"
                         >
-                            Add record
+                            {t("addRecord")}
                             <span>+</span>
                         </button>
                     </div>
                 </section>
 
                 {recordForm && <div className="employee-record-backdrop" role="presentation" onMouseDown={() => !savingRecord && setRecordForm(null)}>
-                    <section className="employee-record-modal" role="dialog" aria-modal="true" aria-label={recordForm === "recognition" ? "Add recognition" : recordForm === "note" ? "Add manager note" : "Create write-up"} onMouseDown={e=>e.stopPropagation()}>
-                        <h2>{recordForm === "recognition" ? "Add recognition" : recordForm === "note" ? "Add manager note" : "Create write-up"}</h2>
-                        <p>Record for {employee.name}</p>
+                    <section className="employee-record-modal" role="dialog" aria-modal="true" aria-label={recordForm === "recognition" ? t("addRecognition") : recordForm === "note" ? t("addNoteTitle") : t("createWriteUp")} onMouseDown={e=>e.stopPropagation()}>
+                        <h2>{recordForm === "recognition" ? t("addRecognition") : recordForm === "note" ? t("addNoteTitle") : t("createWriteUp")}</h2>
+                        <p>{t("recordFor",{name:employee.name})}</p>
                         <form onSubmit={submitRecord}>
-                            {recordForm !== "writeup" ? <>{recordForm === "note" && <fieldset className="note-type-fieldset"><legend>{t("noteType")}</legend><div className="note-type-button-group" role="group" aria-label={t("noteType")}>{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>{t("title")}<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
+                            {recordForm !== "writeup" ? <>{recordForm === "note" && <fieldset className="note-type-fieldset"><legend>{t("noteType")}</legend><div className="note-type-button-group" role="group" aria-label={t("noteType")}>{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{t(value === "GENERAL" ? "general" : value === "POSITIVE" ? "positive" : "needsImprovement")}</button>)}</div></fieldset>}<label>{t("title")}<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
                               : <label>{t("warningType")}<select value={warningType} onChange={e=>setWarningType(e.target.value as WriteUpType)}>
                                 <option value="VERBAL_WARNING">{t("verbalWarning")}</option><option value="WRITTEN_WARNING">{t("writtenWarning")}</option><option value="FINAL_WARNING">{t("finalWarning")}</option>
                               </select></label>}
-                            <label>{recordForm === "recognition" ? "Recognition details" : recordForm === "note" ? "Note" : "Reason / details"}<textarea required rows={6} maxLength={10000} value={recordContent} onChange={e=>setRecordContent(e.target.value)}/></label>
+                            <label>{recordForm === "recognition" ? t("recognitionDetails") : recordForm === "note" ? t("noteDetails") : t("reasonDetails")}<textarea required rows={6} maxLength={10000} value={recordContent} onChange={e=>setRecordContent(e.target.value)}/></label>
                             {recordError && <p role="alert" className="employee-record-error">{recordError}</p>}
-                            <div className="employee-record-actions"><button type="button" disabled={savingRecord} onClick={()=>setRecordForm(null)}>{t("cancel")}</button><button type="submit" disabled={savingRecord}>{savingRecord ? "Saving…" : "Save record"}</button></div>
+                            <div className="employee-record-actions"><button type="button" disabled={savingRecord} onClick={()=>setRecordForm(null)}>{t("cancel")}</button><button type="submit" disabled={savingRecord}>{savingRecord ? t("saving") : t("saveRecord")}</button></div>
                         </form>
                     </section>
                 </div>}
                 {manageGoals && <div className="employee-record-backdrop" role="presentation" onMouseDown={() => !goalSaving && setManageGoals(false)}>
-                    <section className="employee-record-modal goal-editor-modal" role="dialog" aria-modal="true" aria-label={editingGoalId === null ? "Create development goal" : "Edit development goal"} onMouseDown={event=>event.stopPropagation()}>
+                    <section className="employee-record-modal goal-editor-modal" role="dialog" aria-modal="true" aria-label={editingGoalId === null ? t("newGoal") : t("editGoal")} onMouseDown={event=>event.stopPropagation()}>
                         <h2>{editingGoalId === null ? "Create development goal" : "Edit development goal"}</h2>
                         <p>Development goal for {employee.name}</p>
                         <form onSubmit={saveGoal}>
@@ -466,7 +464,7 @@ export default function EmployeePage() {
                             <div className="employee-record-actions">
                                 {editingGoalId !== null && <button type="button" disabled={goalSaving} onClick={() => { const goal=goals.find(item=>item.id===editingGoalId); if(goal) void removeGoal(goal); }}>{t("deleteGoal")}</button>}
                                 <button type="button" disabled={goalSaving} onClick={()=>setManageGoals(false)}>{t("cancel")}</button>
-                                <button type="submit" disabled={goalSaving}>{goalSaving?"Saving…":"Save goal"}</button>
+                                <button type="submit" disabled={goalSaving}>{goalSaving?t("saving"):t("saveGoalLabel")}</button>
                             </div>
                         </form>
                     </section>
@@ -669,7 +667,7 @@ export default function EmployeePage() {
                             <div>
                                 <h2>
                                     {activeTab === "timeline"
-                                        ? "Employee timeline"
+                                        ? t("evaluationTimeline")
                                         : activeTab.charAt(0).toUpperCase() +
                                           activeTab.slice(1)}
                                 </h2>
@@ -703,7 +701,7 @@ export default function EmployeePage() {
                                                 <span
                                                     className={`timeline-type timeline-type-${event.type}`}
                                                 >
-                                                    {event.type === "note" ? (event.noteType === "POSITIVE" ? "Positive note" : event.noteType === "IMPROVEMENT" ? "Needs improvement" : "General note") : getTimelineLabel(event.type)}
+                                                    {event.type === "note" ? (event.noteType === "POSITIVE" ? t("positiveNote") : event.noteType === "IMPROVEMENT" ? t("improveNote") : t("generalNote")) : getTimelineLabel(event.type)}
                                                 </span>
 
                                                 <h3>{event.evaluationId ? <Link to={`/employees/${employee.id}/evaluations/${event.evaluationId}`}>{event.title}</Link> : event.title}</h3>
@@ -821,13 +819,13 @@ export default function EmployeePage() {
                             <div className="goal-list">
                                 {goalsLoading ? <p className="goals-empty">{t("loadingGoals")}</p> :
                                     goals.filter(goal => showCompletedGoals ? goal.status === "COMPLETED" : goal.status === "INCOMPLETE").length === 0 ?
-                                      <p className="goals-empty">{showCompletedGoals ? "No completed goals yet." : "No active development goals."}</p> :
+                                      <p className="goals-empty">{showCompletedGoals ? t("noCompletedGoals") : t("noActiveGoals")}</p> :
                                     goals.filter(goal => showCompletedGoals ? goal.status === "COMPLETED" : goal.status === "INCOMPLETE").map(goal => (
                                         <div className={`goal-item${completingGoals.includes(goal.id) ? " goal-finishing" : ""}`} key={goal.id}>
                                             <div className="goal-heading">
                                                 <button type="button" className={`goal-check${goal.status === "COMPLETED" || completingGoals.includes(goal.id) ? " checked" : ""}`}
                                                     disabled={completingGoals.includes(goal.id)}
-                                                    aria-label={goal.status === "COMPLETED" ? `Mark ${goal.title} incomplete` : `Mark ${goal.title} completed`}
+                                                    aria-label={goal.status === "COMPLETED" ? t("markGoalIncomplete",{name:goal.title}) : t("markGoalCompleted",{name:goal.title})}
                                                     aria-pressed={goal.status === "COMPLETED" || completingGoals.includes(goal.id)}
                                                     onClick={() => void changeGoalStatus(goal)}>
                                                     <span className="goal-check-mark" aria-hidden="true">✓</span>
@@ -837,13 +835,13 @@ export default function EmployeePage() {
                                             </div>
                                             <div className="goal-body">
                                                 <p>{goal.description}</p>
-                                                <p className="goal-due">Target: {formatProfileDate(goal.duration)}</p>
+                                                <p className="goal-due">{t("target")} {formatProfileDate(goal.duration)}</p>
                                             </div>
                                         </div>
                                     ))}
                             </div>
                             <button className="goal-show-completed" type="button" onClick={() => setShowCompletedGoals(current => !current)}>
-                                {showCompletedGoals ? "← Back to active goals" : `View completed goals (${goals.filter(goal => goal.status === "COMPLETED").length}) →`}
+                                {showCompletedGoals ? t("backActiveGoals") : t("completedGoalsCount",{count:goals.filter(goal => goal.status === "COMPLETED").length})}
                             </button>
                         </article>
                     </aside>
