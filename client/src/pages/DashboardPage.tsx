@@ -1,4 +1,5 @@
 import "./DashboardPage.css";
+import {useLanguage} from "../i18n/LanguageContext";
 import EmployeePicker, { type EmployeePickerOption } from "../components/EmployeePicker";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -53,6 +54,7 @@ function greetingForHour(hour: number): string {
 }
 
 export default function DashboardPage() {
+    const {t}=useLanguage();
     const managerName = "Paul";
     const [greeting, setGreeting] = useState(() => greetingForHour(new Date().getHours()));
 
@@ -178,12 +180,12 @@ export default function DashboardPage() {
         <main className="dashboard-page">
             <header className="dashboard-header">
                 <div>
-                    <p className="dashboard-eyebrow">Overview</p>
+                    <p className="dashboard-eyebrow">{t("overview")}</p>
 
-                    <h1>{greeting}, {managerName}</h1>
+                    <h1>{t(greeting === "Good morning" ? "goodMorning" : greeting === "Good afternoon" ? "goodAfternoon" : "goodEvening")}, {managerName}</h1>
 
                     <p>
-                        Here is what is happening with your team today.
+                        {t("teamToday")}
                     </p>
                 </div>
 
@@ -194,18 +196,18 @@ export default function DashboardPage() {
                 <div className="dashboard-record-backdrop" onMouseDown={() => { if (!recordSaving) setRecordAction(null); }}>
                     <section className="dashboard-record-modal" role="dialog" aria-modal="true" aria-label={recordAction === "recognition" ? "Add recognition" : recordAction === "note" ? "Add manager note" : "Create write-up"} onMouseDown={event => event.stopPropagation()}>
                         <h2>{recordAction === "recognition" ? "Add recognition" : recordAction === "note" ? "Add manager note" : "Create write-up"}</h2>
-                        <p>Choose an employee and record the details.</p>
+                        <p>{t("chooseEmployee")}</p>
                         <form onSubmit={submitRecord}>
                             <EmployeePicker employees={employees} value={recordEmployeeId}
                                 onChange={id => { setRecordEmployeeId(id); setRecordError(""); }} disabled={recordSaving}/>
                             {recordAction !== "writeup" ? (
-                                <>{recordAction === "note" && <fieldset className="note-type-fieldset"><legend>Note type</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} disabled={recordSaving} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>Title<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label></>
+                                <>{recordAction === "note" && <fieldset className="note-type-fieldset"><legend>{t("noteType")}</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} disabled={recordSaving} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>{t("title")}<input required maxLength={200} value={noteTitle} onChange={event => setNoteTitle(event.target.value)} disabled={recordSaving}/></label></>
                             ) : (
                                 <label>Warning type
                                     <select value={warningType} onChange={event => setWarningType(event.target.value as WriteUpType)} disabled={recordSaving}>
-                                        <option value="VERBAL_WARNING">Verbal warning</option>
-                                        <option value="WRITTEN_WARNING">Written warning</option>
-                                        <option value="FINAL_WARNING">Final warning</option>
+                                        <option value="VERBAL_WARNING">{t("verbalWarning")}</option>
+                                        <option value="WRITTEN_WARNING">{t("writtenWarning")}</option>
+                                        <option value="FINAL_WARNING">{t("finalWarning")}</option>
                                     </select>
                                 </label>
                             )}
@@ -215,7 +217,7 @@ export default function DashboardPage() {
                             {recordError && <p className="dashboard-record-error" role="alert">{recordError}</p>}
                             {employeeError && <p className="dashboard-record-error" role="alert">Unable to load employees. Please reload the dashboard.</p>}
                             <div className="dashboard-record-actions">
-                                <button type="button" disabled={recordSaving} onClick={() => setRecordAction(null)}>Cancel</button>
+                                <button type="button" disabled={recordSaving} onClick={() => setRecordAction(null)}>{t("cancel")}</button>
                                 <button type="submit" disabled={recordSaving || employeeError || !employees.length}>{recordSaving ? "Saving…" : "Save record"}</button>
                             </div>
                         </form>
@@ -226,7 +228,7 @@ export default function DashboardPage() {
                 <article className="summary-card">
                     <span className="summary-icon employees-icon" aria-hidden="true">👥</span>
                     <div className="summary-card-info">
-                        <p>Total employees</p>
+                        <p>{t("totalEmployees")}</p>
                         <strong>{employeeCounts?.total ?? "—"}</strong>
                         <span className="summary-card-subtext">{employeeError ? "Unable to load employees" : employeeCounts ? `${employeeCounts.active} active employees` : "Loading employees…"}</span>
                     </div>
@@ -234,7 +236,7 @@ export default function DashboardPage() {
                 <article className="summary-card">
                     <span className="summary-icon evaluation-icon" aria-hidden="true">✓</span>
                     <div className="summary-card-info">
-                        <p>Evaluations completed</p>
+                        <p>{t("completedEvaluations")}</p>
                         <strong>{completedThisQuarter ?? "—"}</strong>
                         <span className="summary-card-subtext">{quarterError ? "Unable to load evaluations" : "This quarter"}</span>
                     </div>
@@ -242,7 +244,7 @@ export default function DashboardPage() {
                 <article className="summary-card">
                     <span className="summary-icon evaluation-icon" aria-hidden="true">◷</span>
                     <div className="summary-card-info">
-                        <p>Evaluations due</p>
+                        <p>{t("evaluationsDue")}</p>
                         <strong>{employeeCounts?.evaluationsDue ?? "—"}</strong>
                         <span className="summary-card-subtext">Due today or overdue</span>
                     </div>
@@ -250,7 +252,7 @@ export default function DashboardPage() {
                 <article className="summary-card">
                     <span className="summary-icon note-icon" aria-hidden="true">✎</span>
                     <div className="summary-card-info">
-                        <p>Manager notes</p>
+                        <p>{t("managerNotes")}</p>
                         <strong>{employeeCounts?.notes ?? "—"}</strong>
                         <span className="summary-card-subtext">{employeeError ? "Unable to load notes" : "Total manager notes"}</span>
                     </div>
@@ -258,7 +260,7 @@ export default function DashboardPage() {
                 <article className="summary-card">
                     <span className="summary-icon writeup-icon" aria-hidden="true">!</span>
                     <div className="summary-card-info">
-                        <p>Open write-ups</p>
+                        <p>{t("openWriteUps")}</p>
                         <strong>{employeeCounts?.openWriteUps ?? "—"}</strong>
                         <span className="summary-card-subtext">{employeeError ? "Unable to load write-ups" : "Unresolved records"}</span>
                     </div>
@@ -269,17 +271,17 @@ export default function DashboardPage() {
                 <article className="dashboard-panel activity-panel">
                     <div className="panel-header">
                         <div>
-                            <h2>Recent activity</h2>
-                            <p>Latest employee record updates</p>
+                            <h2>{t("recentActivity")}</h2>
+                            <p>{t("latestRecordUpdates")}</p>
                         </div>
 
-                        <Link className="text-button" to="/employees">View employees</Link>
+                        <Link className="text-button" to="/employees">{t("viewEmployees")}</Link>
                     </div>
 
                     <div className="activity-list">
-                        {activityLoading && <p className="dashboard-activity-message">Loading recent activity…</p>}
+                        {activityLoading && <p className="dashboard-activity-message">{t("loadingActivity")}</p>}
                         {activityError && <p className="dashboard-activity-message" role="alert">Unable to load recent activity.</p>}
-                        {!activityLoading && !activityError && recentActivity.length === 0 && <p className="dashboard-activity-message">No employee activity yet.</p>}
+                        {!activityLoading && !activityError && recentActivity.length === 0 && <p className="dashboard-activity-message">{t("noActivity")}</p>}
                         {recentActivity.map((activity) => (
                             <div
                                 className="activity-item"
@@ -317,8 +319,8 @@ export default function DashboardPage() {
                     <article className="dashboard-panel">
                         <div className="panel-header">
                             <div>
-                                <h2>Upcoming evaluations</h2>
-                                <p>Overdue and scheduled in the next 30 days</p>
+                                <h2>{t("upcomingEvaluations")}</h2>
+                                <p>{t("next30Days")}</p>
                             </div>
                         </div>
 
@@ -360,8 +362,8 @@ export default function DashboardPage() {
                     <article className="dashboard-panel quick-actions-panel">
                         <div className="panel-header">
                             <div>
-                                <h2>Quick actions</h2>
-                                <p>Common management tasks</p>
+                                <h2>{t("quickActions")}</h2>
+                                <p>{t("commonTasks")}</p>
                             </div>
                         </div>
 
