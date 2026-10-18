@@ -4,7 +4,7 @@ import "./EmployeePage.css";
 
 import { getemployee, getemployeenotes, getemployeewriteups, createManagerNote, createEmployeeWriteUp, resolveEmployeeWriteUp, type WriteUpType, type ManagerNoteType } from "../api/employee";
 import { getEmployeeEvaluations } from "../api/employee-evaluations";
-import { getEmployeeGoals, createEmployeeGoal, updateEmployeeGoal, deleteEmployeeGoal, type EmployeeGoal, type GoalStatus } from "../api/goals";
+import { getEmployeeGoals, createEmployeeGoal, updateEmployeeGoal, deleteEmployeeGoal, type EmployeeGoal } from "../api/goals";
 
 
 type EmployeeStatus = "Active" | "Inactive" | "Leave";
@@ -124,7 +124,6 @@ export default function EmployeePage() {
     const [goalTitle, setGoalTitle] = useState("");
     const [goalDescription, setGoalDescription] = useState("");
     const [goalDate, setGoalDate] = useState("");
-    const [goalStatus, setGoalStatus] = useState<GoalStatus>("INCOMPLETE");
     const [goalSaving, setGoalSaving] = useState(false);
     const [goalFormError, setGoalFormError] = useState("");
 
@@ -258,7 +257,6 @@ export default function EmployeePage() {
         setGoalTitle(goal?.title ?? "");
         setGoalDescription(goal?.description ?? "");
         setGoalDate(goal?.duration.slice(0, 10) ?? "");
-        setGoalStatus(goal?.status ?? "INCOMPLETE");
         setGoalFormError("");
         setManageGoals(true);
     }
@@ -272,7 +270,7 @@ export default function EmployeePage() {
         }
         setGoalSaving(true);
         try {
-            const input = {title: goalTitle.trim(), description: goalDescription.trim(), duration: goalDate, status: goalStatus};
+            const input = {title: goalTitle.trim(), description: goalDescription.trim(), duration: goalDate, status: editingGoalId === null ? "INCOMPLETE" as const : goals.find(goal => goal.id === editingGoalId)?.status ?? "INCOMPLETE" as const};
             if (editingGoalId === null) await createEmployeeGoal(Number(employeeId), input);
             else await updateEmployeeGoal(Number(employeeId), editingGoalId, input);
             setGoals(await getEmployeeGoals(Number(employeeId)));
@@ -438,7 +436,7 @@ export default function EmployeePage() {
                             <label>Title<input required maxLength={200} value={goalTitle} onChange={event=>setGoalTitle(event.target.value)}/></label>
                             <label>Description<textarea required rows={4} maxLength={10000} value={goalDescription} onChange={event=>setGoalDescription(event.target.value)}/></label>
                             <label>Target completion date<input required type="date" value={goalDate} onChange={event=>setGoalDate(event.target.value)}/></label>
-                            <label>Status<select value={goalStatus} onChange={event=>setGoalStatus(event.target.value as GoalStatus)}><option value="INCOMPLETE">Incomplete</option><option value="COMPLETED">Completed</option></select></label>
+                            
                             {goalFormError && <p role="alert" className="goal-form-error">{goalFormError}</p>}
                             <div className="employee-record-actions">
                                 {editingGoalId !== null && <button type="button" disabled={goalSaving} onClick={() => { const goal=goals.find(item=>item.id===editingGoalId); if(goal) void removeGoal(goal); }}>Delete goal</button>}
