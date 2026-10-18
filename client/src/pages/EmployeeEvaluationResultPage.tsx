@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getEvaluationResult, type EvaluationResult } from "../api/employee-evaluations";
 import "./EmployeeEvaluationPage.css";
+import {useLanguage} from "../i18n/LanguageContext";
 
 export default function EmployeeEvaluationResultPage() {
+  const {t}=useLanguage();
   const { employeeId, evaluationId } = useParams();
   const [result, setResult] = useState<EvaluationResult | null>(null);
   const [error, setError] = useState("");
@@ -16,12 +18,12 @@ export default function EmployeeEvaluationResultPage() {
     return () => { alive = false; };
   }, [employee, evaluationId]);
   return <main className="employee-evaluation-page">
-    <Link className="employee-eval-back" to={`/employees/${employee}`}>← Employee profile</Link>
+    <Link className="employee-eval-back" to={`/employees/${employee}`}>{t("employeeProfileBack")}</Link>
     {error && <p className="employee-eval-error" role="alert">{error}</p>}
-    {!error && !result && <p>Loading evaluation…</p>}
+    {!error && !result && <p>{t("loadingEvaluation")}</p>}
     {result && <>
       <header className="employee-eval-header">
-        <p>Completed employee evaluation</p>
+        <p>{t("completedEvaluation")}</p>
         <h1>{result.template.name}</h1>
         <span>{result.employee.firstName} {result.employee.lastName} · {result.employee.department.name} · {new Date(result.completedAt).toLocaleDateString()} · v{result.template.version}</span>
       </header>
