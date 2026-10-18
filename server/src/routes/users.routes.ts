@@ -7,7 +7,8 @@ import { authenticate, type AuthRequest } from "../middleware/auth.middleware";
 
 const prisma = new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL!})});
 const router = Router();
-const publicFields = {id:true,email:true,firstName:true,lastName:true,role:true,createdAt:true,updatedAt:true} as const;
+const publicFields = {id:true,email:true,firstName:true,lastName:true,role:true,language:true,createdAt:true,updatedAt:true} as const;
+const validLanguage = (v:unknown):v is "fr-CA"|"en-CA" => v==="fr-CA" || v==="en-CA";
 const roles = ["ADMIN","MANAGER","TEAM_LEADER"] as const;
 type Role = typeof roles[number];
 const validRole = (value:unknown):value is Role => roles.some(role=>role===value);
@@ -30,11 +31,11 @@ router.use(async(req:Request,res:Response,next:NextFunction)=>{
 });
 router.get("/",async(_req,res)=>{try{res.json({users:await prisma.user.findMany({select:publicFields,orderBy:[{lastName:"asc"},{firstName:"asc"}]})});}catch(e){error(res,e);}});
 router.post("/",async(req,res)=>{
-  const {firstName,lastName,email,password,role}=req.body??{};
-  if(!validText(firstName)||!validText(lastName)||!validText(email,254)||!/^\S+@\S+\.\S+$/.test(email)||!validText(password,256)||password.length<12||!validRole(role))
+  const {firstName,lastName,email,password,role,language="fr-CA"}=req.body??{};
+  if(!validText(firstName)||!validText(lastName)||!validText(email,254)||!/^\S+@\S+\.\S+$/.test(email)||!validText(password,256)||password.length<12||!validRole(role)||!validLanguage(language))
     return res.status(400).json({message:"Provide a name, valid email, role and password (at least 12 characters)."});
   try{
-    const user=await prisma.user.create({data:{firstName:firstName.trim(),lastName:lastName.trim(),email:email.trim().toLowerCase(),role,passwordHash:await argon2.hash(password)},select:publicFields});
+    const user=await prisma.user.create({data:{firstName:firstName.trim(),lastName:lastName.trim(),email:email.trim().toLowerCase(),role,language,passwordHash:await argon2.hash(password)},select:publicFields});
     return res.status(201).json(user);
   }catch(e){return error(res,e);}
 });
@@ -42,10 +43,11 @@ router.patch("/:userId",async(req:Request,res:Response)=>{
   const userId=Number(req.params.userId);
   if(!Number.isSafeInteger(userId)||userId<=0)return res.status(400).json({message:"Invalid user ID."});
   const body=req.body;
-  if(!body||typeof body!=="object"||Array.isArray(body)||!Object.keys(body).length||Object.keys(body).some(k=>!["firstName","lastName","email","role","password"].includes(k)))
+  if(!body||typeof body!=="object"||Array.isArray(body)||!Object.keys(body).length||Object.keys(body).some(k=>!["firstName","lastName","email","role","password","language"].includes(k)))
     return res.status(400).json({message:"Invalid update fields."});
   for(const key of ["firstName","lastName","email"]){if(key in body&&!validText(body[key],key==="email"?254:100))return res.status(400).json({message:"Invalid "+key});}
   if("email" in body&&!/^\S+@\S+\.\S+$/.test(body.email))return res.status(400).json({message:"Invalid email."});
+  if("language" in body&&!validLanguage(body.language))return res.status(400).json({message:"Invalid language."});
   if("role" in body&&!validRole(body.role))return res.status(400).json({message:"Invalid role."});
   if("password" in body&&(!validText(body.password,256)||body.password.length<12))return res.status(400).json({message:"Password must be at least 12 characters."});
   try{
@@ -59,6 +61,7 @@ router.patch("/:userId",async(req:Request,res:Response)=>{
         ...("lastName" in body?{lastName:body.lastName.trim()}:{}),
         ...("email" in body?{email:body.email.trim().toLowerCase()}:{}),
         ...("role" in body?{role:body.role as Role}:{}),
+        ...("language" in body?{language:body.language as "fr-CA"|"en-CA"}:{}),
         ...("password" in body?{passwordHash:await argon2.hash(body.password)}:{})
       },select:publicFields});
     });
