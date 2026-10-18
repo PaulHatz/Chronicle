@@ -1,3 +1,4 @@
+import type { EmployeeInput } from "../validation/schemas";
 import "dotenv/config";
 import { PrismaClient } from "../generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -39,7 +40,7 @@ export async function getEmployeeList() {
     return employees.map(withSchedule);
 }
 
-export async function getEmployeeForId(id) {
+export async function getEmployeeForId(id: number) {
     const employee = await prisma.employee.findUnique({
         where: { id },
         include: { department: true, evaluations: { orderBy: { completedAt: "desc" }, take: 1, select: { completedAt: true } }, _count: { select: { notes: true, writeUps: { where: { resolvedAt: null } } } } }
@@ -49,7 +50,7 @@ export async function getEmployeeForId(id) {
 
 }
 
-export async function createEmployee(emp) {
+export async function createEmployee(emp: EmployeeInput) {
 
     if (!Number.isSafeInteger(Number(emp.departmentId)) || Number(emp.departmentId) <= 0) {
         throw new Error("A valid departmentId is required.");
@@ -105,3 +106,4 @@ export async function updateEmployee(id: number, input: unknown) {
             ? {nextEvaluationAt:addDays(hireDate,department.evaluationFrequencyDays)} : {})
     },include:{department:true}});
 }
+

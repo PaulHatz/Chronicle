@@ -1,3 +1,5 @@
+import { languageBody, themeBody } from "../validation/schemas";
+import { validateRequest } from "../middleware/validation.middleware";
 import { Router, type Request, type Response } from "express";
 import { PrismaClient } from "../generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -6,7 +8,7 @@ import "dotenv/config";
 const prisma=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL!})});
 const router=Router();
 router.use(authenticate);
-router.patch("/language",async(req:Request,res:Response)=>{
+router.patch("/language", validateRequest(languageBody),async(req:Request,res:Response)=>{
  const language=req.body?.language;
  if(language!=="fr-CA"&&language!=="en-CA")return res.status(400).json({message:"Choose fr-CA or en-CA."});
  const id=(req as AuthRequest).user?.id;
@@ -17,7 +19,7 @@ router.patch("/language",async(req:Request,res:Response)=>{
   return res.json({language});
  }catch(e){console.error(e);return res.status(500).json({message:"Unable to save language."});}
 });
-router.patch("/theme",async(req:Request,res:Response)=>{
+router.patch("/theme", validateRequest(themeBody),async(req:Request,res:Response)=>{
  const darkMode=req.body?.darkMode;
  if(typeof darkMode!=="boolean")return res.status(400).json({message:"darkMode must be a boolean."});
  const id=(req as AuthRequest).user?.id;
@@ -29,3 +31,4 @@ router.patch("/theme",async(req:Request,res:Response)=>{
  }catch(e){console.error(e);return res.status(500).json({message:"Unable to save appearance preference."});}
 });
 export default router;
+

@@ -1,3 +1,5 @@
+import { employeeBody } from "../validation/schemas";
+import { validateRequest } from "../middleware/validation.middleware";
 import { Router } from "express";
 import { authenticate } from "../middleware/auth.middleware";
 import { getemployeelist, getemployee, addemployee, updateEmployee } from "../controllers/employees.controller";
@@ -5,10 +7,10 @@ import { getemployeelist, getemployee, addemployee, updateEmployee } from "../co
 const router = Router();
 
 router.use(authenticate);
-router.post("/add", addemployee);
-router.get("/getemployeelist", getemployeelist);
-router.get("/:employeeId", getemployee);
-router.patch("/:employeeId", updateEmployee);
+router.post("/add", validateRequest(employeeBody), addemployee);
+router.get("/getemployeelist", validateRequest(), getemployeelist);
+router.get("/:employeeId", validateRequest(), getemployee);
+router.patch("/:employeeId", validateRequest(employeeBody), updateEmployee);
 
 
 

@@ -1,3 +1,5 @@
+import { userBody, userPatch } from "../validation/schemas";
+import { validateRequest } from "../middleware/validation.middleware";
 import { Router, type Request, type Response, type NextFunction } from "express";
 import argon2 from "argon2";
 import "dotenv/config";
@@ -22,8 +24,8 @@ router.use((req:Request,res:Response,next:NextFunction)=>{
   res.locals.actorRole=(req as AuthRequest).user!.role;
   next();
 });
-router.get("/",async(_req,res)=>{try{res.json({users:await prisma.user.findMany({where:res.locals.actorRole==="MANAGER"?{role:"TEAM_LEADER"}:{},select:publicFields,orderBy:[{lastName:"asc"},{firstName:"asc"}]})});}catch(e){error(res,e);}});
-router.post("/",async(req,res)=>{
+router.get("/", validateRequest(),async(_req,res)=>{try{res.json({users:await prisma.user.findMany({where:res.locals.actorRole==="MANAGER"?{role:"TEAM_LEADER"}:{},select:publicFields,orderBy:[{lastName:"asc"},{firstName:"asc"}]})});}catch(e){error(res,e);}});
+router.post("/", validateRequest(userBody),async(req,res)=>{
   const {firstName,lastName,email,password,role,language="fr-CA"}=req.body??{};
   if(!validText(firstName)||!validText(lastName)||!validText(email,254)||!/^\S+@\S+\.\S+$/.test(email)||!validText(password,256)||password.length<12||!validRole(role)||!validLanguage(language))
     return res.status(400).json({message:"Provide a name, valid email, role and password (at least 12 characters)."});
@@ -33,7 +35,7 @@ router.post("/",async(req,res)=>{
     return res.status(201).json(user);
   }catch(e){return error(res,e);}
 });
-router.patch("/:userId",async(req:Request,res:Response)=>{
+router.patch("/:userId", validateRequest(userPatch),async(req:Request,res:Response)=>{
   const userId=Number(req.params.userId);
   if(!Number.isSafeInteger(userId)||userId<=0)return res.status(400).json({message:"Invalid user ID."});
   const body=req.body;
@@ -67,7 +69,7 @@ router.patch("/:userId",async(req:Request,res:Response)=>{
     return res.json(result);
   }catch(e){return error(res,e);}
 });
-router.delete("/:userId",async(req:Request,res:Response)=>{
+router.delete("/:userId", validateRequest(),async(req:Request,res:Response)=>{
   if(res.locals.actorRole!=="ADMIN")return res.status(403).json({message:"Only administrators may delete users."});
   const userId=Number(req.params.userId),actorId=(req as AuthRequest).user!.id;
   if(!Number.isSafeInteger(userId)||userId<=0)return res.status(400).json({message:"Invalid user ID."});

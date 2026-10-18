@@ -51,7 +51,6 @@ export async function getemployee(req: Request, res: Response) {
 
 export async function addemployee(req: Request, res: Response) {
     try {
-        console.log(req.body);
         const result = await employeeService.createEmployee(req.body);
 
         if(!result) {
@@ -84,3 +83,4 @@ export async function updateEmployee(req: Request, res: Response) {
         return res.status(500).json({message:"Unable to update employee."});
     }
 }
+

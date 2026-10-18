@@ -52,6 +52,7 @@ function dispatch(target: express.Express, path: string, method = "GET", bearer:
         req.url = path;
         req.method = method;
         req.headers = bearer === null ? {} : {authorization:`Bearer ${bearer}`};
+        if (body !== undefined) req.headers["content-type"] = "application/json";
         (req as any).body = body;
         const res = new ServerResponse(req);
         res.end = ((chunk?: any) => {
