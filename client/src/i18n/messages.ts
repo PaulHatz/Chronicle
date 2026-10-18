@@ -243,6 +243,13 @@ export const messages = {
   questionLabel: "Question {number}",
   submitEvaluation: "Complete evaluation",
   submitting: "Submitting…",
+  loginDescription: "Keep employee evaluations, manager notes, and disciplinary records organized in one place.",
+  performanceTimelines: "Employee performance timelines",
+  structuredEvaluations: "Structured evaluations",
+  secureDocumentation: "Secure manager documentation",
+  loginFooter: "Chronicle Employee Performance Platform",
+  hidePasswordFull: "Hide password",
+  showPasswordFull: "Show password",
  },
  "fr-CA": {
   dashboard:"Tableau de bord",employees:"Employés",settings:"Paramètres",signOut:"Déconnexion",
@@ -488,6 +495,13 @@ export const messages = {
   questionLabel: "Question {number}",
   submitEvaluation: "Terminer l’évaluation",
   submitting: "Envoi en cours…",
+  loginDescription: "Centralisez les évaluations des employés, les notes de gestion et les dossiers disciplinaires.",
+  performanceTimelines: "Chronologies du rendement des employés",
+  structuredEvaluations: "Évaluations structurées",
+  secureDocumentation: "Documentation de gestion sécurisée",
+  loginFooter: "Plateforme de gestion du rendement Chronicle",
+  hidePasswordFull: "Masquer le mot de passe",
+  showPasswordFull: "Afficher le mot de passe",
  }
 } as const;
 export type Locale = keyof typeof messages;
