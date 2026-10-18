@@ -25,7 +25,7 @@ export default function EmployeeEvaluationResultPage() {
       <header className="employee-eval-header">
         <p>{t("completedEvaluation")}</p>
         <h1>{result.template.name}</h1>
-        <span>{result.employee.firstName} {result.employee.lastName} · {result.employee.department.name} · {new Date(result.completedAt).toLocaleDateString()} · v{result.template.version}</span>
+        <span>{result.employee.firstName} {result.employee.lastName} · {result.employee.department.name} · {new Date(result.completedAt).toLocaleDateString(document.documentElement.lang)} · v{result.template.version}</span>
       </header>
       <div className="employee-eval-form">
         {result.answers.map((answer,index) => <section className="employee-eval-card" key={answer.id}>
