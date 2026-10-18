@@ -2,8 +2,10 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getEvaluationTemplate, updateEvaluationQuestion, deleteEvaluationQuestion, type EvaluationTemplateDetail, type EvaluationQuestion, type NewQuestion } from "../api/evaluations";
 import "./EvaluationTemplatesPage.css";
+import {useLanguage} from "../i18n/LanguageContext";
 
 export default function EvaluationTemplateDetailPage() {
+  const {t}=useLanguage();
   const { templateId } = useParams();
   const id = Number(templateId);
   const [template, setTemplate] = useState<EvaluationTemplateDetail | null>(null);
@@ -86,17 +88,17 @@ export default function EvaluationTemplateDetailPage() {
   return (
     <main className="evaluation-builder">
       <header className="evaluation-builder-header">
-        <Link className="evaluation-back" to="/evaluation-templates">← All templates</Link>
+        <Link className="evaluation-back" to="/evaluation-templates">{t("allTemplatesBack")}</Link>
         <p className="evaluation-eyebrow">Settings / Evaluation templates</p>
         <h1>{template?.name ?? "Evaluation template"}</h1>
         {template && <p>Version {template.version} · {template.questions.length} questions</p>}
       </header>
-      {loading ? <section className="evaluation-panel">Loading template…</section> :
+      {loading ? <section className="evaluation-panel">{t("loadingTemplate")}</section> :
         !template ? <section className="evaluation-panel evaluation-error">{error || "Template not found."}</section> : (
         <div className="evaluation-detail-list">
           {error && <p role="alert" className="evaluation-error">{error}</p>}
           {notice && <p role="status" className="evaluation-success">{notice}</p>}
-          {template.questions.length === 0 && <section className="evaluation-panel">This template has no questions.</section>}
+          {template.questions.length === 0 && <section className="evaluation-panel">{t("noQuestions")}</section>}
           {template.questions.map((q, index) => (
             <section className="evaluation-panel" key={q.id}>
               <div className="evaluation-question-top">
@@ -105,22 +107,22 @@ export default function EvaluationTemplateDetailPage() {
                   {editing !== q.id && <h2>{q.questionText}</h2>}
                 </div>
                 {editing !== q.id && <div className="evaluation-detail-actions">
-                  <button type="button" disabled={busy} onClick={() => beginEdit(q)}>Edit</button>
-                  <button type="button" disabled={busy} className="evaluation-remove" onClick={() => void remove(q)}>Delete</button>
+                  <button type="button" disabled={busy} onClick={() => beginEdit(q)}>{t("edit")}</button>
+                  <button type="button" disabled={busy} className="evaluation-remove" onClick={() => void remove(q)}>{t("delete")}</button>
                 </div>}
               </div>
               {editing === q.id && draft ? (
                 <form className="evaluation-detail-form" onSubmit={save}>
-                  <label>Question text<textarea required rows={2} value={draft.questionText} onChange={e => setDraft({ ...draft, questionText: e.target.value })}/></label>
-                  <label>Question type<select value={draft.questionType} onChange={e => changeType(e.target.value as "NUMERIC" | "TEXT")}>
-                    <option value="NUMERIC">Numeric score</option><option value="TEXT">Written answer</option>
+                  <label>{t("questionText")}<textarea required rows={2} value={draft.questionText} onChange={e => setDraft({ ...draft, questionText: e.target.value })}/></label>
+                  <label>{t("questionType")}<select value={draft.questionType} onChange={e => changeType(e.target.value as "NUMERIC" | "TEXT")}>
+                    <option value="NUMERIC">{t("numericScore")}</option><option value="TEXT">{t("writtenAnswer")}</option>
                   </select></label>
                   {draft.questionType === "NUMERIC" && <>
                     <div className="evaluation-range">
-                      <label>Minimum score<input type="number" value={draft.minScore ?? ""} onChange={e => setDraft({ ...draft, minScore: e.target.value === "" ? null : Number(e.target.value) })}/></label>
-                      <label>Maximum score<input type="number" value={draft.maxScore ?? ""} onChange={e => setDraft({ ...draft, maxScore: e.target.value === "" ? null : Number(e.target.value) })}/></label>
+                      <label>{t("minScore")}<input type="number" value={draft.minScore ?? ""} onChange={e => setDraft({ ...draft, minScore: e.target.value === "" ? null : Number(e.target.value) })}/></label>
+                      <label>{t("maxScore")}<input type="number" value={draft.maxScore ?? ""} onChange={e => setDraft({ ...draft, maxScore: e.target.value === "" ? null : Number(e.target.value) })}/></label>
                     </div>
-                    <div className="evaluation-rubric"><strong>Scoring rubric</strong>
+                    <div className="evaluation-rubric"><strong>{t("scoringRubric")}</strong>
                       {draft.minScore !== null && draft.maxScore !== null &&
                        Number.isSafeInteger(draft.minScore) && Number.isSafeInteger(draft.maxScore) &&
                        draft.minScore <= draft.maxScore && draft.maxScore - draft.minScore <= 20 &&
@@ -134,7 +136,7 @@ export default function EvaluationTemplateDetailPage() {
                     </div>
                   </>}
                   <div className="evaluation-detail-actions">
-                    <button type="button" disabled={busy} onClick={() => { setEditing(null); setDraft(null); }}>Cancel</button>
+                    <button type="button" disabled={busy} onClick={() => { setEditing(null); setDraft(null); }}>{t("cancel")}</button>
                     <button className="evaluation-submit" disabled={busy} type="submit">{busy ? "Saving…" : "Save changes"}</button>
                   </div>
                 </form>
@@ -144,9 +146,9 @@ export default function EvaluationTemplateDetailPage() {
                   {q.rubric && Object.entries(q.rubric).sort(([a],[b])=>Number(a)-Number(b)).map(([score,description]) => (
                     <div className="evaluation-rubric-display" key={score}><strong>{score}</strong><span>{description}</span></div>
                   ))}
-                  {!q.rubric && <p className="evaluation-help">No rubric provided.</p>}
+                  {!q.rubric && <p className="evaluation-help"{t("noRubric")}</p>}
                 </div>
-              ) : <p className="evaluation-help">The evaluator enters a written response to this question.</p>}
+              ) : <p className="evaluation-help">{t("writtenResponseInfo")}</p>}
             </section>
           ))}
           <p className="evaluation-help">Questions linked to existing employee evaluations cannot be edited or deleted. The API will return a conflict in that case.</p>
