@@ -24,11 +24,6 @@ export default function SettingsLayout() {
               <small>{link.detail}</small>
             </NavLink>
           ))}
-          <NavLink to="/evaluation-templates/new"
-            className={({isActive}) => `settings-sidebar-link settings-sidebar-create${isActive ? " active" : ""}`}>
-            <strong>＋ Create template</strong>
-            <small>Build a new review form</small>
-          </NavLink>
         </nav>
       </aside>
       <section className="settings-main" aria-label="Settings content">
