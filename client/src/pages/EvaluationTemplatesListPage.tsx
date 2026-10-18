@@ -38,10 +38,10 @@ export default function EvaluationTemplatesListPage() {
           error ? <p className="evaluation-error" role="alert">{error}</p> :
           visible.length === 0 ? <div className="evaluation-empty"><strong>{t("noTemplates")}</strong><p>{t("templateCreationHelp")}</p></div> :
           <div className="evaluation-list-rows">
-            {visible.map(t => <Link className="evaluation-list-row evaluation-list-link" to={`/evaluation-templates/${t.id}`} key={t.id}>
+            {visible.map(template => <Link className="evaluation-list-row evaluation-list-link" to={`/evaluation-templates/${template.id}`} key={template.id}>
               <div className="evaluation-template-symbol">▤</div>
-              <div><strong>{t.name}</strong><span>{t("evaluationTemplate")}</span></div>
-              <span className="evaluation-version">v{t.version}</span><span aria-hidden="true">→</span>
+              <div><strong>{template.name}</strong><span>{t("evaluationTemplate")}</span></div>
+              <span className="evaluation-version">v{template.version}</span><span aria-hidden="true">→</span>
             </Link>)}
           </div>}
       </div>
