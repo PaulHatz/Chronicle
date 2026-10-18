@@ -59,3 +59,32 @@
 :root[data-theme="dark"] :is(.evaluation-stat,.evaluation-existing,.evaluation-list-toolbar,.evaluation-list-row,.evaluation-rubric-display,.department-list-heading,.department-row){border-color:#3a4962!important}
 :root[data-theme="dark"] :is(.evaluation-stat strong,.evaluation-existing strong,.department-identity strong){color:#eff4fc!important}
 :root[data-theme="dark"] :is(.evaluation-list-row span,.evaluation-existing span,.department-identity span,.department-template small){color:#aebbd2!important}
+
+/* Employee profile: performance widgets, evaluation timeline, and action hovers. */
+:root[data-theme="dark"] :is(.profile-action-list button:hover,.employee-tabs button:hover){background:#34445d!important;color:#e6edfb!important}
+:root[data-theme="dark"] .profile-action-list button{color:#d9e5f8}
+:root[data-theme="dark"] :is(.performance-score,.evaluation-date-box,.performance-progress){background:#283953!important}
+:root[data-theme="dark"] :is(.performance-score strong,.evaluation-date-box strong,.performance-rating strong){color:#e5efff!important}
+:root[data-theme="dark"] :is(.performance-score span,.evaluation-date-box span,.performance-rating span){color:#aabbd7!important}
+:root[data-theme="dark"] :is(.timeline-event,.timeline-event-content,.history-panel-heading){background:#1c2638!important;border-color:#38485f!important}
+:root[data-theme="dark"] :is(.timeline-title-row h3,.timeline-author strong){color:#e9f1ff!important}
+:root[data-theme="dark"] :is(.timeline-event-content>p,.timeline-title-row time,.empty-timeline p){color:#b1bed5!important}
+:root[data-theme="dark"] .timeline-event:not(:last-child)::before{background:#40516a!important}
+:root[data-theme="dark"] :is(.timeline-icon-evaluation,.timeline-icon-note,.timeline-icon-recognition,.timeline-icon-writeup,.timeline-icon-training,
+ .timeline-type-evaluation,.timeline-type-note,.timeline-type-recognition,.timeline-type-writeup,.timeline-type-training){background:#293c52!important;color:#c3d7fa!important}
+
+/* Dashboard record dialog: employee search, choices, and note selection. */
+:root[data-theme="dark"] :is(.dashboard-employee-search,.dashboard-employee-results){background:#243147!important;border-color:#40516d!important;color:#e8eefb!important}
+:root[data-theme="dark"] .dashboard-employee-search:focus-within{border-color:#7393d1!important;box-shadow:0 0 0 3px #7393d133!important}
+:root[data-theme="dark"] .dashboard-employee-choice{background:transparent!important;color:#dae6f8!important}
+:root[data-theme="dark"] .dashboard-employee-choice:hover{background:#33445d!important}
+:root[data-theme="dark"] .dashboard-employee-choice.is-selected{background:#345078!important;border-color:#829fcb!important}
+:root[data-theme="dark"] .dashboard-employee-avatar{background:#374d71!important;color:#e8f1ff!important}
+:root[data-theme="dark"] :is(.dashboard-employee-label small,.dashboard-employee-search>span,.dashboard-employee-empty){color:#a7b8d2!important}
+:root[data-theme="dark"] :is(.note-type-fieldset legend,.dashboard-record-modal label,.dashboard-employee-picker>label){color:#dce7fa!important}
+:root[data-theme="dark"] .note-type-button-group{background:#202e44!important;border-color:#435472!important}
+:root[data-theme="dark"] .note-type-button-group .note-type-option{background:transparent!important;color:#b9cae3!important}
+:root[data-theme="dark"] .note-type-button-group .note-type-option:hover:not(:disabled){background:#354762!important}
+:root[data-theme="dark"] .note-type-button-group .note-type-option.selected{background:#39547e!important;color:#fff!important;border-color:#7797c9!important;box-shadow:none!important}
+:root[data-theme="dark"] .dashboard-record-actions{background:transparent!important;border:0!important;box-shadow:none!important}
+:root[data-theme="dark"] .dashboard-record-actions button[type="submit"]{background:#385e9b!important;border-color:#567fc0!important;color:#fff!important}
