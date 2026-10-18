@@ -525,3 +525,8 @@
 .note-type-button-group .note-type-option.selected{background:#fff;border-color:#c6d4ed;box-shadow:0 1px 5px rgba(24,45,82,.09);color:#304d86}
 .note-type-button-group .note-type-option:focus-visible{outline:2px solid #304d86;outline-offset:2px}
 .note-type-button-group .note-type-option:disabled{opacity:.6;cursor:not-allowed}
+
+/* Three full-width dashboard actions, stacked for quick scanning. */
+.quick-action-grid{grid-template-columns:minmax(0,1fr)}
+.quick-action-grid button{flex-direction:row;align-items:center;min-height:64px;gap:14px;padding:14px 17px;text-align:left}
+.quick-action-grid span{flex:0 0 34px;width:34px;height:34px}
