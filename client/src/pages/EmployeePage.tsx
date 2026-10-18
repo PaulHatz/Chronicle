@@ -687,7 +687,7 @@ export default function EmployeePage() {
                             {filteredEvents.map((event) => (
                                 <article
                                     className="timeline-event"
-                                    key={event.id}
+                                    key={`${event.type}-${event.id}`}
                                 >
                                     <div
                                         className={`timeline-icon timeline-icon-${event.type}`}
