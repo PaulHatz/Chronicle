@@ -88,3 +88,6 @@
 :root[data-theme="dark"] .note-type-button-group .note-type-option.selected{background:#39547e!important;color:#fff!important;border-color:#7797c9!important;box-shadow:none!important}
 :root[data-theme="dark"] .dashboard-record-actions{background:transparent!important;border:0!important;box-shadow:none!important}
 :root[data-theme="dark"] .dashboard-record-actions button[type="submit"]{background:#385e9b!important;border-color:#567fc0!important;color:#fff!important}
+
+/* Start Evaluation has a dedicated hover selector in EmployeePage.css. */
+:root[data-theme="dark"] .profile-action-list .employee-start-evaluation:hover{background:#34445d!important;color:#e6edfb!important}
