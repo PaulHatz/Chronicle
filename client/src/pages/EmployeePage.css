@@ -1092,3 +1092,7 @@
  .goal-check,.goal-check-mark,.goal-item .goal-title,.goal-item .goal-body{transition:none!important}
  .goal-finishing .goal-title{text-decoration:line-through}
 }
+
+/* Keep the goal checkbox in its original neutral color when checked. */
+.goal-check.checked{background:#fff;border-color:#aab7c9;color:#304d86}
+.goal-check:hover{border-color:#aab7c9}
