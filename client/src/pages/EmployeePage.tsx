@@ -338,11 +338,11 @@ export default function EmployeePage() {
                     <div className="not-found-icon">?</div>
                     <h1>{t("employeeNotFound")}</h1>
                     <p>
-                        The employee record you requested does not exist.
+                        {t("employeeMissingMessage")}
                     </p>
 
                     <Link to="/employees">
-                        Return to employee directory
+                        {t("returnDirectory")}
                     </Link>
                 </section>
             </main>
@@ -374,7 +374,7 @@ export default function EmployeePage() {
             <div className="employee-profile-container">
                 <Link className="back-link" to="/employees">
                     <span>←</span>
-                    Back to employees
+                    {t("backEmployees")}
                 </Link>
 
                 <section className="employee-profile-header">
@@ -474,7 +474,7 @@ export default function EmployeePage() {
                         <div className="section-heading">
                             <div>
                                 <p className="section-eyebrow">
-                                    Employee information
+                                    {t("profileInformation")}
                                 </p>
                                 <h2>{t("profileDetails")}</h2>
                             </div>
@@ -517,7 +517,7 @@ export default function EmployeePage() {
                         <div className="section-heading">
                             <div>
                                 <p className="section-eyebrow">
-                                    Current performance
+                                    {t("currentPerformance")}
                                 </p>
                                 <h2>{t("performanceScore")}</h2>
                             </div>
@@ -673,7 +673,7 @@ export default function EmployeePage() {
                                 </h2>
 
                                 <p>
-                                    Performance and development history
+                                    {t("evaluationHistory")}
                                 </p>
                             </div>
 
@@ -743,7 +743,7 @@ export default function EmployeePage() {
                             <div className="side-card-heading">
                                 <h2>{t("quickActions")}</h2>
                                 <p>
-                                    Add an event to the employee record.
+                                    {t("eventToRecord")}
                                 </p>
                             </div>
 
@@ -756,7 +756,7 @@ export default function EmployeePage() {
                                     <div>
                                         <strong>{t("addNote")}</strong>
                                         <small>
-                                            Record feedback or coaching
+                                            {t("recordFeedback")}
                                         </small>
                                     </div>
 
@@ -771,7 +771,7 @@ export default function EmployeePage() {
                                     <div>
                                         <strong>{t("startEvaluation")}</strong>
                                         <small>
-                                            Complete a performance review
+                                            {t("completePerformanceReview")}
                                         </small>
                                     </div>
 
@@ -786,7 +786,7 @@ export default function EmployeePage() {
                                     <div>
                                         <strong>{t("addRecognition")}</strong>
                                         <small>
-                                            Recognize positive performance
+                                            {t("recognizePerformance")}
                                         </small>
                                     </div>
 
@@ -801,7 +801,7 @@ export default function EmployeePage() {
                                     <div>
                                         <strong>{t("createWriteUp")}</strong>
                                         <small>
-                                            Document disciplinary action
+                                            {t("documentDiscipline")}
                                         </small>
                                     </div>
 
