@@ -62,7 +62,7 @@ export default function EmployeeEvaluationPage(){
        </label>)}
       </fieldset>
       <label className="employee-eval-comment">{t("additionalComment")}<textarea rows={3} value={answers[q.id]?.text??""} onChange={e=>change(q.id,"text",e.target.value)}/></label>
-     </>:<label className="employee-eval-comment">{t("writtenResponse")}<textarea required rows={5} value={answers[q.id]?.text??""} onChange={e=>change(q.id,"text",e.target.value)} placeholder="Write your evaluation…"/></label>}
+     </>:<label className="employee-eval-comment">{t("writtenResponse")}<textarea required rows={5} value={answers[q.id]?.text??""} onChange={e=>change(q.id,"text",e.target.value)} placeholder={t("writeEvaluation")}/></label>}
     </section>)}
     {error&&<div className="employee-eval-error" role="alert">{error}</div>}
     <div className="employee-eval-footer"><Link to={`/employees/${id}`}>{t("cancel")}</Link><button disabled={saving||form.template.questions.length===0} type="submit">{saving?"Submitting…":"Complete evaluation"}</button></div>
