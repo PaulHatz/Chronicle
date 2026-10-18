@@ -25,15 +25,17 @@ router.use(async(req:Request,res:Response,next:NextFunction)=>{
   try{
     const actor=await prisma.user.findUnique({where:{id},select:{role:true}});
     if(!actor)return res.status(401).json({message:"Account no longer exists."});
-    if(actor.role!=="ADMIN")return res.status(403).json({message:"Administrator access required."});
+    if(actor.role!=="ADMIN"&&actor.role!=="MANAGER")return res.status(403).json({message:"Manager access required."});
+    res.locals.actorRole=actor.role;
     next();
   }catch(e){error(res,e);}
 });
-router.get("/",async(_req,res)=>{try{res.json({users:await prisma.user.findMany({select:publicFields,orderBy:[{lastName:"asc"},{firstName:"asc"}]})});}catch(e){error(res,e);}});
+router.get("/",async(_req,res)=>{try{res.json({users:await prisma.user.findMany({where:res.locals.actorRole==="MANAGER"?{role:"TEAM_LEADER"}:{},select:publicFields,orderBy:[{lastName:"asc"},{firstName:"asc"}]})});}catch(e){error(res,e);}});
 router.post("/",async(req,res)=>{
   const {firstName,lastName,email,password,role,language="fr-CA"}=req.body??{};
   if(!validText(firstName)||!validText(lastName)||!validText(email,254)||!/^\S+@\S+\.\S+$/.test(email)||!validText(password,256)||password.length<12||!validRole(role)||!validLanguage(language))
     return res.status(400).json({message:"Provide a name, valid email, role and password (at least 12 characters)."});
+  if(res.locals.actorRole==="MANAGER"&&role!=="TEAM_LEADER")return res.status(403).json({message:"Managers may only create team leaders."});
   try{
     const user=await prisma.user.create({data:{firstName:firstName.trim(),lastName:lastName.trim(),email:email.trim().toLowerCase(),role,language,passwordHash:await argon2.hash(password)},select:publicFields});
     return res.status(201).json(user);
@@ -50,10 +52,12 @@ router.patch("/:userId",async(req:Request,res:Response)=>{
   if("language" in body&&!validLanguage(body.language))return res.status(400).json({message:"Invalid language."});
   if("role" in body&&!validRole(body.role))return res.status(400).json({message:"Invalid role."});
   if("password" in body&&(!validText(body.password,256)||body.password.length<12))return res.status(400).json({message:"Password must be at least 12 characters."});
+  if(res.locals.actorRole==="MANAGER"&&"role" in body&&body.role!=="TEAM_LEADER")return res.status(403).json({message:"Managers may only manage team leaders."});
   try{
     const result=await prisma.$transaction(async tx=>{
       const current=await tx.user.findUnique({where:{id:userId}});
       if(!current)return null;
+      if(res.locals.actorRole==="MANAGER"&&current.role!=="TEAM_LEADER")return "forbidden";
       if(current.role==="ADMIN"&&body.role&&body.role!=="ADMIN"&&await tx.user.count({where:{role:"ADMIN"}})<=1)
         return "last-admin";
       return tx.user.update({where:{id:userId},data:{
@@ -65,12 +69,14 @@ router.patch("/:userId",async(req:Request,res:Response)=>{
         ...("password" in body?{passwordHash:await argon2.hash(body.password)}:{})
       },select:publicFields});
     });
+    if(result==="forbidden")return res.status(403).json({message:"Managers may only modify team leaders."});
     if(result==="last-admin")return res.status(409).json({message:"Cannot demote the last administrator."});
     if(!result)return res.status(404).json({message:"User not found."});
     return res.json(result);
   }catch(e){return error(res,e);}
 });
 router.delete("/:userId",async(req:Request,res:Response)=>{
+  if(res.locals.actorRole!=="ADMIN")return res.status(403).json({message:"Only administrators may delete users."});
   const userId=Number(req.params.userId),actorId=(req as AuthRequest).user!.id;
   if(!Number.isSafeInteger(userId)||userId<=0)return res.status(400).json({message:"Invalid user ID."});
   if(userId===actorId)return res.status(409).json({message:"You cannot delete your own account."});
