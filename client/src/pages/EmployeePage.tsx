@@ -443,9 +443,9 @@ export default function EmployeePage() {
                         <h2>{recordForm === "recognition" ? "Add recognition" : recordForm === "note" ? "Add manager note" : "Create write-up"}</h2>
                         <p>Record for {employee.name}</p>
                         <form onSubmit={submitRecord}>
-                            {recordForm !== "writeup" ? <>{recordForm === "note" && <fieldset className="note-type-fieldset"><legend>Note type</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>{t("title")}<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
-                              : <label>Warning type<select value={warningType} onChange={e=>setWarningType(e.target.value as WriteUpType)}>
-                                <option value="VERBAL_WARNING">Verbal warning</option><option value="WRITTEN_WARNING">Written warning</option><option value="FINAL_WARNING">Final warning</option>
+                            {recordForm !== "writeup" ? <>{recordForm === "note" && <fieldset className="note-type-fieldset"><legend>{t("noteType")}</legend><div className="note-type-button-group" role="group" aria-label="Note type">{([["GENERAL","General"],["POSITIVE","Positive"],["IMPROVEMENT","Needs improvement"]] as const).map(([value,label])=><button key={value} type="button" className={`note-type-option${noteType === value ? " selected" : ""}`} aria-pressed={noteType === value} onClick={()=>setNoteType(value)}>{label}</button>)}</div></fieldset>}<label>{t("title")}<input required maxLength={200} value={noteTitle} onChange={e=>setNoteTitle(e.target.value)}/></label></>
+                              : <label>{t("warningType")}<select value={warningType} onChange={e=>setWarningType(e.target.value as WriteUpType)}>
+                                <option value="VERBAL_WARNING">{t("verbalWarning")}</option><option value="WRITTEN_WARNING">{t("writtenWarning")}</option><option value="FINAL_WARNING">{t("finalWarning")}</option>
                               </select></label>}
                             <label>{recordForm === "recognition" ? "Recognition details" : recordForm === "note" ? "Note" : "Reason / details"}<textarea required rows={6} maxLength={10000} value={recordContent} onChange={e=>setRecordContent(e.target.value)}/></label>
                             {recordError && <p role="alert" className="employee-record-error">{recordError}</p>}
@@ -568,7 +568,7 @@ export default function EmployeePage() {
                             <strong>
                                 {employee.completedEvaluations}
                             </strong>
-                            <small>Completed</small>
+                            <small>{t("completed")}</small>
                         </div>
                     </article>
 
@@ -578,7 +578,7 @@ export default function EmployeePage() {
                         </div>
 
                         <div>
-                            <span>Manager notes</span>
+                            <span>{t("managerNotes")}</span>
                             <strong>{employee.notes}</strong>
                             <small>{t("totalRecords")}</small>
                         </div>
@@ -588,7 +588,7 @@ export default function EmployeePage() {
                         <div className="stat-icon stat-icon-red">!</div>
 
                         <div>
-                            <span>Open write-ups</span>
+                            <span>{t("openWriteUps")}</span>
                             <strong>{employee.openWriteUps}</strong>
                             <small>{t("requiresFollowUp")}</small>
                         </div>
@@ -717,7 +717,7 @@ export default function EmployeePage() {
                                             <span>{event.resolvedAt ? "Resolved" : "Open"}</span>
                                             {!event.resolvedAt && <button type="button" onClick={() => void resolveRecord(event.writeUpId!)}>{t("markResolved")}</button>}
                                         </div>}
-                                        {event.evaluationId && <Link className="evaluation-timeline-link" to={`/employees/${employee.id}/evaluations/${event.evaluationId}`}>View evaluation results →</Link>}
+                                        {event.evaluationId && <Link className="evaluation-timeline-link" to={`/employees/${employee.id}/evaluations/${event.evaluationId}`}>{t("viewEvaluationResult")}</Link>}
 
                                         <div className="timeline-author">
                                             Added by{" "}
@@ -730,7 +730,7 @@ export default function EmployeePage() {
                             {filteredEvents.length === 0 && (
                                 <div className="empty-timeline">
                                     <div>⌕</div>
-                                    <h3>No records found</h3>
+                                    <h3>{t("noRecord")}</h3>
                                     <p>
                                         There are no records in this
                                         category yet.
