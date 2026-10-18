@@ -7,6 +7,13 @@ import { getEmployeeEvaluations } from "../api/employee-evaluations";
 import { getEmployeeGoals, createEmployeeGoal, updateEmployeeGoal, deleteEmployeeGoal, type EmployeeGoal } from "../api/goals";
 
 
+function formatProfileDate(value: string | null | undefined): string {
+    if (!value) return "N/A";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "N/A";
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+}
+
 type EmployeeStatus = "Active" | "Inactive" | "Leave";
 
 type Employee = {
@@ -181,10 +188,10 @@ export default function EmployeePage() {
                                 position: data.position,
                                 department: data.department?.name ?? "Unknown",
                                 status: data.status,
-                                hireDate: data.hireDate,
+                                hireDate: formatProfileDate(data.hireDate),
                                 manager: "N/A",
-                                lastEvaluation: evaluations.length ? new Date(evaluations[0].completedAt).toLocaleDateString() : "N/A",
-                                nextEvaluation: data.nextEvaluationAt ? new Date(data.nextEvaluationAt).toLocaleDateString() : "N/A",
+                                lastEvaluation: evaluations.length ? formatProfileDate(evaluations[0].completedAt) : "N/A",
+                                nextEvaluation: data.nextEvaluationAt ? formatProfileDate(data.nextEvaluationAt) : "N/A",
                                 performanceScore,
                                 performanceMaxScore,
                                 notes: data_notes.length,
@@ -700,7 +707,7 @@ export default function EmployeePage() {
                                                 <h3>{event.evaluationId ? <Link to={`/employees/${employee.id}/evaluations/${event.evaluationId}`}>{event.title}</Link> : event.title}</h3>
                                             </div>
 
-                                            <time>{event.date}</time>
+                                            <time>{formatProfileDate(event.date)}</time>
                                         </div>
 
                                         <p>{event.description}</p>
@@ -828,7 +835,7 @@ export default function EmployeePage() {
                                             </div>
                                             <div className="goal-body">
                                                 <p>{goal.description}</p>
-                                                <p className="goal-due">Target: {new Date(goal.duration).toLocaleDateString(undefined,{timeZone:"UTC",year:"numeric",month:"short",day:"numeric"})}</p>
+                                                <p className="goal-due">Target: {formatProfileDate(goal.duration)}</p>
                                             </div>
                                         </div>
                                     ))}
