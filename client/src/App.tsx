@@ -12,6 +12,7 @@ import AppLayout from "./layout/AppLayout";
 import SettingsLayout from "./layout/SettingsLayout";
 import DepartmentsPage from "./pages/DepartmentsPage";
 import UsersPage from "./pages/UsersPage";
+import LanguageSettingsPage from "./pages/LanguageSettingsPage";
 import EmployeeEvaluationPage from "./pages/EmployeeEvaluationPage";
 import EmployeeEvaluationResultPage from "./pages/EmployeeEvaluationResultPage";
 export default function App() {
@@ -43,6 +44,7 @@ export default function App() {
                   <Route path="/settings" element={<Navigate to="/users" replace />} />
                   <Route path="/departments" element={<DepartmentsPage />} />
                   <Route path="/users" element={<UsersPage />} />
+                  <Route path="/settings/language" element={<LanguageSettingsPage />} />
                   <Route path="/evaluation-templates" element={<EvaluationTemplatesListPage />} />
                   <Route path="/evaluation-templates/new" element={<EvaluationTemplatesPage />} />
                   <Route path="/evaluation-templates/:templateId" element={<EvaluationTemplateDetailPage />} />
