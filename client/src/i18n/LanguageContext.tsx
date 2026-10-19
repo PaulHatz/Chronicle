@@ -22,7 +22,7 @@ export function LanguageProvider({children}:{children:ReactNode}){
    if(active&&(user?.language==="en-CA"||user?.language==="fr-CA"))setLocale(user.language);
   }).catch(()=>{});
   return()=>{active=false;};
- },[setLocale,isAuthenticated]);
+ },[setLocale,isAuthenticated,locale]);
  const t=useCallback((key:MessageKey,params?:Record<string,string|number>)=>translate(locale,key,params),[locale]);
  return <Context.Provider value={{locale,setLocale,t}}>{children}</Context.Provider>;
 }
