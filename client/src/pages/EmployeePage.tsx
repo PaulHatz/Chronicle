@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./EmployeePage.css";
 import {useLanguage} from "../i18n/LanguageContext";
@@ -119,8 +119,8 @@ export default function EmployeePage() {
     const [activeTab, setActiveTab] = useState<TabName>("timeline");
     const [employee, setEmployee] = useState<Employee>();
     const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [, setIsLoading] = useState(true);
+    const [, setError] = useState<string | null>(null);
     const [recordForm, setRecordForm] = useState<"note"|"writeup"|"recognition"|null>(null);
     const [noteTitle, setNoteTitle] = useState("");
     const [noteType, setNoteType] = useState<ManagerNoteType>("GENERAL");
