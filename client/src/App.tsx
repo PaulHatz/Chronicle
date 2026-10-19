@@ -4,6 +4,7 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 import RequireRole from "./auth/RequireRole";
 import AppLayout from "./layout/AppLayout";
 import SettingsLayout from "./layout/SettingsLayout";
+import PageLoading from "./components/PageLoading";
 
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
@@ -20,7 +21,7 @@ const EmployeeEvaluationPage = lazy(() => import("./pages/EmployeeEvaluationPage
 const EmployeeEvaluationResultPage = lazy(() => import("./pages/EmployeeEvaluationResultPage"));
 export default function App() {
     return (
-        <Suspense fallback={<main role="status" aria-live="polite" style={{ padding: "2rem" }}>Loading page…</main>}>
+        <Suspense fallback={<PageLoading />}>
         <Routes>
             <Route
                 path="/login"
