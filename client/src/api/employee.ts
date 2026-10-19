@@ -13,7 +13,7 @@ export async function getemployeelist() {
 
 }
 
-export async function getemployee(id) {
+export async function getemployee(id: number) {
     const response = await apiFetch(
         "/employees/" + String(id), 
         {
@@ -24,14 +24,14 @@ export async function getemployee(id) {
     return response.json();
 }
 
-export async function addemployee(newEmployee) {
+export async function addemployee(newEmployee: EmployeeProfileInput) {
     return apiFetch("/employees/add", {
         method: "POST",
         body: JSON.stringify(newEmployee),
     });
 }
 
-export async function getemployeenotes(id) {
+export async function getemployeenotes(id: number) {
     const response = await apiFetch(
         "/activity/notes/" + String(id), 
         {
@@ -42,7 +42,7 @@ export async function getemployeenotes(id) {
     return response.json();
 }
 
-export async function getemployeewriteups(id) {
+export async function getemployeewriteups(id: number) {
     const response = await apiFetch(
         "/activity/writeup/" + String(id), 
         {
