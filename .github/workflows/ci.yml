@@ -40,6 +40,8 @@ jobs:
         working-directory: server
       - run: npx prisma generate
         working-directory: server
+        env:
+          DATABASE_URL: postgresql://chronicle:ci-only@127.0.0.1:5432/chronicle
       - run: npm run build
         working-directory: server
       - run: npm test
