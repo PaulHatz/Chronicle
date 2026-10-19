@@ -32,7 +32,7 @@ export default function EmployeesPage() {
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [departments, setDepartments] = useState<DepartmentOption[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [, setError] = useState<string | null>(null);
     const [showAddForm, setShowAddForm] = useState(false);
 
     const [newEmployee, setNewEmployee] = useState({
@@ -552,7 +552,7 @@ export default function EmployeesPage() {
                                         <span
                                             className={`employee-status employee-status-${employee.status.toLowerCase()}`}
                                         >
-                                            {employee.status === "Leave"
+                                            {employee.status === "LEAVE"
                                                 ? "On leave"
                                                 : employee.status}
                                         </span>
