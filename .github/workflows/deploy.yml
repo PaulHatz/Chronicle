@@ -59,7 +59,7 @@ jobs:
         run: |
           tar -czf client-release.tar.gz -C client dist
           tar -czf server-release.tar.gz -C server \
-            dist package.json package-lock.json
+            dist package.json package-lock.json prisma.config.ts prisma
 
       - name: Configure SSH
         env:
@@ -100,7 +100,16 @@ jobs:
             -C /opt/chronicle/server
 
           cd /opt/chronicle/server
-          npm ci --omit=dev --no-audit --no-fund
+          # The Prisma CLI is a dev dependency; it is needed to apply migrations.
+          npm ci --include=dev --no-audit --no-fund
+
+          # Preserve the database and secrets. Apply only committed migrations,
+          # never db push / migrate dev / reset against production.
+          if [ -f prisma/migrations/migration_lock.toml ]; then
+            npx --no-install prisma migrate deploy
+          else
+            echo "No version-controlled Prisma migrations yet; skipping schema changes."
+          fi
 
           sudo -n systemctl restart chronicle.service
 
