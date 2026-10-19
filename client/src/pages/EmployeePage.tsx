@@ -235,7 +235,7 @@ export default function EmployeePage() {
                         setEmployee(emp);
                         
                         const employee_notes: TimelineEvent[] = data_notes.map(
-                            (note: any): TimelineEvent => ({
+                            (note: {id:number;type?:ManagerNoteType;title:string;content:string;createdAt:string}): TimelineEvent => ({
                                 id: note.id,
                                 type: "note",
                                 noteType: note.type ?? "GENERAL",
@@ -246,7 +246,7 @@ export default function EmployeePage() {
                         }));
 
                         const employee_writeups: TimelineEvent[] = data_writeups.map(
-                            (writeup: any): TimelineEvent => ({
+                            (writeup: {id:number;resolvedAt?:string|null;type:WriteUpType;reason:string;createdAt:string}): TimelineEvent => ({
                                 id: writeup.id,
                                 writeUpId: writeup.id,
                                 resolvedAt: writeup.resolvedAt,
@@ -299,7 +299,6 @@ export default function EmployeePage() {
         const id = Number(employeeId);
         if (!Number.isSafeInteger(id) || id <= 0) return;
         let cancelled = false;
-        setGoalsLoading(true);
         void getEmployeeGoals(id)
           .then(data => { if (!cancelled) { setGoals(data); setGoalsError(""); } })
           .catch(err => { if (!cancelled) setGoalsError(err instanceof Error ? err.message : "Unable to load goals."); })
