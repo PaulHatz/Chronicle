@@ -530,3 +530,13 @@
 .quick-action-grid{grid-template-columns:minmax(0,1fr)}
 .quick-action-grid button{flex-direction:row;align-items:center;min-height:64px;gap:14px;padding:14px 17px;text-align:left}
 .quick-action-grid span{flex:0 0 34px;width:34px;height:34px}
+
+/* Align the dashboard with the centered Employees page content area. */
+.dashboard-page .dashboard-header,
+.dashboard-page .summary-grid,
+.dashboard-page .dashboard-content-grid {
+    width: 100%;
+    max-width: 1500px;
+    margin-left: auto;
+    margin-right: auto;
+}
