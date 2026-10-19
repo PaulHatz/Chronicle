@@ -15,7 +15,7 @@ export default function EmployeeEvaluationPage(){
  const [saving,setSaving]=useState(false);
  const [error,setError]=useState("");
  useEffect(()=>{
-   if(!Number.isSafeInteger(id)||id<=0){setError("Invalid employee ID.");setLoading(false);return;}
+   if(!Number.isSafeInteger(id)||id<=0)return;
    let live=true;
    void getEmployeeEvaluationForm(id).then(data=>{if(live)setForm(data);}).catch(e=>{if(live)setError(e instanceof Error?e.message:"Unable to load evaluation.");}).finally(()=>{if(live)setLoading(false);});
    return ()=>{live=false;};
@@ -48,7 +48,7 @@ export default function EmployeeEvaluationPage(){
  }
  return <main className="employee-evaluation-page">
   <Link className="employee-eval-back" to={`/employees/${id}`}>{t("employeeProfileBack")}</Link>
-  {loading?<div className="employee-eval-card">{t("loadingEvaluation")}</div>:!form?<div className="employee-eval-error">{error||"Evaluation unavailable."}</div>:<>
+  {!Number.isSafeInteger(id)||id<=0?<div className="employee-eval-error">Invalid employee ID.</div>:loading?<div className="employee-eval-card">{t("loadingEvaluation")}</div>:!form?<div className="employee-eval-error">{error||"Evaluation unavailable."}</div>:<>
    <header className="employee-eval-header"><p>{t("newEvaluation")}</p><h1>{form.template.name}</h1>
    <span>{form.employee.firstName} {form.employee.lastName} · {form.employee.department} · Version {form.template.version}</span></header>
    <form className="employee-eval-form" onSubmit={submit}>
