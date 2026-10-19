@@ -18,7 +18,7 @@ export default function EvaluationTemplateDetailPage() {
 
   useEffect(() => {
     if (!Number.isSafeInteger(id) || id <= 0) {
-      setError("Invalid template ID."); setLoading(false); return;
+      return;
     }
     let active = true;
     void getEvaluationTemplate(id)
@@ -93,7 +93,7 @@ export default function EvaluationTemplateDetailPage() {
         <h1>{template?.name ?? "Evaluation template"}</h1>
         {template && <p>Version {template.version} · {template.questions.length} questions</p>}
       </header>
-      {loading ? <section className="evaluation-panel">{t("loadingTemplate")}</section> :
+      {!Number.isSafeInteger(id)||id<=0 ? <section className="evaluation-panel evaluation-error">Invalid template ID.</section> : loading ? <section className="evaluation-panel">{t("loadingTemplate")}</section> :
         !template ? <section className="evaluation-panel evaluation-error">{error || "Template not found."}</section> : (
         <div className="evaluation-detail-list">
           {error && <p role="alert" className="evaluation-error">{error}</p>}
