@@ -1,0 +1,106 @@
+
+name: Deploy Chronicle
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chronicle-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            client/package-lock.json
+            server/package-lock.json
+
+      - name: Build frontend
+        working-directory: client
+        run: |
+          npm ci --no-audit --no-fund
+          npm run lint
+          npm run build
+
+      - name: Build backend
+        working-directory: server
+        run: |
+          npm ci --no-audit --no-fund
+          npx prisma generate
+          npm run build
+          npm test
+
+      - name: Package application
+        run: |
+          tar -czf client-release.tar.gz -C client dist
+          tar -czf server-release.tar.gz -C server \
+            dist package.json package-lock.json
+
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Upload application
+        env:
+          HOST: ${{ secrets.VPS_HOST }}
+          USER: ${{ secrets.VPS_USER }}
+          PORT: ${{ secrets.VPS_SSH_PORT }}
+        run: |
+          scp -P "$PORT" -o BatchMode=yes \
+            client-release.tar.gz server-release.tar.gz \
+            "$USER@$HOST:/home/deploy/"
+
+      - name: Install and restart
+        env:
+          HOST: ${{ secrets.VPS_HOST }}
+          USER: ${{ secrets.VPS_USER }}
+          PORT: ${{ secrets.VPS_SSH_PORT }}
+        run: |
+          ssh -p "$PORT" -o BatchMode=yes \
+            "$USER@$HOST" 'bash -se' <<'REMOTE'
+          set -euo pipefail
+
+          tar -xzf ~/client-release.tar.gz \
+            -C /opt/chronicle/client
+
+          tar -xzf ~/server-release.tar.gz \
+            -C /opt/chronicle/server
+
+          cd /opt/chronicle/server
+          npm ci --omit=dev --no-audit --no-fund
+
+          sudo -n systemctl restart chronicle.service
+
+          for attempt in $(seq 1 15); do
+            if curl -fsS http://127.0.0.1:3000/ \
+              >/dev/null; then
+              echo "Chronicle API is responding"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "Chronicle API health check failed"
+          exit 1
+          REMOTE
