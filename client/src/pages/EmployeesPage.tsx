@@ -9,6 +9,20 @@ import { isEvaluationDue } from "../api/evaluationDue";
 
 type EmployeeStatus = "ACTIVE" | "INACTIVE" | "LEAVE";
 
+type EmployeeApiRecord = {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string | null;
+    position: string;
+    department?: {name: string} | null;
+    status: EmployeeStatus;
+    lastEvaluationAt?: string | null;
+    nextEvaluationAt?: string | null;
+    openWriteUpsCount?: number | null;
+    notesCount?: number | null;
+};
+
 type Employee = {
     id: number;
     name: string;
@@ -129,7 +143,7 @@ export default function EmployeesPage() {
                 if (!cancelled) {
 
                     const employeeList: Employee[] = data.employeeList.map(
-                        (employee: any): Employee => ({
+                        (employee: EmployeeApiRecord): Employee => ({
                             id: Number(employee.id),
                             name: String(employee.firstName + " " + employee.lastName),
                             initials: String(employee.firstName[0] + employee.lastName[0]),
