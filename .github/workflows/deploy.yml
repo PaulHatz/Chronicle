@@ -49,6 +49,9 @@ jobs:
 
       - name: Build backend
         working-directory: server
+        env:
+          # Build/test only. The production DB URL remains on the VPS.
+          DATABASE_URL: postgresql://chronicle:ci-only@127.0.0.1:5432/chronicle
         run: |
           npm ci --no-audit --no-fund
           npx prisma generate
