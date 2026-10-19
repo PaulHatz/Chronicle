@@ -1,4 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? "http://localhost:3000/api" : "/api");
+// Node-based tests do not provide Vite's import.meta.env object.
+const API_URL = import.meta.env?.VITE_API_URL ?? (import.meta.env?.DEV === false ? "/api" : "http://localhost:3000/api");
 /*
 export async function apiFetch(
     endpoint: string,
