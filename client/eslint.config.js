@@ -19,4 +19,9 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  // Context providers intentionally export hooks alongside components.
+  {
+    files: ['src/auth/*Context.tsx', 'src/i18n/LanguageContext.tsx', 'src/theme/ThemeContext.tsx'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
 ])
