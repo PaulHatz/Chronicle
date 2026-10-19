@@ -8,8 +8,8 @@ export function RoleProvider({children}:{children:ReactNode}){
  const {isAuthenticated}=useAuth();
  const [session,setSession]=useState<Session>({role:null,loading:true});
  useEffect(()=>{
-  if(!isAuthenticated){setSession({role:null,loading:false});return;}
-  let live=true;setSession({role:null,loading:true});
+  if(!isAuthenticated)return;
+  let live=true;
   void apiFetch("/auth/me").then(async response=>{
    if(!response.ok)throw new Error("Unable to verify account permissions.");
    return response.json();
@@ -17,6 +17,6 @@ export function RoleProvider({children}:{children:ReactNode}){
    .catch(()=>{if(live)setSession({role:null,loading:false});});
   return()=>{live=false;};
  },[isAuthenticated]);
- return <Context.Provider value={session}>{children}</Context.Provider>;
+ return <Context.Provider value={isAuthenticated ? session : {role:null,loading:false}}>{children}</Context.Provider>;
 }
 export const useRole=()=>useContext(Context);
